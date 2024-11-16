@@ -16,8 +16,8 @@ model User {
   password     String?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+  role         Role     @default(CUSTOMER)
 
-  role                Role      @default(CUSTOMER)
   articles            Article[]
   orders              Order[]
   cart                Cart?
