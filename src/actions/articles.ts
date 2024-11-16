@@ -11,13 +11,13 @@ import { Article } from "@prisma/client";
 import { uploadImageCloudinary, deleteImageCloudinary } from "./fileUploader";
 import { ActionResponse, ActionResponses } from "@/lib/actions";
 
-export async function upsertArticle({
+export const upsertArticle = async ({
   data,
   id,
 }: {
   data: FormData;
   id?: string;
-}): Promise<ActionResponse<{ message: string }>> {
+}): Promise<ActionResponse<{ message: string }>> => {
   try {
     const title = data.get("title") as string;
     const slug = data.get("slug") as string;
@@ -76,12 +76,12 @@ export async function upsertArticle({
     console.log(error);
     return ActionResponses.serverError("Failed to upsert article");
   }
-}
+};
 
-export async function updateArticleStatus(
+export const updateArticleStatus = async (
   id: string,
   is_published: boolean,
-): Promise<ActionResponse<{ id: string }>> {
+): Promise<ActionResponse<{ id: string }>> => {
   try {
     await updateArticle({ id }, { is_published });
     return ActionResponses.success({ id });
@@ -89,11 +89,11 @@ export async function updateArticleStatus(
     console.log(error);
     return ActionResponses.serverError("Failed to get article");
   }
-}
+};
 
-export async function getArticleById(
+export const getArticleById = async (
   id: string,
-): Promise<ActionResponse<Article>> {
+): Promise<ActionResponse<Article>> => {
   try {
     const articleData = await findArticle({ id });
     if (!articleData) {
@@ -106,11 +106,11 @@ export async function getArticleById(
     console.log(error);
     return ActionResponses.serverError("Failed to get article");
   }
-}
+};
 
-export async function deleteArticle(
+export const deleteArticle = async (
   id: string,
-): Promise<ActionResponse<{ id: string }>> {
+): Promise<ActionResponse<{ id: string }>> => {
   try {
     await hardDeleteArticle({ id });
     return ActionResponses.success({ id });
@@ -118,15 +118,15 @@ export async function deleteArticle(
     console.log(error);
     return ActionResponses.serverError("Failed to delete article");
   }
-}
+};
 
-export async function getArticles({
+export const getArticles = async ({
   tags,
   order,
 }: {
   tags?: string[];
   order?: "latest" | "popular";
-}): Promise<ActionResponse<Article[]>> {
+}): Promise<ActionResponse<Article[]>> => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const query: any = {};
@@ -139,4 +139,4 @@ export async function getArticles({
     console.error(error);
     return ActionResponses.serverError("Failed to get articles");
   }
-}
+};
