@@ -88,7 +88,7 @@ export const updateArticleStatus = async (
     return ActionResponses.success({ id });
   } catch (error) {
     console.log(error);
-    return ActionResponses.serverError("Failed to get article");
+    return ActionResponses.serverError("Failed to update article");
   }
 };
 
@@ -124,11 +124,11 @@ export const deleteArticle = async (
 export const getArticles = async ({
   tags,
   order,
-  keyword,
+  searchQuery,
 }: {
   tags?: string[];
   order?: "latest" | "popular";
-  keyword?: string;
+  searchQuery?: string;
 }): Promise<ActionResponse<Article[]>> => {
   try {
     const query: Prisma.ArticleWhereInput = {};
@@ -136,8 +136,15 @@ export const getArticles = async ({
       query.tags = { hasSome: tags };
     }
 
-    if (keyword && keyword.trim() !== "") {
-      query.title = { contains: keyword, mode: "insensitive" };
+    if (searchQuery && searchQuery.trim() !== "") {
+      query.OR = [
+        {
+          title: { contains: searchQuery, mode: Prisma.QueryMode.insensitive },
+        },
+        ...searchQuery.split(" ").map((term) => ({
+          title: { contains: term, mode: Prisma.QueryMode.insensitive },
+        })),
+      ];
     }
 
     const articles = await findArticles(query, order);
