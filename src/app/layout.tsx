@@ -2,24 +2,12 @@ import NextAuthProvider from "@/components/providers/NextAuthProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import generalSansFont from "./fonts";
 
 const robots =
   process.env.APP_ENV != "production" ? "noindex, nofollow" : "index, follow";
 
-// TOOD: Change this metadata
 export const metadata: Metadata = {
   title: {
     default:
@@ -31,7 +19,7 @@ export const metadata: Metadata = {
   authors: [{ name: "MokletDev", url: "https://dev.moklet.org/" }],
   creator: "MokletDev",
   openGraph: {
-    images: `${process.env.URL}/logo-horizontal.png`,
+    images: `${process.env.URL}/opengraph.png`,
   },
   keywords: [
     // Short
@@ -105,9 +93,9 @@ export default function RootLayout({
           <GoogleAnalytics gaId={process.env.GA_ID} />
         )}
         <body
-          className={`${geistSans.variable} ${geistMono.variable} overflow-x-hidden antialiased`}
+          className={`${generalSansFont.className} overflow-x-hidden antialiased`}
         >
-          <main>{children}</main>
+          <main className="h-full min-h-screen w-full">{children}</main>
           <Toaster />
         </body>
       </html>
