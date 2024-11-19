@@ -13,13 +13,11 @@ import {
 import { revalidatePath } from "next/cache";
 
 // handling user request custom product
-export const addCustomProductByUser = async (
-  data: FormData,
-) => {
+export const addCustomProductByUser = async (data: FormData) => {
   const width = data.get("width") as string;
   const height = data.get("height") as string;
-  const Material=data.get("Material") as string
-  const Model=data.get("model") as string
+  const Material = data.get("Material") as string;
+  const Model = data.get("model") as string;
   const Price = parseFloat(data.get("price") as string);
   const size = data.get("size") as string;
   const color = data.get("color") as string;
@@ -31,7 +29,7 @@ export const addCustomProductByUser = async (
       color,
       Price,
       Material,
-      Model
+      Model,
     });
     if (!productCustom) {
       return ActionResponses.serverError("Failed to get create Product Custom");
@@ -44,7 +42,6 @@ export const addCustomProductByUser = async (
     return ActionResponses.serverError("Failed to create Product Custom");
   }
 };
-
 
 export const updateCustomProduct = async (id: string, data: FormData) => {
   const width = data.get("width") as string;
@@ -196,7 +193,6 @@ export const addMaterial = async (
   }
 };
 
-
 export const deleteMaterialbyUser = async (id: string) => {
   try {
     const deleteMaterials = await deleteMaterial({ id });
@@ -213,6 +209,4 @@ export const deleteMaterialbyUser = async (id: string) => {
   }
 };
 
-export const GetMaterials = async()=>{
-  
-}
+export const GetMaterials = async () => {};
