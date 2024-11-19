@@ -14,23 +14,31 @@ import { revalidatePath } from "next/cache";
 
 export const addCustomProductByUser = async (
   data: FormData,
-  product: { connect: { id: string } },
+  model: {model:string, Description:string},
 ) => {
-  const Description = data.get("description") as string;
   const width = data.get("width") as string;
-  const Height = data.get("height") as string;
+  const height = data.get("height") as string;
+  const name_material=data.get("name_material") as string
+  const price_material=parseFloat(data.get("price_material") as string)
   const Price = parseFloat(data.get("price") as string);
   const size = data.get("size") as string;
   const color = data.get("color") as string;
   try {
     const productCustom = await createProductCustom({
-      Description,
       width,
-      Height,
+      height,
       size,
       color,
       Price,
-      product,
+      model: {
+        create: model
+      },
+      material:{
+        create:{
+          name: name_material,
+          price: price_material,
+        }
+      }
     });
     if (!productCustom) {
       return ActionResponses.serverError("Failed to get create Product Custom");
@@ -44,10 +52,10 @@ export const addCustomProductByUser = async (
   }
 };
 
+
 export const updateCustomProduct = async (id: string, data: FormData) => {
-  const Description = data.get("description") as string;
   const width = data.get("width") as string;
-  const Height = data.get("height") as string;
+  const height = data.get("height") as string;
   const Price = parseFloat(data.get("price") as string);
   const size = data.get("size") as string;
   const color = data.get("color") as string;
@@ -55,9 +63,8 @@ export const updateCustomProduct = async (id: string, data: FormData) => {
     const productCustom = await updateProductCustom(
       { id },
       {
-        Description,
         width,
-        Height,
+        height,
         size,
         color,
         Price,
@@ -155,13 +162,11 @@ export const addMaterial = async (
   product: { connect: { id: string } },
 ) => {
   const name = data.get("name") as string;
-  const Description = data.get("description") as string;
   const price = parseFloat(data.get("price") as string);
   try {
     if (!id) {
       const Material = await createMaterial({
         name,
-        Description,
         price,
         product,
       });
@@ -177,7 +182,6 @@ export const addMaterial = async (
       const Material = await updateMaterial(
         { id },
         {
-          Description,
           name,
           price,
         },
