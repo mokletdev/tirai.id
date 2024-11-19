@@ -40,13 +40,11 @@ model Product {
   model          Model[]
   custom_options CustomOption[]
   order_products OrderItem[]
-  customRequest  CustomRequest[]
 }
 
 model Material {
   id            String          @id @default(uuid())
   name          String
-  Description   String
   customRequest CustomRequest[]
   price         Float
   product       Product[]
@@ -80,12 +78,9 @@ model CustomRequest {
   model       Model[]
   color       String
   width       String
-  Height      String
+  height      String
   Price       Float
-  Description String //bisa berisi model
   size        String
-  productId   String
-  product     Product    @relation(fields: [productId], references: [id])
 }
 
 model Order {
