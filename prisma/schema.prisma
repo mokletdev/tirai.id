@@ -28,7 +28,6 @@ model Product {
   name        String
   description String
   price       Float
-  material    Material[]
   stock       Int
   category    ProductCategory
   is_custom   Boolean
@@ -37,7 +36,6 @@ model Product {
 
   created_at     DateTime       @default(now())
   updated_at     DateTime       @updatedAt
-  model          Model[]
   custom_options CustomOption[]
   order_products OrderItem[]
 }
@@ -46,7 +44,6 @@ model Material {
   id      String    @id @default(uuid())
   name    String
   price   Float
-  product Product[]
 }
 
 model CustomOption {
@@ -66,18 +63,17 @@ model CustomOption {
 model Model {
   id          String    @id @default(uuid())
   model       String
-  Description String
-  product     Product[]
+  description String
 }
 
 model CustomRequest {
   id       String @id @default(uuid())
-  Material String
-  Model    String
+  material String
+  model    String
   color    String
   width    String
   height   String
-  Price    Float
+  price    Float
   size     String
 }
 

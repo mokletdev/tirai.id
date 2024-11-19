@@ -16,9 +16,9 @@ import { revalidatePath } from "next/cache";
 export const addCustomProductByUser = async (data: FormData) => {
   const width = data.get("width") as string;
   const height = data.get("height") as string;
-  const Material = data.get("Material") as string;
-  const Model = data.get("model") as string;
-  const Price = parseFloat(data.get("price") as string);
+  const material = data.get("Material") as string;
+  const model = data.get("model") as string;
+  const price = parseFloat(data.get("price") as string);
   const size = data.get("size") as string;
   const color = data.get("color") as string;
   try {
@@ -27,9 +27,9 @@ export const addCustomProductByUser = async (data: FormData) => {
       height,
       size,
       color,
-      Price,
-      Material,
-      Model,
+      price,
+      material,
+      model,
     });
     if (!productCustom) {
       return ActionResponses.serverError("Failed to get create Product Custom");
@@ -46,7 +46,7 @@ export const addCustomProductByUser = async (data: FormData) => {
 export const updateCustomProduct = async (id: string, data: FormData) => {
   const width = data.get("width") as string;
   const height = data.get("height") as string;
-  const Price = parseFloat(data.get("price") as string);
+  const price = parseFloat(data.get("price") as string);
   const size = data.get("size") as string;
   const color = data.get("color") as string;
   try {
@@ -57,7 +57,7 @@ export const updateCustomProduct = async (id: string, data: FormData) => {
         height,
         size,
         color,
-        Price,
+        price,
       },
     );
     if (!productCustom) {
@@ -91,16 +91,14 @@ export const deleteCustomProduct = async (id: string) => {
 export const addModel = async (
   id: string | null,
   data: FormData,
-  product: { connect: { id: string } },
 ) => {
-  const Description = data.get("description") as string;
+  const description = data.get("description") as string;
   const model = data.get("model") as string;
   try {
     if (!id) {
       const Model = await createModel({
-        Description,
+        description,
         model,
-        product,
       });
       if (!Model) {
         return ActionResponses.serverError(
@@ -114,7 +112,7 @@ export const addModel = async (
       const Model = await updateModel(
         { id },
         {
-          Description,
+          description,
           model,
         },
       );
@@ -151,7 +149,6 @@ export const deleteModelbyUser = async (id: string) => {
 export const addMaterial = async (
   id: string | null,
   data: FormData,
-  product: { connect: { id: string } },
 ) => {
   const name = data.get("name") as string;
   const price = parseFloat(data.get("price") as string);
@@ -160,7 +157,6 @@ export const addMaterial = async (
       const Material = await createMaterial({
         name,
         price,
-        product,
       });
       if (!Material) {
         return ActionResponses.serverError(
