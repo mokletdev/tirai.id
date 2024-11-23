@@ -3,6 +3,7 @@ import {
   getServerSession as nextAuthGetServerSession,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google"
 
 import { compareHash } from "@/utils/encryption";
 
@@ -89,11 +90,11 @@ export const authOptions: AuthOptions = {
       },
     }),
     // TODO: Work on Google sign-in provider
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    //   allowDangerousEmailAccountLinking: false,
-    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: false,
+    }),
   ],
   callbacks: {
     async redirect({ url, baseUrl }) {
