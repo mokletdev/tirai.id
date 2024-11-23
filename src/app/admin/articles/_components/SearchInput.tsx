@@ -2,52 +2,65 @@
 
 import * as React from "react";
 import { Search } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Form, FormControl, FormItem } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
-export function SearchInput({ searchTerm }: { searchTerm: string }) {
+interface SearchInputProps {
+  title: string;
+  tags: string;
+}
+
+export function SearchInput({
+  searchTerm,
+  handleSearch,
+  setTitle,
+  setTags,
+}: {
+  searchTerm: SearchInputProps;
+  handleSearch: () => void;
+  setTitle: (title: string) => void;
+  setTags: (tags: string) => void;
+}) {
   const form = useForm({
     defaultValues: {
-      search: searchTerm || "",
+      tags: searchTerm.tags || "",
+      title: searchTerm.title || "",
     },
   });
-
-  const router = useRouter();
-
-  function onSubmit(data: { search: string }) {
-    const trimmedSearch = data.search.trim();
-    const params: URLSearchParams = new URLSearchParams();
-    if (trimmedSearch) {
-      params.set("searchQuery", trimmedSearch);
-    }
-    router.push(`?${params.toString()}`);
-  }
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
         className="flex w-full max-w-sm items-center space-x-2"
       >
-        <FormField
-          control={form.control}
-          name="search"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Input
-                  type="search"
-                  placeholder="Search..."
-                  className="w-full"
-                  {...field}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <FormControl>
+          <FormItem className="w-full">
+            <Input
+              type="search"
+              placeholder="Search Tags"
+              className="w-full"
+              value={searchTerm.tags || ""}
+              onChange={(e) => setTags(e.target.value)}
+            />
+          </FormItem>
+        </FormControl>
+        <FormControl>
+          <FormItem className="w-full">
+            <Input
+              type="search"
+              placeholder="Search Title"
+              className="w-full"
+              value={searchTerm.title || ""}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </FormItem>
+        </FormControl>
         <Button type="submit" size="icon">
           <Search className="h-4 w-4" />
           <span className="sr-only">Search</span>

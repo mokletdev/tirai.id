@@ -3,16 +3,25 @@ import ArticleFilterLayout from "./_components/ArticleFilterLayout";
 import { getArticles } from "@/actions/articles";
 import { ArticlesWithUser } from "@/types/entityRelations";
 export default async function page({
-  searchParams,
+  searchParams: searchParamsPromise,
 }: {
-  searchParams: { searchQuery: string };
+  searchParams: Promise<{
+    title: string;
+    tags: string;
+    sort: "latest" | "popular";
+  }>;
 }) {
-  const response = await getArticles({ searchQuery: searchParams.searchQuery });
+  const searchParams = await searchParamsPromise;
+  const response = await getArticles({
+    searchQuery: searchParams.title,
+    tags: searchParams.tags,
+    order: searchParams.sort,
+  });
   const articles: ArticlesWithUser[] = response.data ?? [];
   return (
     <div className="w-full space-y-8">
       <div className="flex w-full justify-end">
-        <ArticleFilterLayout searchData={searchParams.searchQuery} />
+        <ArticleFilterLayout searchData={searchParams} />
       </div>
       <div className="flex w-full flex-wrap gap-8 pb-16">
         {articles &&
@@ -26,6 +35,7 @@ export default async function page({
               slug={article.slug}
               author={article.author.name}
               author_role={article.author.role}
+              views={article.views}
             />
           ))}
       </div>

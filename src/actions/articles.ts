@@ -128,14 +128,17 @@ export const getArticles = async ({
   order,
   searchQuery,
 }: {
-  tags?: string[];
+  tags?: string;
   order?: "latest" | "popular";
   searchQuery?: string;
 }): Promise<ActionResponse<ArticlesWithUser[]>> => {
   try {
     const query: Prisma.ArticleWhereInput = {};
-    if (tags && tags.length > 0) {
-      query.tags = { hasSome: tags };
+    if (tags) {
+      const tagsArray = tags.split(" ").filter((tag) => tag.trim() !== "");
+      if (tagsArray.length > 0) {
+        query.tags = { hasSome: tagsArray };
+      }
     }
 
     if (searchQuery && searchQuery.trim() !== "") {
