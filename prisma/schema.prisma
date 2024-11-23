@@ -138,6 +138,24 @@ model Cart {
 // }
 // ],
 
+model SEO {
+  id                 Int      @id @default(autoincrement())
+  page               String   @unique
+  title              String
+  description        String
+  keywords           String[]
+  canonicalURL       String?
+  ogTitle            String?
+  ogDescription      String?
+  ogImage            String?
+  twitterCard        String? // Summary, Summary_large_image, etc.
+  twitterTitle       String?
+  twitterDescription String?
+  twitterImage       String?
+  updatedAt          DateTime @updatedAt
+  createdAt          DateTime @default(now())
+}
+
 enum Role {
   CUSTOMER
   ADMIN
