@@ -1,5 +1,5 @@
 "use client";
-import { CalendarIcon, HashIcon, LinkIcon, User } from "lucide-react";
+import { CalendarIcon, HashIcon, LinkIcon, User, Eye } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ interface ArticleCardProps {
   slug: string;
   author: string;
   author_role: Role;
+  views: number;
 }
 
 export default function ArticleCard({
@@ -30,6 +31,7 @@ export default function ArticleCard({
   slug,
   author,
   author_role,
+  views,
 }: ArticleCardProps) {
   return (
     <Card className="w-full max-w-[595px]">
@@ -56,6 +58,10 @@ export default function ArticleCard({
                 {tag}
               </Badge>
             ))}
+        </div>
+        <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
+          <Eye className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+          Views: {views}
         </div>
         <div className="flex items-center text-xs text-muted-foreground sm:text-sm">
           <CalendarIcon className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
