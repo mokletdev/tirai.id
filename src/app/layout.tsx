@@ -1,9 +1,9 @@
 import NextAuthProvider from "@/components/providers/NextAuthProvider";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
 import generalSansFont from "./fonts";
+import "./globals.css";
 
 const robots =
   process.env.APP_ENV != "production" ? "noindex, nofollow" : "index, follow";
@@ -93,9 +93,9 @@ export default function RootLayout({
           <GoogleAnalytics gaId={process.env.GA_ID} />
         )}
         <body
-          className={`${generalSansFont.className} overflow-x-hidden antialiased`}
+          className={`${generalSansFont.className} overflow-x-hidden bg-white antialiased`}
         >
-          <main className="h-full min-h-screen w-full">{children}</main>
+          {children}
           <Toaster />
         </body>
       </html>
