@@ -96,15 +96,18 @@ export const updateArticleStatus = async (
 
 export const getArticleById = async (
   id: string,
+  action: "view" | "edit",
 ): Promise<ActionResponse<ArticlesWithUser>> => {
   try {
     const articleData = await findArticle({ id });
     if (!articleData) {
       return (await ActionResponses()).notFound("Article not found");
     }
-    await updateArticle({ id }, { views: articleData.views + 1 });
+    if (action === "view") {
+      await updateArticle({ id }, { views: articleData.views + 1 });
+    }
 
-    return (await ActionResponses()).success(articleData);
+    return (await ActionResponses()).success(articleData as ArticlesWithUser);
   } catch (error) {
     console.log(error);
     return (await ActionResponses()).serverError("Failed to get article");
@@ -115,7 +118,18 @@ export const deleteArticle = async (
   id: string,
 ): Promise<ActionResponse<{ id: string }>> => {
   try {
+    const article = await findArticle({ id });
+    if (article) {
+      const deleteResult = await deleteImageCloudinary(article.cover_url);
+      if (deleteResult.error) {
+        return (await ActionResponses()).serverError(
+          "Failed to delete article",
+        );
+      }
+    }
+
     await hardDeleteArticle({ id });
+    revalidatePath("/admin/articles");
     return (await ActionResponses()).success({ id });
   } catch (error) {
     console.log(error);
