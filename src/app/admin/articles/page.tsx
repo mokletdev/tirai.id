@@ -39,6 +39,7 @@ export default async function page({
           articles.map((article: ArticlesWithUser) => (
             <ArticleCard
               key={article.id}
+              id={article.id}
               title={article.title}
               imageUrl={article.cover_url}
               createdAt={article.created_at.toLocaleDateString()}

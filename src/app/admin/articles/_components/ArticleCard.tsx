@@ -2,6 +2,7 @@
 import { CalendarIcon, HashIcon, LinkIcon, User, Eye } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -11,8 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Role } from "@prisma/client";
+import { deleteArticle } from "@/actions/articles";
 
 interface ArticleCardProps {
+  id: string;
   title: string;
   imageUrl: string;
   tags?: string[];
@@ -24,6 +27,7 @@ interface ArticleCardProps {
 }
 
 export default function ArticleCard({
+  id,
   title,
   imageUrl,
   tags,
@@ -77,9 +81,18 @@ export default function ArticleCard({
         </div>
       </CardContent>
       <CardFooter className="flex justify-end">
-        <Button size="sm" className="sm:px-4 sm:py-2 sm:text-base">
-          Update Article
+        <Button
+          size="sm"
+          className="sm:px-4 sm:py-2 sm:text-base"
+          onClick={() => deleteArticle(id)}
+        >
+          Delete Article
         </Button>
+        <Link href={`/admin/articles/update/${id}`}>
+          <Button size="sm" className="sm:px-4 sm:py-2 sm:text-base">
+            Update Article
+          </Button>
+        </Link>
         <Button size="sm" className="sm:px-4 sm:py-2 sm:text-base">
           See Article
         </Button>
