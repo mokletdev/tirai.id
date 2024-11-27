@@ -46,7 +46,7 @@ export const defaultEditorContent = {
 };
 
 interface EditorProps {
-  initialValue?: JSONContent;
+  initialValue?: string;
   onChange: (content: string) => void;
 }
 

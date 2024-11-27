@@ -151,7 +151,7 @@ export default function ArticleForm({
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <Editor {...field} />
+                <Editor initialValue={updateData?.content} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
