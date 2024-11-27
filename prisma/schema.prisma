@@ -26,11 +26,12 @@ model User {
 }
 
 model Token {
-  id         String       @id @default(uuid())
-  token      String       @unique
-  last_sent  DateTime?
-  sent_count Int          @default(0)
-  purpose    TokenPurpose
+  id          String       @id @default(uuid())
+  token       String       @unique
+  last_sent   DateTime?
+  sent_count  Int          @default(0)
+  purpose     TokenPurpose
+  expiry_date DateTime
 
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String @unique

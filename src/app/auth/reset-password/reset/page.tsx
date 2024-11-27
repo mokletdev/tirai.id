@@ -1,6 +1,7 @@
 "use client";
 
 import { resetPassword } from "@/actions/auth/resetPassword";
+import { requestResetPasswordMail } from "@/actions/mail";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -29,11 +30,11 @@ export default function ResetPasswordVerification() {
   const searchParams = useSearchParams();
   const resetToken = searchParams.get("token");
 
-  if (!resetToken) return notFound();
-
   const [loading, setLoading] = useState(false);
   const form = useZodForm({ schema: resetPasswordSchema });
   const router = useRouter();
+
+  if (!resetToken) return notFound();
 
   const { handleSubmit } = form;
 
@@ -58,6 +59,37 @@ export default function ResetPasswordVerification() {
     );
 
     if (resetPasswordResult.error) {
+      if (resetPasswordResult.error.field === "expiry_date") {
+        setLoading(false);
+        return toast("Token Kadaluarsa", {
+          description: "Token yang anda gunakan telah kadaluarsa",
+          action: {
+            label: "Kirim ulang",
+            onClick: async () => {
+              setLoading(true);
+
+              const loadingToast = toast.loading("Loading...");
+              const userEmail = resetPasswordResult.error!.message;
+
+              const { error } = await requestResetPasswordMail(userEmail);
+
+              if (error) {
+                setLoading(false);
+                return toast.error(error.message, { id: loadingToast });
+              }
+
+              setLoading(false);
+              return toast.success(
+                "Berhasil mengirim ulang email verifikasi!",
+                {
+                  id: loadingToast,
+                },
+              );
+            },
+          },
+        });
+      }
+
       setLoading(false);
       return toast.error(resetPasswordResult.error.message, {
         id: loadingToast,
