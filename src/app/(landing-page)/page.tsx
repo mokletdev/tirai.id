@@ -5,6 +5,7 @@ import { Body3, Display } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { Navbar } from "./components/navbar";
 
 const CAROUSEL_IMAGES: string[] = [
   "/assets/hero/image-3.jpg",
@@ -26,9 +27,7 @@ export default function Home() {
 
   return (
     <>
-      <nav className="fixed z-[999] w-full bg-white">
-        <div className="mx-auto max-w-screen-xl"></div>
-      </nav>
+      <Navbar />
       <main className="mx-auto min-h-screen w-full max-w-screen-xl px-6 pt-[5.375rem] md:px-12">
         <SectionContainer id="hero">
           <div className="relative h-[582px] overflow-hidden rounded-[1.25rem]">

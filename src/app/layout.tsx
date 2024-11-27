@@ -154,7 +154,7 @@ export default function RootLayout({
                   </ul>
                 </div>
               </div>
-              <div className="w-full max-w-[214px]">
+              <div className="w-fit">
                 {/* TOOD: Change this into an actual contact of Tirai.id */}
                 <div className="mb-5 flex items-center gap-x-3">
                   <Link href={`https://wa.me/${phoneNumber}`}>
