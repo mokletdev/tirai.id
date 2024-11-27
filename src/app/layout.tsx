@@ -110,7 +110,7 @@ export default function RootLayout({
             className="mx-auto w-full max-w-screen-xl px-6 pb-8 pt-[5.125rem] md:px-12"
           >
             <div className="flex h-full flex-col items-start gap-y-[72px] lg:flex-row lg:justify-between lg:gap-y-0">
-              <div className="flex h-full flex-col items-start gap-y-[22px] lg:h-[155px] lg:justify-between">
+              <div className="flex h-full flex-col items-start gap-y-[22px] lg:h-[155px] lg:justify-between lg:gap-y-0">
                 <Image
                   src={"/assets/logo-trimmed.png"}
                   alt="Logo Tirai.id"
@@ -122,7 +122,7 @@ export default function RootLayout({
                   &copy; {new Date().getFullYear()} Pengembang Tirai.id
                 </Body3>
               </div>
-              <div className="w-full lg:max-w-[598px]">
+              <div className="flex w-full flex-col justify-between lg:h-[155px] lg:max-w-[598px]">
                 <div className="mb-11 flex w-full max-w-[598px] flex-col items-start gap-6 md:flex-row md:items-center md:justify-between md:gap-0 lg:mb-0">
                   {NAV_ITEMS.map((item) => (
                     <Link
