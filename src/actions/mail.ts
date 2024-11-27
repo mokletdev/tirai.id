@@ -7,6 +7,7 @@ import { resetPasswordTemplate, verifyTemplate } from "@/utils/mail-template";
 import { generateToken } from "@/utils/random-string";
 
 const EMAIL_VERIFICATION_DELAY_SECONDS = 120;
+const EMAIL_VERIFICATION_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
 export const requestVerificationMail = async ({
   userId,
@@ -14,7 +15,7 @@ export const requestVerificationMail = async ({
 }: {
   userId?: string;
   userEmail?: string;
-}): Promise<ActionResponse<any>> => {
+}): Promise<ActionResponse<unknown>> => {
   try {
     if (!userId && !userEmail)
       return ActionResponses.notFound(`User tidak ditemukan`);
@@ -37,26 +38,37 @@ export const requestVerificationMail = async ({
 
     const now = new Date();
 
-    const timeSinceLastSent = verificationToken?.last_sent
-      ? (now.getTime() - new Date(verificationToken.last_sent).getTime()) / 1000
-      : Infinity;
+    // Check if token exist and is not expired
+    if (verificationToken && now < verificationToken.expiry_date) {
+      const timeSinceLastSent = verificationToken.last_sent
+        ? (now.getTime() - new Date(verificationToken.last_sent).getTime()) /
+          1000
+        : Infinity;
 
-    if (timeSinceLastSent < EMAIL_VERIFICATION_DELAY_SECONDS) {
-      return ActionResponses.badRequest(
-        `Mohon menunggu ${EMAIL_VERIFICATION_DELAY_SECONDS - timeSinceLastSent} detik sebelum membuat permintaan lagi`,
-      );
+      if (timeSinceLastSent < EMAIL_VERIFICATION_DELAY_SECONDS) {
+        return ActionResponses.badRequest(
+          `Mohon menunggu ${EMAIL_VERIFICATION_DELAY_SECONDS - timeSinceLastSent} detik sebelum membuat permintaan lagi`,
+        );
+      }
     }
 
     const newToken = generateToken();
+    const expiryDate = new Date(now.getTime() + EMAIL_VERIFICATION_EXPIRY_MS);
 
     // Update/create token data in the database
     const token = await prisma.token.upsert({
       where: { id: verificationToken?.id || "" },
-      update: { token: newToken, last_sent: now, sent_count: { increment: 1 } },
+      update: {
+        token: newToken,
+        last_sent: now,
+        expiry_date: expiryDate,
+        sent_count: { increment: 1 },
+      },
       create: {
         token: newToken,
         last_sent: now,
         sent_count: 1,
+        expiry_date: expiryDate,
         purpose: "EMAIL_VERIFICATION",
         user: { connect: { id: userId } },
       },
@@ -68,7 +80,7 @@ export const requestVerificationMail = async ({
       to: email,
       html: verifyTemplate(
         name,
-        `${process.env.APP_URL}/auth/verify?token=${token.token}`,
+        `${process.env.APP_URL}/auth/confirm-email/verify?token=${token.token}`,
       ),
     });
 
@@ -81,14 +93,17 @@ export const requestVerificationMail = async ({
 
 export const requestResetPasswordMail = async (
   userEmail: string,
-): Promise<ActionResponse<any>> => {
+): Promise<ActionResponse<unknown>> => {
   try {
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
       include: { tokens: true },
     });
 
-    if (!user) return ActionResponses.notFound(`User tidak ditemukan`);
+    if (!user)
+      return ActionResponses.notFound(
+        `User dengan email ${userEmail} tidak ditemukan`,
+      );
 
     const { name, email, tokens } = user;
 
@@ -98,27 +113,37 @@ export const requestResetPasswordMail = async (
 
     const now = new Date();
 
-    const timeSinceLastSent = resetPasswordToken?.last_sent
-      ? (now.getTime() - new Date(resetPasswordToken.last_sent).getTime()) /
-        1000
-      : Infinity;
+    // Check if token exist and is not expired
+    if (resetPasswordToken && now < resetPasswordToken.expiry_date) {
+      const timeSinceLastSent = resetPasswordToken.last_sent
+        ? (now.getTime() - new Date(resetPasswordToken.last_sent).getTime()) /
+          1000
+        : Infinity;
 
-    if (timeSinceLastSent < EMAIL_VERIFICATION_DELAY_SECONDS) {
-      return ActionResponses.badRequest(
-        `Mohon menunggu ${EMAIL_VERIFICATION_DELAY_SECONDS - timeSinceLastSent} detik sebelum membuat permintaan lagi`,
-      );
+      if (timeSinceLastSent < EMAIL_VERIFICATION_DELAY_SECONDS) {
+        return ActionResponses.badRequest(
+          `Mohon menunggu ${EMAIL_VERIFICATION_DELAY_SECONDS - timeSinceLastSent} detik sebelum membuat permintaan lagi`,
+        );
+      }
     }
 
     const newToken = generateToken();
+    const expiryDate = new Date(now.getTime() + EMAIL_VERIFICATION_EXPIRY_MS);
 
     // Update/create token data in the database
     const token = await prisma.token.upsert({
       where: { id: resetPasswordToken?.id || "" },
-      update: { token: newToken, last_sent: now, sent_count: { increment: 1 } },
+      update: {
+        token: newToken,
+        last_sent: now,
+        expiry_date: expiryDate,
+        sent_count: { increment: 1 },
+      },
       create: {
         token: newToken,
         last_sent: now,
         sent_count: 1,
+        expiry_date: expiryDate,
         purpose: "RESET_PASSWORD",
         user: { connect: { email: userEmail } },
       },

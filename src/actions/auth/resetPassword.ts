@@ -11,9 +11,16 @@ export const resetPassword = async (
   try {
     const token = await prisma.token.findUnique({
       where: { token: resetToken },
+      include: { user: { select: { email: true } } },
     });
     if (!token || token.purpose !== "RESET_PASSWORD")
       return ActionResponses.badRequest("Token anda tidak valid");
+
+    const now = new Date();
+    const isInvalid = now >= token.expiry_date;
+    if (isInvalid) {
+      return ActionResponses.badRequest(token.user.email, "expiry_date");
+    }
 
     const user = await prisma.user.findUnique({ where: { id: token.user_id } });
     if (!user) return ActionResponses.notFound("User tidak ditemukan");
