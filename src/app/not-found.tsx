@@ -1,7 +1,7 @@
 import { buttonVariants } from "@/components/ui/button";
 import { Body3, Display } from "@/components/ui/text";
 import { COLORS } from "@/constants/color";
-import { ArrowLeft, ShieldClose } from "lucide-react";
+import { ShieldClose } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
