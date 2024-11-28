@@ -11,7 +11,6 @@ import Image from "next/image";
 import Link from "next/link";
 import generalSansFont from "./fonts";
 import "./globals.css";
-import ProgressBarProvider from "@/components/providers/ProgressBarProvider";
 import "./prosemirror.css";
 
 const robots =

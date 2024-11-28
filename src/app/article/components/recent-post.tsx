@@ -1,11 +1,10 @@
-import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { buttonVariants } from "@/components/ui/button";
 import { H1, H3, H6 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widget/SectionTitle";
-import Author from "./author";
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
+import Author from "./author";
 
 export default function Recent() {
   return (
