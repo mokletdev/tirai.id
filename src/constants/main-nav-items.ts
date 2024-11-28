@@ -9,4 +9,5 @@ export const NAV_ITEMS: NavItem[] = [
   { title: "Tentang Kami", href: "/about" },
   { title: "Kain", href: "#fabric" },
   { title: "Testimoni", href: "#testimony" },
+  { title: "Artikel", href: "/article" },
 ] as const;
