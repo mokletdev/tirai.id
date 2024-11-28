@@ -21,13 +21,13 @@ export const Navbar: FC = () => {
   return (
     <>
       <nav className="fixed z-[1000] w-full bg-white">
-        <div className="mx-auto flex w-full max-w-screen-lg items-center justify-between px-6 py-4 md:px-12">
+        <div className="mx-auto flex w-full max-w-screen-xl items-center justify-between px-6 py-4 md:px-12">
           <Link href={"/"} className="max-w-[100.37px]">
             <span className="block h-[48px] w-[100.37px] bg-[url(/assets/logo-trimmed.png)] bg-contain bg-no-repeat text-transparent">
               Tirai.id
             </span>
           </Link>
-          <ul className="hidden items-center lg:flex">
+          <ul className="hidden items-center lg:flex lg:items-end">
             {NAV_ITEMS.map((item, index) => (
               <li key={index}>
                 <Link
@@ -43,6 +43,26 @@ export const Navbar: FC = () => {
                 </Link>
               </li>
             ))}
+
+            <Link
+              href={
+                session?.user?.role
+                  ? ADMIN_ROLES.includes(session.user.role)
+                    ? "/admin"
+                    : "#"
+                  : "#"
+              }
+              className={buttonVariants({
+                variant: "default",
+                className: "ml-6 w-full text-center",
+              })}
+            >
+              {session?.user?.role
+                ? ADMIN_ROLES.includes(session.user.role)
+                  ? "Dashboard"
+                  : "Belanja sekarang"
+                : "Belanja sekarang"}
+            </Link>
           </ul>
           <div className="flex items-center gap-2 lg:hidden">
             <input
@@ -86,40 +106,25 @@ export const Navbar: FC = () => {
           </div>
           <div className="flex w-full flex-col items-center justify-between gap-4 lg:hidden">
             {/* TODO: Change the href to e-commerce or something */}
-            {session?.user ? (
-              <Link
-                href={ADMIN_ROLES.includes(session.user.role) ? "/admin" : "#"}
-                className={buttonVariants({
-                  variant: "default",
-                  className: "w-full text-center",
-                })}
-              >
-                {ADMIN_ROLES.includes(session.user.role)
+            <Link
+              href={
+                session?.user?.role
+                  ? ADMIN_ROLES.includes(session.user.role)
+                    ? "/admin"
+                    : "#"
+                  : "#"
+              }
+              className={buttonVariants({
+                variant: "default",
+                className: "ml-6 w-full text-center",
+              })}
+            >
+              {session?.user?.role
+                ? ADMIN_ROLES.includes(session.user.role)
                   ? "Dashboard"
-                  : "Belanja"}
-              </Link>
-            ) : (
-              <>
-                <Link
-                  href={"/auth/login"}
-                  className={buttonVariants({
-                    variant: "default",
-                    className: "w-full text-center",
-                  })}
-                >
-                  Masuk
-                </Link>
-                <Link
-                  href={"/auth/register"}
-                  className={buttonVariants({
-                    variant: "outline",
-                    className: "w-full text-center",
-                  })}
-                >
-                  Daftar
-                </Link>
-              </>
-            )}
+                  : "Belanja sekarang"
+                : "Belanja sekarang"}
+            </Link>
           </div>
         </div>
       </aside>
