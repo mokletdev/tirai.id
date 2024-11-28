@@ -18,7 +18,7 @@ export const H1: FC<HTMLAttributes<HTMLParagraphElement>> = (props) => {
     <h1
       {...props}
       className={cn(
-        "text-[22px] font-medium leading-[30px] md:text-[36px] md:font-semibold md:leading-[44px] lg:text-[48px] lg:font-medium lg:leading-[65px]",
+        "text-[26px] font-medium leading-[35px] md:text-[36px] md:leading-[49px]",
         props.className,
       )}
     />
@@ -29,7 +29,10 @@ export const H2: FC<HTMLAttributes<HTMLParagraphElement>> = (props) => {
   return (
     <h2
       {...props}
-      className={cn("text-[40px] font-medium leading-[54px]", props.className)}
+      className={cn(
+        "text-[20px] font-medium leading-[27px] md:text-[32px] md:leading-[43px]",
+        props.className,
+      )}
     />
   );
 };

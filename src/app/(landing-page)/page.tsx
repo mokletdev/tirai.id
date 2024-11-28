@@ -3,7 +3,7 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { buttonVariants } from "@/components/ui/button";
-import { Body3, Display, H1, H3, H5 } from "@/components/ui/text";
+import { Body3, Display, H1, H2, H3, H5 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widgets/SectionTitle";
 import { cn, formatRupiah } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
@@ -228,6 +228,24 @@ const MOTTOS: Motto[] = [
   },
 ];
 
+const FABRIC_HIGHLIGHTS: Motto[] = [
+  {
+    title: "Bahan Lokal dengan Motif Menarik",
+    description:
+      "Kain lokal, diproduksi dalam negeri, menahan sinar matahari hingga +/- 45%, lebih terjangkau, dengan banyak motif dan warna cerah.",
+  },
+  {
+    title: "Vitrase Tirai Sempurna dan Nyaman",
+    description:
+      "Vitrase menahan sinar matahari dan menjaga privasi, sambil memungkinkan penghuni rumah melihat ke luar dengan bebas.",
+  },
+  {
+    title: "Black Out Mengatur Cahaya dan Suasana",
+    description:
+      "Menghalangi cahaya matahari dengan sempurna, halus, lembut, dan mudah dibersihkan. Ideal untuk berbagai gorden yang mempercantik ruangan.",
+  },
+];
+
 // TODO: Remove these dummy products and replace it with an actual list of products using server action
 const PRODUCTS: Product[] = [
   {
@@ -276,6 +294,9 @@ export default function Home() {
   useEffect(() => {
     const changeSlideInterval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % CAROUSEL_IMAGES.length);
+      setCurrentFabricHighlight(
+        (prev) => (prev + 1) % FABRIC_HIGHLIGHTS.length,
+      );
     }, 5000);
 
     return () => clearInterval(changeSlideInterval);
@@ -522,6 +543,53 @@ export default function Home() {
                 <Body3 className="text-neutral-500">{motto.description}</Body3>
               </div>
             ))}
+          </div>
+        </SectionContainer>
+        <SectionContainer id="fabrics">
+          <div className="mb-[3.25rem] w-full">
+            <SectionTitle>Kain</SectionTitle>
+            <H1 className="text-black">
+              Kain Berkualitas untuk Gorden Sempurna
+            </H1>
+          </div>
+          <div className="flex flex-col-reverse justify-between lg:flex-row lg:items-center">
+            <div className="flex w-full flex-col gap-y-6 lg:w-[60%]">
+              {FABRIC_HIGHLIGHTS.map((highlight, index) => (
+                <div
+                  key={highlight.title}
+                  className="flex items-center gap-x-7"
+                >
+                  <div
+                    className={cn(
+                      "h-36 w-[0.375rem] rounded-full transition-colors duration-300",
+                      currentFabricHighlight === index
+                        ? "bg-primary-900"
+                        : "bg-neutral-500",
+                    )}
+                  ></div>
+                  <div
+                    className={cn(
+                      "block transition-all duration-300",
+                      currentFabricHighlight === index
+                        ? "opacity-100"
+                        : "opacity-40",
+                    )}
+                  >
+                    <H2 className="mb-5 text-black">{highlight.title}</H2>
+                    <Body3 className="text-neutral-500">
+                      {highlight.description}
+                    </Body3>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Image
+              src={"/assets/fabric.png"}
+              alt="Bahan Kain"
+              width={381}
+              height={475}
+              className="mb-14 h-auto w-full max-w-[381px] object-cover md:mb-24 lg:mb-0"
+            />
           </div>
         </SectionContainer>
       </PageContainer>
