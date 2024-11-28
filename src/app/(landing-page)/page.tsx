@@ -2,7 +2,7 @@
 
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { buttonVariants } from "@/components/ui/button";
-import { Body3, Display, H3 } from "@/components/ui/text";
+import { Body3, Display, H1, H3 } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { Navbar } from "./components/navbar";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { SectionTitle } from "@/components/widgets/SectionTitle";
 
 interface ProductType {
   icon: ReactNode;
@@ -316,6 +317,40 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </SectionContainer>
+        <SectionContainer id="custom">
+          <div className="flex w-full flex-col-reverse items-end justify-between gap-y-24 lg:flex-row lg:gap-0">
+            <div className="w-full lg:max-w-[46%]">
+              <SectionTitle>Custom</SectionTitle>
+              <H1 className="mb-[1.375rem] text-black">
+                Buat Tirai Sesuai Keinginan untuk Ruangan Anda
+              </H1>
+              <Body3 className="mb-12 text-neutral-500">
+                Kami menyediakan layanan pembuatan tirai kustom yang dapat
+                disesuaikan dengan ukuran jendela dan pilihan bahan Anda. Dengan
+                pengalaman lebih dari 10 tahun dan kepercayaan dari ratusan
+                klien, kami siap membantu mewujudkan tirai impian Anda. Hubungi
+                kami sekarang untuk mendapatkan layanan terbaik.
+              </Body3>
+              {/* TODO: Change this to the custom product route */}
+              <Link
+                href={"#"}
+                className={buttonVariants({
+                  variant: "default",
+                  className: "w-full sm:w-fit",
+                })}
+              >
+                Buat tirai Anda sekarang <ArrowRight />
+              </Link>
+            </div>
+            <Image
+              src={"/assets/custom-product.png"}
+              alt="Produk Kustom"
+              width={525}
+              height={457}
+              className="pointer-events-none h-auto w-full object-cover lg:w-[45%]"
+            />
           </div>
         </SectionContainer>
       </PageContainer>
