@@ -11,7 +11,7 @@ import { ArrowRight, Quote } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
-import { Navbar } from "./components/navbar";
+import { Navbar } from "./components/Navbar";
 
 interface ProductType {
   icon: ReactNode;
