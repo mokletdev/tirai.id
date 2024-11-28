@@ -109,6 +109,7 @@ model Article {
   updated_at   DateTime @updatedAt
   is_published Boolean  @default(false)
   views        Int      @default(0)
+  description  String?
 
   author    User   @relation(fields: [author_id], references: [id], onDelete: Cascade)
   author_id String
