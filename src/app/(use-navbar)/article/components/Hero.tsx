@@ -1,11 +1,11 @@
-import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionContainer } from "@/components/layout/SectionContainer";
-import { H1, H3, H6 } from "@/components/ui/text";
+import { Body3, Display, H6 } from "@/components/ui/text";
+import { FC } from "react";
 
-export default function Hero() {
+export const Hero: FC = () => {
   return (
     <SectionContainer className="text-center">
-      <div className="flex flex-row justify-center text-center">
+      <div className="flex flex-row justify-center gap-x-2">
         <svg
           width="25"
           height="24"
@@ -25,13 +25,13 @@ export default function Hero() {
 
         <H6 className="mb-3 text-black">Tips & Inspirasi</H6>
       </div>
-      <H1 className="mb-3 text-black">
-        Tips dan Inspirasi Seputar Tirai dan Desain Interior
-      </H1>
-      <H6 className="mb-3 text-black opacity-50">
+      <Display className="mb-6 text-black">
+        Temukan Tips dan Inspirasi Seputar Tirai dan Desain Interior
+      </Display>
+      <Body3 className="text-neutral-500">
         Dapatkan tips, panduan, dan tren terbaru untuk memilih tirai dan
         mendesain ruang yang indah dan fungsional
-      </H6>
+      </Body3>
     </SectionContainer>
   );
-}
+};
