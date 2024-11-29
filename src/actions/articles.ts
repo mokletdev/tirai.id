@@ -7,7 +7,7 @@ import {
   hardDeleteArticle,
   updateArticle,
 } from "@/utils/database/article.query";
-import { ArticlesWithUser } from "@/types/entityRelations";
+import { ArticleWithUser } from "@/types/entityRelations";
 import { uploadImageCloudinary, deleteImageCloudinary } from "./fileUploader";
 import { Article, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -101,7 +101,7 @@ export const updateArticleStatus = async (
 export const getArticleById = async (
   id: string,
   action: "view" | "edit",
-): Promise<ActionResponse<ArticlesWithUser>> => {
+): Promise<ActionResponse<ArticleWithUser>> => {
   try {
     const articleData = await findArticle({ id });
     if (!articleData) {
@@ -111,7 +111,7 @@ export const getArticleById = async (
       await updateArticle({ id }, { views: articleData.views + 1 });
     }
 
-    return ActionResponses.success(articleData as ArticlesWithUser);
+    return ActionResponses.success(articleData as ArticleWithUser);
   } catch (error) {
     console.log(error);
     return ActionResponses.serverError("Failed to get article");
@@ -167,7 +167,7 @@ export const getArticles = async ({
   status?: boolean;
   startDate?: Date;
   endDate?: Date;
-}): Promise<ActionResponse<ArticlesWithUser[]>> => {
+}): Promise<ActionResponse<ArticleWithUser[]>> => {
   try {
     const query: Prisma.ArticleWhereInput = {};
     if (tags) {

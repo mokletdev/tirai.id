@@ -1,12 +1,9 @@
 "use client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+
+import { upsertArticle } from "@/actions/articles";
 import Editor from "@/components/editor/advanced-editor";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -16,18 +13,22 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { upsertArticle } from "@/actions/articles";
-import { ArticlesWithUser } from "@/types/entityRelations";
+import { Input } from "@/components/ui/input";
+import { useZodForm } from "@/hooks/use-zod-form";
+import { ArticleWithUser } from "@/types/entityRelations";
+import Image from "next/image";
+import { FC } from "react";
+import * as z from "zod";
 
 const MAX_FILE_SIZE = 5_000_000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
 
-export default function ArticleForm({
+export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   updateData,
 }: {
-  updateData?: ArticlesWithUser;
-}) {
-  const formSchema = z.object({
+  updateData?: ArticleWithUser;
+}) => {
+  const createArticleSchema = z.object({
     title: z.string().min(1, "Title is required"),
     slug: z.string().min(1, "Slug is required"),
     tags: z
@@ -57,8 +58,7 @@ export default function ArticleForm({
     is_published: z.boolean().default(false),
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useZodForm({
     defaultValues: {
       title: updateData?.title || "",
       slug: updateData?.slug || "",
@@ -68,25 +68,22 @@ export default function ArticleForm({
       image: undefined,
       is_published: updateData?.is_published || false,
     },
+    schema: createArticleSchema,
   });
 
-  console.log(form.watch("content"));
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof createArticleSchema>) {
     const formData = new FormData();
     formData.append("title", values.title);
     formData.append("slug", values.slug);
     formData.append("tags", values.tags.join(","));
     formData.append("content", values.content);
-    if (values.image) {
-      formData.append("image", values.image);
-    }
+    if (values.image) formData.append("image", values.image);
+
     formData.append("is_published", values.is_published.toString());
     formData.append("author_id", "1");
 
     const res = await upsertArticle({ data: formData, id: updateData?.id });
-    console.log(values);
-    console.log(res);
+    // TODO: Handle response (toast, loading, etc)
   }
 
   return (
@@ -184,6 +181,7 @@ export default function ArticleForm({
               height={200}
               alt="Cover Preview"
               className="max-h-64"
+              unoptimized
             />
           </div>
         ) : updateData && updateData.cover_url ? (
@@ -194,6 +192,7 @@ export default function ArticleForm({
               height={200}
               alt="Cover Preview"
               className="max-h-64"
+              unoptimized
             />
           </div>
         ) : null}
@@ -217,8 +216,10 @@ export default function ArticleForm({
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" className="w-full" size={"lg"}>
+          Submit
+        </Button>
       </form>
     </Form>
   );
-}
+};

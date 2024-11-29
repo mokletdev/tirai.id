@@ -1,8 +1,8 @@
 import { getArticles } from "@/actions/articles";
 import { Body3 } from "@/components/ui/text";
-import { ArticlesWithUser } from "@/types/entityRelations";
-import ArticleCard from "./_components/ArticleCard";
-import ArticleFilterLayout from "./_components/ArticleFilterLayout";
+import { ArticleWithUser } from "@/types/entityRelations";
+import ArticleCard from "./components/ArticleCard";
+import ArticleFilterLayout from "./components/ArticleFilterLayout";
 
 export default async function Articles({
   searchParams: searchParamsPromise,
@@ -30,16 +30,16 @@ export default async function Articles({
     startDate: searchParams.start,
     endDate: searchParams.end,
   });
-  const articles: ArticlesWithUser[] = response.data ?? [];
+  const articles: ArticleWithUser[] = response.data ?? [];
 
   return (
     <div className="w-full space-y-8">
       <div className="flex w-full justify-end">
         <ArticleFilterLayout searchData={searchParams} />
       </div>
-      <div className="flex w-full flex-wrap gap-8 pb-16">
+      <div className="flex w-full max-w-[90%] flex-wrap gap-6 pb-16">
         {articles.length > 0 &&
-          articles.map((article: ArticlesWithUser) => (
+          articles.map((article: ArticleWithUser) => (
             <ArticleCard
               key={article.id}
               id={article.id}
