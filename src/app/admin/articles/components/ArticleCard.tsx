@@ -125,6 +125,12 @@ export default function ArticleCard({
         >
           <Pencil />
         </Link>
+        <Link
+          href={`/article/${slug}`}
+          className={buttonVariants({ variant: "default", size: "icon" })}
+        >
+          <Eye />
+        </Link>
       </CardFooter>
     </Card>
   );

@@ -1,6 +1,11 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { findArticle } from "@/utils/database/article.query";
 import type { Metadata, ResolvingMetadata } from "next";
+import ArticleContent from "./components/ArticleContent";
+import { ArticleWithUser } from "@/types/entityRelations";
+import { getArticleBySlug } from "@/actions/articles";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -65,13 +70,38 @@ export default async function ArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const article = await findArticle({ slug });
+  const response = await getArticleBySlug(slug, "view");
+  const article: ArticleWithUser | null = response.data ?? null;
 
   console.log(article);
 
   return (
     <PageContainer>
-      <div></div>
+      <div>
+        {article && article.author_id ? (
+          <ArticleContent article={article} />
+        ) : (
+          <div className="flex min-h-screen items-center justify-center text-black">
+            <div className="text-center">
+              <h1 className="mb-4 text-4xl font-bold">
+                404 - Article Not Found
+              </h1>
+              <p className="mb-8 text-xl">
+                Sorry, the article {`"${slug}" doesn't exist.`}
+              </p>
+              <Link
+                href={"/"}
+                className={buttonVariants({
+                  variant: "default",
+                  className: "w-full",
+                })}
+              >
+                Kembali ke beranda
+              </Link>
+            </div>
+          </div>
+        )}
+      </div>
     </PageContainer>
   );
 }
