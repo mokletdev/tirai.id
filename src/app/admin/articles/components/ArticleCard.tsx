@@ -1,8 +1,8 @@
 "use client";
-import { CalendarIcon, HashIcon, LinkIcon, User, Eye } from "lucide-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
+import { deleteArticle } from "@/actions/articles";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,9 +10,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Role } from "@prisma/client";
-import { deleteArticle } from "@/actions/articles";
+import {
+  CalendarIcon,
+  Eye,
+  HashIcon,
+  LinkIcon,
+  Pencil,
+  Trash,
+  User,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface ArticleCardProps {
   id: string;
@@ -37,8 +48,10 @@ export default function ArticleCard({
   author_role,
   views,
 }: ArticleCardProps) {
+  const [loading, setLoading] = useState(false);
+
   return (
-    <Card className="w-full max-w-[595px]">
+    <Card className="w-full max-w-full lg:max-w-[540px]">
       <CardHeader>
         <CardTitle className="text-xl sm:text-2xl">{title}</CardTitle>
       </CardHeader>
@@ -81,22 +94,37 @@ export default function ArticleCard({
           Written By: {author} - {author_role}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex items-center justify-end gap-x-2">
         <Button
-          size="sm"
-          className="sm:px-4 sm:py-2 sm:text-base"
-          onClick={() => deleteArticle(id)}
+          size="icon"
+          variant="destructive"
+          disabled={loading}
+          onClick={async () => {
+            setLoading(true);
+            const loadingToast = toast.loading("Loading...");
+
+            const deleteArticleResult = await deleteArticle(id);
+            if (deleteArticleResult.error) {
+              setLoading(false);
+              return toast.error(deleteArticleResult.error.message, {
+                id: loadingToast,
+              });
+            }
+
+            setLoading(false);
+            return toast.success("Berhasil menghapus artikel!", {
+              id: loadingToast,
+            });
+          }}
         >
-          Delete Article
+          <Trash />
         </Button>
-        <Link href={`/admin/articles/update/${id}`}>
-          <Button size="sm" className="sm:px-4 sm:py-2 sm:text-base">
-            Update Article
-          </Button>
+        <Link
+          href={`/admin/articles/update/${id}`}
+          className={buttonVariants({ variant: "default", size: "icon" })}
+        >
+          <Pencil />
         </Link>
-        <Button size="sm" className="sm:px-4 sm:py-2 sm:text-base">
-          See Article
-        </Button>
       </CardFooter>
     </Card>
   );

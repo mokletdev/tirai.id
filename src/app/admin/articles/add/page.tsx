@@ -1,8 +1,9 @@
-import ArticleForm from "../_components/ArticleForm";
-export default function page() {
+import { ArticleForm } from "../components/ArticleForm";
+
+export default function CreateArticle() {
   return (
-    <div className="h-full w-full pb-8">
-      <ArticleForm />
-    </div>
+    <section id="create-article-form" className="w-full pb-8">
+      <ArticleForm />;
+    </section>
   );
 }

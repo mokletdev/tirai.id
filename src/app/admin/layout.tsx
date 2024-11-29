@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import AdminLayout from "./_components/AdminLayout";
+import AdminLayout from "./components/AdminLayout";
 
 export const metadata: Metadata = {
   title: "Admin",

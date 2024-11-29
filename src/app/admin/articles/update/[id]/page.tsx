@@ -1,17 +1,21 @@
 import { getArticleById } from "@/actions/articles";
-import { ArticlesWithUser } from "@/types/entityRelations";
-import ArticleForm from "../../_components/ArticleForm";
-export default async function page({
+import { notFound } from "next/navigation";
+import { ArticleForm } from "../../components/ArticleForm";
+
+export default async function UpdateArticle({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
   const response = await getArticleById(id, "edit");
-  const articleData: ArticlesWithUser | undefined = response.data;
+  const articleData = response.data;
+
+  if (!articleData) return notFound();
+
   return (
-    <div className="h-full w-full pb-8">
+    <section id="update-article-form" className="w-full pb-8">
       <ArticleForm updateData={articleData} />
-    </div>
+    </section>
   );
 }
