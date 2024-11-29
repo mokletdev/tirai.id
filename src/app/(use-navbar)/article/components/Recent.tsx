@@ -4,6 +4,7 @@ import { Body3, H1, H3, H5 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widget/SectionTitle";
 import { formatDate } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -16,6 +17,7 @@ export const Recent = (data: {
   published_at: Date;
 }) => {
   const { cover, title, slug, authorName, content, published_at } = data;
+  const sanitizedContent = DOMPurify.sanitize(content);
 
   return (
     <SectionContainer>
@@ -34,7 +36,10 @@ export const Recent = (data: {
           <div className="mt-11 flex max-w-full flex-col lg:mt-0 lg:justify-between">
             <div className="mb-10 block lg:mb-0">
               <H3 className="mb-3 text-black">{title}</H3>
-              <Body3 className="line-clamp-4 text-neutral-500">{content}</Body3>
+              <div
+                className="font-regular line-clamp-4 text-base leading-[22px] text-neutral-500"
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+              ></div>
             </div>
             <div className="flex flex-col items-start justify-between gap-y-8 md:flex-row lg:items-center lg:gap-0">
               <div className="flex flex-col justify-between gap-y-0.5">
