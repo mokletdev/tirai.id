@@ -4,6 +4,7 @@ import { Body1, Body2, Body3, H1, H3, H5 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widget/SectionTitle";
 import { formatDate } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
+import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -17,6 +18,7 @@ export const Recent = (data: {
   tags: string[];
 }) => {
   const { cover, tags, title, slug, authorName, content, published_at } = data;
+  const sanitizedContent = DOMPurify.sanitize(content);
 
   return (
     <SectionContainer id="recent-article">

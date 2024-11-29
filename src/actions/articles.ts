@@ -118,11 +118,18 @@ export const getArticleById = async (
   }
 };
 
-export const getArticleBySlug = async (slug: string) => {
+export const getArticleBySlug = async (
+  slug: string,
+  action: "view" | "edit",
+) => {
   try {
     const article = await findArticle({ slug });
     if (!article) {
       return ActionResponses.notFound(`Article ${slug} is not found`);
+    }
+
+    if (action === "view") {
+      await updateArticle({ slug }, { views: article.views + 1 });
     }
 
     return ActionResponses.success(article);
