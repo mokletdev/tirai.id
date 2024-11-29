@@ -1,5 +1,7 @@
 "use server";
+
 import { ActionResponse, ActionResponses } from "@/lib/actions";
+import { ArticlesWithUser } from "@/types/entityRelations";
 import {
   createArticle,
   findArticle,
@@ -7,10 +9,9 @@ import {
   hardDeleteArticle,
   updateArticle,
 } from "@/utils/database/article.query";
-import { ArticlesWithUser } from "@/types/entityRelations";
-import { uploadImageCloudinary, deleteImageCloudinary } from "./fileUploader";
-import { Article, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { deleteImageCloudinary, uploadImageCloudinary } from "./fileUploader";
 
 export const upsertArticle = async ({
   data,

@@ -1,4 +1,5 @@
 "use server";
+
 import { ActionResponse, ActionResponses } from "@/lib/actions";
 import { createUser, findUser, updateUser } from "@/utils/database/user.query";
 import { encrypt } from "@/utils/encryption";

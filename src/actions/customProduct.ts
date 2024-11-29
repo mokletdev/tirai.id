@@ -1,3 +1,5 @@
+"use server";
+
 import { ActionResponses } from "@/lib/actions";
 import {
   createMaterial,
@@ -88,10 +90,7 @@ export const deleteCustomProduct = async (id: string) => {
 };
 
 // model
-export const addModel = async (
-  id: string | null,
-  data: FormData,
-) => {
+export const addModel = async (id: string | null, data: FormData) => {
   const description = data.get("description") as string;
   const model = data.get("model") as string;
   try {
@@ -146,10 +145,7 @@ export const deleteModelbyUser = async (id: string) => {
   }
 };
 // material
-export const addMaterial = async (
-  id: string | null,
-  data: FormData,
-) => {
+export const addMaterial = async (id: string | null, data: FormData) => {
   const name = data.get("name") as string;
   const price = parseFloat(data.get("price") as string);
   try {
