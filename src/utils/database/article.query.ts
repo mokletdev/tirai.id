@@ -94,11 +94,18 @@ export const findArticle = async (where: Prisma.ArticleWhereUniqueInput) => {
   });
 };
 
-export const findTags = async () => {
+export const findTags = async (searchTerm?: string) => {
   const articles = await prisma.article.findMany({ select: { tags: true } });
-  const tags = new Set(articles.flatMap(({ tags }) => tags));
+  const uniqueTags = new Set(articles.flatMap(({ tags }) => tags));
+  const tags = Array.from(uniqueTags);
 
-  return Array.from(tags);
+  if (searchTerm) {
+    return tags.filter((tag) =>
+      tag.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }
+
+  return tags;
 };
 
 export const updateArticle = async (

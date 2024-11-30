@@ -24,7 +24,7 @@ export async function generateMetadata({
   const paginatedArticles = await paginate<
     Prisma.ArticleGetPayload<{
       include: {
-        author: true;
+        author: { select: { name: true; role: true } };
       };
     }>,
     Prisma.ArticleFindManyArgs
@@ -39,7 +39,7 @@ export async function generateMetadata({
         views: "desc",
       },
       include: {
-        author: true,
+        author: { select: { name: true, role: true } },
       },
     },
   );
@@ -98,7 +98,12 @@ export default async function Articles({
       },
     },
   );
-  if (page > paginatedArticles.meta.lastPage) return notFound();
+  if (
+    paginatedArticles.meta.lastPage !== 0 &&
+    page > paginatedArticles.meta.lastPage
+  ) {
+    return notFound();
+  }
 
   const latestArticle = await findLatestArticle();
   const tags = await findTags();

@@ -1,13 +1,87 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { SectionContainer } from "@/components/layout/SectionContainer";
+import { buttonVariants } from "@/components/ui/button";
+import { Body3, H1, H2 } from "@/components/ui/text";
+import { SectionTitle } from "@/components/widget/SectionTitle";
+import { paginator } from "@/lib/paginator";
+import prisma from "@/lib/prisma";
+import { cn, sanitizeSearchTerm } from "@/lib/utils";
+import { findTags } from "@/utils/database/article.query";
+import { Prisma } from "@prisma/client";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { ArticlesResultDisplay } from "./components/Articles";
+import { SearchBar } from "./components/SearchBar";
+import { Tags } from "./components/Tags";
+
+const paginate = paginator({ perPage: 6 });
 
 export default async function SearchArticles({
   searchParams,
 }: {
-  searchParams: Promise<{ term?: string }>;
+  searchParams: Promise<{ term?: string; page?: string }>;
 }) {
-  const { term } = await searchParams;
+  // The term can't be undefined, if it is then we redirect the user to /article
+  const { term: searchTerm, page: paramPage } = await searchParams;
+  if (!searchTerm) return redirect("/article");
 
-  console.log(term);
+  let page = paramPage ? Number(paramPage) : 1;
+  if (page < 0) page = 1;
 
-  return <PageContainer></PageContainer>;
+  const sanitizedSearchterm = sanitizeSearchTerm(searchTerm);
+
+  const tags = await findTags(searchTerm);
+
+  const paginatedArticles = await paginate<
+    Prisma.ArticleGetPayload<{
+      include: {
+        author: { select: { name: true; role: true } };
+      };
+    }>,
+    Prisma.ArticleFindManyArgs
+  >(
+    prisma.article,
+    { page },
+    {
+      where: {
+        is_published: true,
+        OR: sanitizedSearchterm.split(" ").map((term) => ({
+          OR: [
+            { title: { contains: term, mode: "insensitive" } },
+            { description: { contains: term, mode: "insensitive" } },
+            { tags: { hasSome: tags } },
+          ],
+        })),
+      },
+      include: { author: { select: { name: true, role: true } } },
+    },
+  );
+
+  return (
+    <PageContainer>
+      <SectionContainer id="search-articles">
+        <div className="block w-full">
+          <H1 className="mb-6 text-black">
+            Hasil Pencarian untuk{" "}
+            <span className="text-primary-900">"{searchTerm}"</span>
+          </H1>
+          <SearchBar defaultValue={searchTerm} />
+
+          <div
+            id="search-result"
+            className={cn(
+              "mt-20 flex w-full flex-col items-start justify-between gap-y-20 lg:flex-row",
+            )}
+          >
+            <ArticlesResultDisplay
+              articles={paginatedArticles.data}
+              meta={paginatedArticles.meta}
+              term={searchTerm}
+            />
+            <Tags tags={tags} />
+          </div>
+        </div>
+      </SectionContainer>
+    </PageContainer>
+  );
 }

@@ -43,7 +43,18 @@ export const Hero: FC = () => {
         Dapatkan tips, panduan, dan tren terbaru untuk memilih tirai dan
         mendesain ruang yang indah dan fungsional
       </Body3>
-      <div className="mx-auto flex w-full max-w-xl items-center justify-between gap-x-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+
+          const sanitizedSearchTerm = sanitizeSearchTerm(searchTerm);
+
+          if (sanitizedSearchTerm !== "") {
+            router.push(`/article/search?term=${sanitizedSearchTerm}`);
+          }
+        }}
+        className="mx-auto flex w-full max-w-xl items-center justify-between gap-x-2"
+      >
         <div className="w-[90%]">
           <Input
             placeholder="Cari artikel dari Tirai.id..."
@@ -53,13 +64,13 @@ export const Hero: FC = () => {
             }}
           />
         </div>
-        <Link
-          href={`/article/search?term=${sanitizeSearchTerm(searchTerm)}`}
+        <Button
+          type="submit"
           className={buttonVariants({ variant: "default" })}
         >
           <Search />
-        </Link>
-      </div>
+        </Button>
+      </form>
     </SectionContainer>
   );
 };
