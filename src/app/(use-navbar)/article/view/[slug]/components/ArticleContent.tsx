@@ -1,9 +1,11 @@
+import { buttonVariants } from "@/components/ui/button";
 import { Body3, H1 } from "@/components/ui/text";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { format } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
 import { Calendar, Eye, User } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { FC } from "react";
 
 export const ArticleContent: FC<{ article: ArticleWithUser }> = ({
@@ -12,6 +14,25 @@ export const ArticleContent: FC<{ article: ArticleWithUser }> = ({
   return (
     <article className="mx-auto block w-full">
       <header>
+        <Image
+          src={article.cover_url}
+          alt={article.title}
+          width={1200}
+          height={345}
+          className="h-[345px] w-full rounded-lg object-cover"
+          unoptimized
+        />
+        <div className="my-5 flex flex-wrap items-center gap-x-5">
+          {article.tags.map((tag) => (
+            <Link
+              key={tag}
+              href={`/article/tags/${tag}`}
+              className={buttonVariants({ variant: "tag", size: "link" })}
+            >
+              {tag}
+            </Link>
+          ))}
+        </div>
         <H1 className="mb-4 text-4xl font-bold text-black" id="headline">
           {article.title}
         </H1>
@@ -34,24 +55,6 @@ export const ArticleContent: FC<{ article: ArticleWithUser }> = ({
             {article.description}
           </Body3>
         )}
-        <div className="mb-6">
-          {article.tags.map((tag) => (
-            <span
-              key={tag}
-              className="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700"
-            >
-              #{tag}
-            </span>
-          ))}
-        </div>
-        <Image
-          src={article.cover_url}
-          alt={article.title}
-          width={1200}
-          height={630}
-          className="object-fit mb-12 w-full rounded-lg"
-          unoptimized
-        />
       </header>
       <section id="article-content">
         <div
