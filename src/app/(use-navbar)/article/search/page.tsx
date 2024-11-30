@@ -1,15 +1,12 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionContainer } from "@/components/layout/SectionContainer";
-import { buttonVariants } from "@/components/ui/button";
-import { Body3, H1, H2 } from "@/components/ui/text";
-import { SectionTitle } from "@/components/widget/SectionTitle";
+import { H1 } from "@/components/ui/text";
 import { paginator } from "@/lib/paginator";
 import prisma from "@/lib/prisma";
 import { cn, sanitizeSearchTerm } from "@/lib/utils";
 import { findTags } from "@/utils/database/article.query";
 import { Prisma } from "@prisma/client";
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArticlesResultDisplay } from "./components/Articles";
 import { SearchBar } from "./components/SearchBar";
 import { Tags } from "./components/Tags";
@@ -56,6 +53,12 @@ export default async function SearchArticles({
       include: { author: { select: { name: true, role: true } } },
     },
   );
+  if (
+    paginatedArticles.meta.lastPage !== 0 &&
+    page > paginatedArticles.meta.lastPage
+  ) {
+    return notFound();
+  }
 
   return (
     <PageContainer>
