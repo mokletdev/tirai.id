@@ -37,10 +37,12 @@ export const Recent = (data: {
               <H3 className="mb-3 text-black">{title}</H3>
               <div className="mb-6 flex flex-wrap items-center gap-x-2">
                 {tags.map((tag) => (
-                  <Link href={`/`}>
-                    <Body1 key={tag} className="text-primary-800">
-                      {tag}
-                    </Body1>
+                  <Link
+                    key={tag}
+                    href={`/article/tags/${tag}`}
+                    className={buttonVariants({ variant: "tag", size: "link" })}
+                  >
+                    {tag}
                   </Link>
                 ))}
               </div>

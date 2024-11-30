@@ -96,7 +96,9 @@ export const findArticle = async (where: Prisma.ArticleWhereUniqueInput) => {
 
 export const findTags = async () => {
   const articles = await prisma.article.findMany({ select: { tags: true } });
-  return articles.map(({ tags }) => tags).flat();
+  const tags = new Set(articles.flatMap(({ tags }) => tags));
+
+  return Array.from(tags);
 };
 
 export const updateArticle = async (

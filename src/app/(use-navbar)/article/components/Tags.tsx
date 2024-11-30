@@ -16,7 +16,7 @@ export const Tags: FC<{ tags: string[] }> = ({ tags }) => {
             <Link
               key={tag}
               href={`/article/tags/${tag}`}
-              className={buttonVariants({ variant: "outline" })}
+              className={buttonVariants({ variant: "tag", size: "link" })}
             >
               {tag}
             </Link>

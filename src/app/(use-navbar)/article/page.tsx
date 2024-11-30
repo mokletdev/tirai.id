@@ -79,7 +79,7 @@ export default async function Articles({
   const paginatedArticles = await paginate<
     Prisma.ArticleGetPayload<{
       include: {
-        author: true;
+        author: { select: { name: true; role: true } };
       };
     }>,
     Prisma.ArticleFindManyArgs
@@ -94,7 +94,7 @@ export default async function Articles({
         views: "desc",
       },
       include: {
-        author: true,
+        author: { select: { name: true, role: true } },
       },
     },
   );
