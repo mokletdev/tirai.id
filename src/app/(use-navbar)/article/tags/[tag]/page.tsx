@@ -64,6 +64,14 @@ export default async function ArticlesByTag({
             <Body3>Tagar</Body3>
             <div className="size-0.5 rounded-full bg-black"></div>
             <Body3>{paginatedArticles.meta.total} Artikel</Body3>
+            <div className="size-0.5 rounded-full bg-black"></div>
+            <Body3>
+              {paginatedArticles.data.reduce(
+                (prev, curr) => prev + curr.views,
+                0,
+              )}{" "}
+              view
+            </Body3>
           </div>
         </div>
         <ArticlesResultDisplay
