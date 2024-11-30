@@ -6,7 +6,7 @@ export const Display: FC<HTMLAttributes<HTMLParagraphElement>> = (props) => {
     <h1
       {...props}
       className={cn(
-        "text-[32px] font-medium leading-[43px] sm:text-[36px] sm:leading-[49px] md:font-semibold lg:text-[60px] lg:font-medium lg:leading-[81px]",
+        "text-[32px] font-medium leading-[43px] sm:text-[36px] sm:leading-[49px] lg:text-[60px] lg:font-medium lg:leading-[81px]",
         props.className,
       )}
     />
