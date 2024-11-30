@@ -11,7 +11,7 @@ export const ArticlesDisplay: FC<{
   meta: PaginationMetadata;
 }> = ({ articles, meta }) => {
   return (
-    <SectionContainer className="">
+    <SectionContainer id="articles">
       <H1 className="mb-[62px] text-black">Artikel Lainnya</H1>
       <div className="grid w-full grid-cols-1 gap-x-6 gap-y-[62px] md:grid-cols-2 lg:grid-cols-3">
         {articles.length > 0 ? (
@@ -22,7 +22,7 @@ export const ArticlesDisplay: FC<{
           </Body3>
         )}
       </div>
-      <PageSelector meta={meta} />
+      {meta.lastPage > 0 && <PageSelector meta={meta} />}
     </SectionContainer>
   );
 };
