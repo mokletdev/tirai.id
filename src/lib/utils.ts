@@ -16,7 +16,7 @@ export const formatDate = (date: Date) => {
   return `${date.getDay()}/${date.getMonth() + 1}/${date.getFullYear()}`;
 };
 
-export const sanitizeSearchTerm = (searchTerm: string) => {
+export const sanitizeInput = (searchTerm: string) => {
   let sanitized = searchTerm.trim();
 
   sanitized = sanitized
