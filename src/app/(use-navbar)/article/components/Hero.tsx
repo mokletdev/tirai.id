@@ -4,7 +4,7 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Body3, Display } from "@/components/ui/text";
-import { sanitizeSearchTerm } from "@/lib/utils";
+import { sanitizeInput } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
 import Link from "next/link";
@@ -47,7 +47,7 @@ export const Hero: FC = () => {
         onSubmit={(e) => {
           e.preventDefault();
 
-          const sanitizedSearchTerm = sanitizeSearchTerm(searchTerm);
+          const sanitizedSearchTerm = sanitizeInput(searchTerm);
 
           if (sanitizedSearchTerm !== "") {
             router.push(`/article/search?term=${sanitizedSearchTerm}`);

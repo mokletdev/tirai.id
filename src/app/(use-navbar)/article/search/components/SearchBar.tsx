@@ -2,7 +2,7 @@
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { sanitizeSearchTerm } from "@/lib/utils";
+import { sanitizeInput } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
 import { FC, useState } from "react";
@@ -17,7 +17,7 @@ export const SearchBar: FC<{ defaultValue?: string }> = ({ defaultValue }) => {
       onSubmit={(e) => {
         e.preventDefault();
 
-        const sanitizedSearchTerm = sanitizeSearchTerm(searchTerm);
+        const sanitizedSearchTerm = sanitizeInput(searchTerm);
 
         if (sanitizedSearchTerm !== "") {
           router.push(`/article/search?term=${sanitizedSearchTerm}`);

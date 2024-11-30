@@ -3,15 +3,21 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { H1 } from "@/components/ui/text";
 import { paginator } from "@/lib/paginator";
 import prisma from "@/lib/prisma";
-import { cn, sanitizeSearchTerm } from "@/lib/utils";
+import { cn, sanitizeInput } from "@/lib/utils";
 import { findTags } from "@/utils/database/article.query";
 import { Prisma } from "@prisma/client";
 import { notFound, redirect } from "next/navigation";
 import { ArticlesResultDisplay } from "./components/Articles";
 import { SearchBar } from "./components/SearchBar";
 import { Tags } from "./components/Tags";
+import { Metadata } from "next";
 
 const paginate = paginator({ perPage: 6 });
+
+export const metadata: Metadata = {
+  title: "Cari Artikel",
+  description: "Cari artikel dari Tirai.id",
+};
 
 export default async function SearchArticles({
   searchParams,
@@ -25,7 +31,7 @@ export default async function SearchArticles({
   let page = paramPage ? Number(paramPage) : 1;
   if (page < 0) page = 1;
 
-  const sanitizedSearchterm = sanitizeSearchTerm(searchTerm);
+  const sanitizedSearchterm = sanitizeInput(searchTerm);
 
   const tags = await findTags(searchTerm);
 
