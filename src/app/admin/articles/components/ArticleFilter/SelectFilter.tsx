@@ -16,15 +16,11 @@ interface SortFormValues {
   status: "all" | "published" | "archived" | "";
 }
 
-export function SearchSelector({
-  searchTerm,
-  setSort,
-  setStatus,
-}: {
+export const SelectFilter: React.FC<{
   searchTerm: SortFormValues;
   setSort: (sort: SortFormValues["sort"]) => void;
   setStatus: (sort: SortFormValues["status"]) => void;
-}) {
+}> = ({ searchTerm, setSort, setStatus }) => {
   const form = useForm<SortFormValues>({
     defaultValues: {
       sort: searchTerm.sort || "",
@@ -38,7 +34,7 @@ export function SearchSelector({
         onSubmit={(e) => {
           e.preventDefault();
         }}
-        className="flex w-full max-w-[400px] items-center space-x-2"
+        className="flex w-full items-center justify-between space-x-2"
       >
         <FormField
           control={form.control}
@@ -102,4 +98,4 @@ export function SearchSelector({
       </form>
     </Form>
   );
-}
+};
