@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
+import { CoverPreview } from "./CoverPreview";
 
 const MAX_FILE_SIZE = 5_000_000;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
@@ -90,6 +91,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   });
 
   const title = form.watch("title");
+  const image = form.watch("image");
 
   useEffect(() => {
     const now = new Date();
@@ -196,7 +198,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           name="slug"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Slug</FormLabel>
+              <FormLabel htmlFor="slug">Slug</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -272,29 +274,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
             </FormItem>
           )}
         />
-        {form.watch("image") ? (
-          <div className="mt-4">
-            <Image
-              src={URL.createObjectURL(form.watch("image") as Blob)}
-              width={300}
-              height={200}
-              alt="Cover Preview"
-              className="max-h-64"
-              unoptimized
-            />
-          </div>
-        ) : updateData && updateData.cover_url ? (
-          <div className="mt-4">
-            <Image
-              src={updateData.cover_url}
-              width={300}
-              height={200}
-              alt="Cover Preview"
-              className="max-h-64"
-              unoptimized
-            />
-          </div>
-        ) : null}
+        <CoverPreview image={image} updateData={updateData} />
         <FormField
           control={form.control}
           name="is_published"
