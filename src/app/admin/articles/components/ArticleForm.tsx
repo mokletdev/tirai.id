@@ -32,12 +32,13 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   const createArticleSchema = useMemo(
     () =>
       z.object({
-        title: z.string().min(1, "Title is required"),
-        slug: z.string().min(1, "Slug is required"),
+        title: z.string().min(1, "Judul artikel wajib diisi."),
+        slug: z.string().min(1, "Slug wajib diisi."),
         tags: z
           .string()
-          .transform((val) => val.split(",").map((tag) => tag.trim())),
-        content: z.string().min(1, "Content is required"),
+          .transform((val) => val.split(", ").map((tag) => tag.trim())),
+        description: z.string().min(10, "Deskripsi minimal 10 karakter"),
+        content: z.string().min(1, "Konten wajib diisi"),
         image: updateData
           ? z
               .instanceof(File)
@@ -47,7 +48,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
                   file === undefined ||
                   ACCEPTED_IMAGE_TYPES.includes(file?.type)
                 );
-              }, "only .jpeg, .png. is valid")
+              }, "Hanya .jpeg, .png. yang valid")
               .refine((file: File | undefined) => {
                 return file === undefined || file?.size <= MAX_FILE_SIZE;
               }, `Ukuran maksimal file adalah 5MB`)
@@ -55,11 +56,11 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               .instanceof(File)
               .refine((file: File) => {
                 return ACCEPTED_IMAGE_TYPES.includes(file?.type);
-              }, "only .jpeg, .png. is valid")
+              }, "Hanya .jpeg, .png. yang valid")
               .refine((file: File) => {
                 return file?.size <= MAX_FILE_SIZE;
               }, `Ukuran maksimal file adalah 5MB`),
-        is_published: z.boolean().default(false),
+        is_published: z.boolean(),
       }),
     [],
   );
@@ -70,6 +71,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
     defaultValues: {
       title: updateData?.title || "",
       slug: updateData?.slug || "",
+      description: updateData?.description || "",
       // @ts-expect-error to display initial update data
       tags: updateData?.tags.join(", ") || [],
       content: updateData?.content || "",
@@ -90,6 +92,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
     try {
       formData.append("title", values.title);
       formData.append("slug", values.slug);
+      formData.append("description", values.description);
       formData.append("tags", values.tags.join(","));
       formData.append("content", values.content);
       if (values.image) formData.append("image", values.image);
@@ -137,9 +140,9 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Judul</FormLabel>
               <FormControl>
-                <Input placeholder="Enter article title" {...field} />
+                <Input {...field} placeholder="Masukkan judul artikel" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -152,10 +155,11 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
             <FormItem>
               <FormLabel>Slug</FormLabel>
               <FormControl>
-                <Input placeholder="Enter article slug" {...field} />
+                <Input {...field} placeholder="Masukkan slug artikel" />
               </FormControl>
               <FormDescription>
-                This will be used in the {`article's URL.`}
+                Slug akan digunakan untuk URL artikel.
+                {"(https://tirai.id/artikel/{slug})"}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -166,7 +170,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           name="tags"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tags</FormLabel>
+              <FormLabel>Tagar</FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter tags, separated by commas"
@@ -174,7 +178,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
                 />
               </FormControl>
               <FormDescription>
-                Enter tags separated by commas
+                Masukkan tagar dengan dipisahkan oleh koma (,)
                 {`(e.g., "tech, news, programming")`}
               </FormDescription>
               <FormMessage />
@@ -186,9 +190,9 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           name="content"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Content</FormLabel>
+              <FormLabel>Konten</FormLabel>
               <FormControl>
-                <Editor initialValue={updateData?.content} {...field} />
+                <Editor {...field} initialValue={updateData?.content} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -199,7 +203,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Cover Image</FormLabel>
+              <FormLabel>Gambar Cover</FormLabel>
               <FormControl>
                 <Input
                   type="file"
@@ -248,9 +252,9 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>Publish</FormLabel>
+                <FormLabel>Status Publikasi</FormLabel>
                 <FormDescription>
-                  Check this box to publish the article immediately.
+                  Centang kotak ini untuk memublikasikan artikel.
                 </FormDescription>
               </div>
             </FormItem>

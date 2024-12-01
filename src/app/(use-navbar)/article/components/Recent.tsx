@@ -1,6 +1,6 @@
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { buttonVariants } from "@/components/ui/button";
-import { Body1, Body3, H1, H3, H5 } from "@/components/ui/text";
+import { Body3, H1, H3, H5 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widget/SectionTitle";
 import { formatDate } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
@@ -12,11 +12,12 @@ export const Recent = (data: {
   title: string;
   slug: string;
   authorName: string;
-  content: string;
+  description: string;
   published_at: Date;
   tags: string[];
 }) => {
-  const { cover, tags, title, slug, authorName, content, published_at } = data;
+  const { cover, tags, title, slug, authorName, description, published_at } =
+    data;
 
   return (
     <SectionContainer id="recent-article">
@@ -46,7 +47,9 @@ export const Recent = (data: {
                   </Link>
                 ))}
               </div>
-              <Body3 className="line-clamp-4 text-neutral-500">{content}</Body3>
+              <Body3 className="line-clamp-4 text-neutral-500">
+                {description}
+              </Body3>
             </div>
             <div className="flex flex-col items-start justify-between gap-y-8 md:flex-row lg:items-center lg:gap-0">
               <div className="flex flex-col justify-between gap-y-0.5">
