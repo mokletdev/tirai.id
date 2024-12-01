@@ -120,7 +120,7 @@ export default function ArticleCard({
           <Trash />
         </Button>
         <Link
-          href={`/admin/articles/update/${id}`}
+          href={`/admin/article/update/${id}`}
           className={buttonVariants({ variant: "default", size: "icon" })}
         >
           <Pencil />
