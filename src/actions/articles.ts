@@ -154,7 +154,7 @@ export const deleteArticle = async (
 
     await hardDeleteArticle({ id });
 
-    revalidatePath("/admin/articles");
+    revalidatePath("/admin/article");
     revalidatePath("/article", "layout");
     return ActionResponses.success({ id });
   } catch (error) {

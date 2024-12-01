@@ -14,17 +14,17 @@ const data = {
   navMain: [
     {
       title: "Articles",
-      url: "/admin/articles",
+      url: "/admin/article",
       icon: Newspaper,
       isActive: true,
       items: [
         {
           title: "All Articles",
-          url: "/admin/articles",
+          url: "/admin/article",
         },
         {
           title: "Add Article",
-          url: "/admin/articles/add",
+          url: "/admin/article/add",
         },
       ],
     },
