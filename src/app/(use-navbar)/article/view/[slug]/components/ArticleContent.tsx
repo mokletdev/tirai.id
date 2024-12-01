@@ -46,7 +46,7 @@ export const ArticleContent: FC<{
             </span>
             <span className="flex items-center">
               <Calendar className="mr-2 h-4 w-4" />
-              {format(new Date(article.published_at), "MMMM d, yyyy")}
+              {format(new Date(article.published_at!), "MMMM d, yyyy")}
             </span>
             <span className="flex items-center">
               <Eye className="mr-2 h-4 w-4" />

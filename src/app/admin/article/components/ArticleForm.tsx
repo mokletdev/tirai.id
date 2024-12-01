@@ -88,14 +88,17 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
     },
     schema: createArticleSchema,
   });
-  const dateNow = new Date();
+
+  const title = form.watch("title");
 
   useEffect(() => {
-    if (!isManualSlug && form.watch().title !== "") {
-      const slug = `${form.watch().title.split(" ").slice(0, 8).join("-")}-${dateNow.getDate()}-${getMonth(dateNow)}-${dateNow.getFullYear()}`;
+    const now = new Date();
+
+    if (!isManualSlug && title !== "") {
+      const slug = `${title.split(" ").slice(0, 8).join("-")}-${now.getDate()}-${getMonth(now)}-${now.getFullYear()}`;
       form.setValue("slug", slug);
     } else form.setValue("slug", "");
-  }, [form.watch().title]);
+  }, [title]);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setLoading(true);
@@ -106,24 +109,37 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
     );
 
     try {
-      formData.append("title", values.title);
-      formData.append("slug", values.slug);
-      formData.append("description", values.description);
-      if (values.tags && values.tags.length > 0) {
-        formData.append("tags", values.tags?.join(","));
-      }
-      formData.append("content", values.content);
-      if (values.image) formData.append("image", values.image);
-      formData.append("is_published", values.is_published.toString());
-      formData.append("author_id", "1");
+      const fields = {
+        title: values.title,
+        slug: values.slug,
+        description: values.description,
+        tags:
+          values.tags?.length && values.tags.length > 0
+            ? values.tags.join(",")
+            : null,
+        content: values.content,
+        image: values.image || null,
+        is_published: values.is_published.toString(),
+        published_at: updateData?.published_at?.toISOString() || null,
+      };
 
-      const res = await upsertArticle({ data: formData, id: updateData?.id });
+      // Append only non-null fields to FormData
+      Object.entries(fields).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          formData.append(key, value as string);
+        }
+      });
 
-      if (!res.success) {
+      const upsertArticleResult = await upsertArticle({
+        data: formData,
+        id: updateData?.id,
+      });
+
+      if (!upsertArticleResult.success) {
         setLoading(false);
         return toast.error(
           updateData
-            ? "Gagal Memperbarui artikel!"
+            ? "Gagal memperbarui artikel!"
             : "Gagal menambahkan artikel!",
           { id: loading },
         );
@@ -132,7 +148,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
       setLoading(false);
       return toast.success(
         updateData
-          ? "Berhasil Memperbarui artikel!"
+          ? "Berhasil memperbarui artikel!"
           : "Berhasil menambahkan artikel!",
         { id: loading },
       );
@@ -140,7 +156,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
       setLoading(false);
       return toast.error(
         updateData
-          ? "Gagal Memperbarui artikel!"
+          ? "Gagal memperbarui artikel!"
           : "Gagal menambahkan artikel!",
         { id: loading },
       );

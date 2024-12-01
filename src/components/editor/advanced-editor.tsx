@@ -9,6 +9,7 @@ import {
   EditorCommandList,
   EditorContent,
   EditorRoot,
+  JSONContent,
 } from "novel";
 
 import { ImageResizer, handleCommandNavigation } from "novel/extensions";
@@ -70,7 +71,7 @@ export default function Editor({ initialValue, onChange }: EditorProps) {
       <EditorRoot>
         <EditorContent
           immediatelyRender={false}
-          initialContent={initialValue}
+          initialContent={initialValue as unknown as JSONContent}
           extensions={extensions}
           className="min-h-96 break-words rounded-xl border p-4"
           editorProps={{
