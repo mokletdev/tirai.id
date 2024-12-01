@@ -115,7 +115,7 @@ export default async function Articles({
       <Recent
         cover={latestArticle.cover_url}
         title={latestArticle.title}
-        content={latestArticle.content}
+        description={latestArticle.description}
         slug={latestArticle.slug}
         authorName={latestArticle.author.name}
         published_at={latestArticle.published_at}
