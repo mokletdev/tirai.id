@@ -18,10 +18,11 @@ import { Label } from "@/components/ui/label";
 import { H2 } from "@/components/ui/text";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { ArticleWithUser } from "@/types/entityRelations";
+import { getMonth } from "date-fns";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -34,6 +35,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   updateData?: ArticleWithUser;
 }) => {
   const router = useRouter();
+  const [isManualSlug, setManualSLug] = useState(updateData ? true : false);
   const createArticleSchema = useMemo(
     () =>
       z.object({
@@ -86,6 +88,14 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
     },
     schema: createArticleSchema,
   });
+  const dateNow = new Date();
+
+  useEffect(() => {
+    if (!isManualSlug && form.watch().title !== "") {
+      const slug = `${form.watch().title.split(" ").slice(0, 8).join("-")}-${dateNow.getDate()}-${getMonth(dateNow)}-${dateNow.getFullYear()}`;
+      form.setValue("slug", slug);
+    } else form.setValue("slug", "");
+  }, [form.watch().title]);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setLoading(true);
@@ -172,12 +182,24 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
             <FormItem>
               <FormLabel>Slug</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Masukkan slug artikel" />
+                <Input
+                  {...field}
+                  disabled={!isManualSlug}
+                  placeholder="Masukkan slug artikel"
+                />
               </FormControl>
               <FormDescription>
                 Slug akan digunakan untuk URL artikel.
                 {"(https://tirai.id/artikel/{slug})"}
               </FormDescription>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  checked={isManualSlug}
+                  onCheckedChange={(e) => setManualSLug(e as boolean)}
+                  color="#000000"
+                />
+                <Label className="text-black">Manual</Label>
+              </div>
               <FormMessage />
             </FormItem>
           )}
