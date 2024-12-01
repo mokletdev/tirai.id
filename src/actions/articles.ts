@@ -187,8 +187,9 @@ export const getArticles = async ({
 }): Promise<ActionResponse<PaginatedResult<ArticleWithUser>>> => {
   try {
     const query: Prisma.ArticleWhereInput = {};
+
     if (tags) {
-      const tagsArray = tags.split(" ").filter((tag) => tag.trim() !== "");
+      const tagsArray = tags.split(", ").filter((tag) => tag.trim() !== "");
       if (tagsArray.length > 0) {
         query.tags = { hasSome: tagsArray };
       }
@@ -214,6 +215,7 @@ export const getArticles = async ({
       perPage,
       page,
     );
+
     return ActionResponses.success(articles);
   } catch (error) {
     console.error(error);

@@ -36,12 +36,18 @@ export const findArticles = async (
       where: {
         ...filter,
         is_published: status !== undefined ? status : undefined,
-        created_at:
-          startDate && endDate
-            ? { gte: startDate, lte: endDate }
-            : startDate
-              ? { gte: startDate }
-              : undefined,
+        created_at: (() => {
+          if (startDate && endDate) {
+            return { gte: startDate, lte: endDate };
+          }
+          if (startDate) {
+            return { gte: startDate };
+          }
+          if (endDate) {
+            return { lte: endDate };
+          }
+          return undefined;
+        })(),
       },
       orderBy:
         sort === "latest"

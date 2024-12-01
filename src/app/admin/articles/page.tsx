@@ -1,8 +1,9 @@
 import { getArticles } from "@/actions/articles";
 import { Body3 } from "@/components/ui/text";
 import { ArticleWithUser } from "@/types/entityRelations";
+import { notFound } from "next/navigation";
 import ArticleCard from "./components/ArticleCard";
-import ArticleFilterLayout from "./components/ArticleFilterLayout";
+import { ArticleFilter } from "./components/ArticleFilter";
 import { PageSelector } from "./components/PageSelector";
 
 export default async function Articles({
@@ -38,17 +39,18 @@ export default async function Articles({
       page,
     })
   ).data;
-  if (!response || page > response.meta.lastPage)
-    return {
-      title: "No Articles Found",
-      description: "Articles you're looking for is not found in our website.",
-    };
+  if (
+    !response ||
+    (response.meta.lastPage !== 0 && page > response.meta.lastPage)
+  )
+    return notFound();
+
   const articles: ArticleWithUser[] = response.data;
 
   return (
     <div className="w-full space-y-8">
       <div className="flex w-full justify-end">
-        <ArticleFilterLayout searchData={searchParams} />
+        <ArticleFilter searchData={searchParams} />
       </div>
       <div className="grid w-full grid-cols-3 gap-6 pb-16">
         {articles.length > 0 &&
@@ -66,9 +68,13 @@ export default async function Articles({
               views={article.views}
             />
           ))}
-        {articles.length === 0 && <Body3>Belum ada artikel apa-apa...</Body3>}
+        {articles.length === 0 && (
+          <Body3 className="text-neutral-500">
+            Tidak ada artikel yang ditemukan...
+          </Body3>
+        )}
       </div>
-      <PageSelector meta={response.meta} />
+      {articles.length > 0 && <PageSelector meta={response.meta} />}
     </div>
   );
 }
