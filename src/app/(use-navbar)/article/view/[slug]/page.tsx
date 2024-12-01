@@ -21,11 +21,10 @@ export async function generateMetadata(
 
   const previousImages = (await parent).openGraph?.images || [];
 
-  if (!article)
+  if (!article || !article.is_published)
     return {
-      title: "Article Not Found",
-      description:
-        "The article that you're looking for is not found in our website.",
+      title: "Artikel Tidak Ditemukan",
+      description: "Artikel yang Anda cari tidak ditemukan di situs web kami.",
     };
 
   return {
@@ -34,7 +33,7 @@ export async function generateMetadata(
       type: "article",
       title: `${article?.title} - ${article?.author.name}`,
       images: [article?.cover_url, ...previousImages],
-      publishedTime: article.published_at.toISOString(),
+      publishedTime: article.published_at!.toISOString(),
       description: article.description || undefined,
       url: `${process.env.APP_URL}/article/view/${article.slug}`,
     },
@@ -65,7 +64,7 @@ export async function generateMetadata(
     },
     publisher: "Tirai.id",
     other: {
-      news_keywords: `${article.published_at.toLocaleDateString("ID-ID", { day: "numeric", month: "long", year: "numeric" })} ${article?.description} ${article?.tags.join(", ")}`,
+      news_keywords: `${article.published_at!.toLocaleDateString("ID-ID", { day: "numeric", month: "long", year: "numeric" })} ${article?.description} ${article?.tags.join(", ")}`,
       "googlebot-news": "index,follow",
     },
   };
@@ -80,7 +79,7 @@ export default async function ArticlePage({
   const response = await getArticleBySlug(slug, "view");
   const data = response.data;
 
-  if (!data || !data.article) return notFound();
+  if (!data || !data.article || !data.article.is_published) return notFound();
 
   const { article } = data;
 
@@ -106,7 +105,7 @@ export default async function ArticlePage({
         url: `${process.env.APP_URL}/assets/logo.png`,
       },
     },
-    datePublished: article.published_at.toISOString(),
+    datePublished: article.published_at!.toISOString(),
     dateModified: article.updated_at.toISOString(),
     articleSection: "Interior Design",
     keywords: article.tags.join(", "),
