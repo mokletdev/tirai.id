@@ -53,11 +53,8 @@ export const upsertArticle = async ({
       slug,
       content,
       is_published,
+      tags,
     };
-
-    if (tags.length > 0) {
-      articleInput.tags = tags;
-    }
 
     if (!id) {
       await createArticle({
