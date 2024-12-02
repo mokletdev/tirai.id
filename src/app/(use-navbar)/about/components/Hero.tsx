@@ -2,8 +2,9 @@ import { SectionContainer } from "@/components/layout/SectionContainer";
 import { Body3, H2 } from "@/components/ui/text";
 import { SectionTitle } from "@/components/widget/SectionTitle";
 import Image from "next/image";
+import { FC } from "react";
 
-export default function Hero() {
+export const Hero: FC = () => {
   return (
     <SectionContainer id="hero">
       <div className="flex flex-col items-end justify-between space-y-[3.75rem] lg:flex-row lg:space-y-0">
@@ -47,4 +48,4 @@ export default function Hero() {
       </div>
     </SectionContainer>
   );
-}
+};
