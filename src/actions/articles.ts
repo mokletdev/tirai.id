@@ -1,15 +1,17 @@
 "use server";
-import { revalidatePath } from "next/cache";
+import { ActionResponse, ActionResponses } from "@/lib/actions";
+import { PaginatedResult } from "@/lib/paginator";
+import { ArticleWithUser } from "@/types/entityRelations";
 import {
   createArticle,
-  updateArticle,
   findArticle,
-  hardDeleteArticle,
   findArticles,
+  hardDeleteArticle,
+  updateArticle,
 } from "@/utils/database/article.query";
-import { Article } from "@prisma/client";
-import { uploadImageCloudinary, deleteImageCloudinary } from "./fileUploader";
-import { ActionResponse, ActionResponses } from "@/lib/actions";
+import { Prisma } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { deleteImageCloudinary, uploadImageCloudinary } from "./fileUploader";
 
 export const upsertArticle = async ({
   data,
@@ -31,13 +33,14 @@ export const upsertArticle = async ({
     const content = data.get("content") as string;
     const author_id = data.get("author_id") as string;
     const image = data.get("image") as File;
+    const is_published = data.get("is_published") === "true";
 
     let uploadedImage;
     if (image) {
       if (id) {
-        const articleData = await findArticle({ id });
-        if (articleData?.cover_url) {
-          await deleteImageCloudinary(articleData.cover_url);
+        const article = await findArticle({ id });
+        if (article?.cover_url) {
+          await deleteImageCloudinary(article.cover_url);
         }
       }
       const imageBuffer = await image.arrayBuffer();
@@ -49,32 +52,34 @@ export const upsertArticle = async ({
       title,
       slug,
       content,
+      is_published,
+      tags,
     };
-
-    if (tags.length > 0) {
-      articleInput.tags = tags;
-    }
 
     if (!id) {
       await createArticle({
         ...articleInput,
-        cover_url: uploadedImage?.data?.url,
+        cover_url: uploadedImage?.data?.url || null,
         author: { connect: { id: author_id } },
       });
-    } else {
-      await updateArticle(
-        { id },
-        {
-          ...articleInput,
-          cover_url: uploadedImage?.data?.url,
-        },
-      );
+
+      revalidatePath("/");
+      return ActionResponses.success({ message: "Article updated" });
     }
-    revalidatePath("/");
+
+    await updateArticle(
+      { id },
+      {
+        ...articleInput,
+        cover_url: uploadedImage?.data?.url,
+      },
+    );
+
+    revalidatePath("/article", "layout");
     return ActionResponses.success({ message: "Article upserted" });
   } catch (error) {
     console.log(error);
-    return ActionResponses.serverError("Failed to upsert article");
+    return ActionResponses.serverError("Failed to update article");
   }
 };
 
@@ -84,24 +89,51 @@ export const updateArticleStatus = async (
 ): Promise<ActionResponse<{ id: string }>> => {
   try {
     await updateArticle({ id }, { is_published });
+
+    revalidatePath("/article", "layout");
     return ActionResponses.success({ id });
+  } catch (error) {
+    console.log(error);
+    return ActionResponses.serverError("Failed to update article");
+  }
+};
+
+export const getArticleById = async (
+  id: string,
+  action: "view" | "edit",
+): Promise<ActionResponse<ArticleWithUser>> => {
+  try {
+    const articleData = await findArticle({ id });
+    if (!articleData) {
+      return ActionResponses.notFound("Article not found");
+    }
+    if (action === "view") {
+      revalidatePath("/article", "layout");
+      await updateArticle({ id }, { views: articleData.views + 1 });
+    }
+
+    return ActionResponses.success(articleData as ArticleWithUser);
   } catch (error) {
     console.log(error);
     return ActionResponses.serverError("Failed to get article");
   }
 };
 
-export const getArticleById = async (
-  id: string,
-): Promise<ActionResponse<Article>> => {
+export const getArticleBySlug = async (
+  slug: string,
+  action: "view" | "edit",
+): Promise<ActionResponse<{ article: ArticleWithUser }>> => {
   try {
-    const articleData = await findArticle({ id });
-    if (!articleData) {
-      return ActionResponses.notFound("Article not found");
+    const article = await findArticle({ slug });
+    if (!article) {
+      return ActionResponses.notFound(`Article ${slug} is not found`);
     }
-    await updateArticle({ id }, { views: articleData.views + 1 });
 
-    return ActionResponses.success(articleData);
+    if (action === "view") {
+      await updateArticle({ slug }, { views: article.views + 1 });
+    }
+
+    return ActionResponses.success({ article });
   } catch (error) {
     console.log(error);
     return ActionResponses.serverError("Failed to get article");
@@ -112,7 +144,18 @@ export const deleteArticle = async (
   id: string,
 ): Promise<ActionResponse<{ id: string }>> => {
   try {
+    const article = await findArticle({ id });
+    if (article) {
+      const deleteResult = await deleteImageCloudinary(article.cover_url);
+      if (deleteResult.error) {
+        return ActionResponses.serverError("Failed to delete article");
+      }
+    }
+
     await hardDeleteArticle({ id });
+
+    revalidatePath("/admin/article");
+    revalidatePath("/article", "layout");
     return ActionResponses.success({ id });
   } catch (error) {
     console.log(error);
@@ -123,17 +166,53 @@ export const deleteArticle = async (
 export const getArticles = async ({
   tags,
   order,
+  searchQuery,
+  status,
+  startDate,
+  endDate,
+  page = 1,
+  perPage = 6,
 }: {
-  tags?: string[];
+  tags?: string;
   order?: "latest" | "popular";
-}): Promise<ActionResponse<Article[]>> => {
+  searchQuery?: string;
+  status?: boolean;
+  startDate?: Date;
+  endDate?: Date;
+  perPage?: number;
+  page?: number;
+}): Promise<ActionResponse<PaginatedResult<ArticleWithUser>>> => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const query: any = {};
-    if (tags && tags.length > 0) {
-      query.tags = { hasSome: tags };
+    const query: Prisma.ArticleWhereInput = {};
+
+    if (tags) {
+      const tagsArray = tags.split(", ").filter((tag) => tag.trim() !== "");
+      if (tagsArray.length > 0) {
+        query.tags = { hasSome: tagsArray };
+      }
     }
-    const articles = await findArticles(query, order);
+
+    if (searchQuery && searchQuery.trim() !== "") {
+      query.OR = [
+        {
+          title: { contains: searchQuery, mode: Prisma.QueryMode.insensitive },
+        },
+        ...searchQuery.split(" ").map((term) => ({
+          title: { contains: term, mode: Prisma.QueryMode.insensitive },
+        })),
+      ];
+    }
+
+    const articles = await findArticles(
+      query,
+      order,
+      status,
+      startDate,
+      endDate,
+      perPage,
+      page,
+    );
+
     return ActionResponses.success(articles);
   } catch (error) {
     console.error(error);
