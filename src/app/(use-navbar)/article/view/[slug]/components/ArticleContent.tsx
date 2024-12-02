@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/components/ui/button";
-import { Body3, H1 } from "@/components/ui/text";
+import { H1 } from "@/components/ui/text";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { format } from "date-fns";
 import DOMPurify from "isomorphic-dompurify";
@@ -15,7 +15,7 @@ export const ArticleContent: FC<{
 }> = ({ article, shareData }) => {
   return (
     <article className="mx-auto block w-full max-w-screen-md">
-      <header className="mb-7 border-b border-neutral-400 pb-7">
+      <header className="mb-14">
         <Image
           src={article.cover_url}
           alt={article.title}
@@ -55,11 +55,6 @@ export const ArticleContent: FC<{
           </div>
           <ShareButton shareData={shareData} />
         </div>
-        {article.description && (
-          <Body3 className="text-xl text-gray-600" id="summary">
-            {article.description}
-          </Body3>
-        )}
       </header>
       <section id="article-content">
         <div

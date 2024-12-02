@@ -20,7 +20,6 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { getMonth } from "date-fns";
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -71,7 +70,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               }, `Ukuran maksimal file adalah 5MB`),
         is_published: z.boolean(),
       }),
-    [],
+    [updateData],
   );
 
   const [loading, setLoading] = useState(false);
@@ -100,7 +99,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
       const slug = `${title.split(" ").slice(0, 8).join("-")}-${now.getDate()}-${getMonth(now)}-${now.getFullYear()}`;
       form.setValue("slug", slug);
     } else form.setValue("slug", "");
-  }, [title]);
+  }, [form, isManualSlug, title]);
 
   const onSubmit = form.handleSubmit(async (values) => {
     setLoading(true);
@@ -154,6 +153,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           : "Berhasil menambahkan artikel!",
         { id: loading },
       );
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       setLoading(false);
       return toast.error(
