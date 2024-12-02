@@ -1,8 +1,8 @@
 import { PageContainer } from "@/components/layout/PageContainer";
-import Hero from "./components/Hero";
+import { Testimonies } from "../(landing-page)/components/Testimonies";
 import { Client } from "./components/Client";
+import { Hero } from "./components/Hero";
 import { Keunggulan } from "./components/Keunggulan";
-import { Testimony } from "./components/Testimony";
 import VisiMisi from "./components/VisiMisi";
 
 export default function AboutUs() {
@@ -12,7 +12,7 @@ export default function AboutUs() {
       <VisiMisi />
       <Client />
       <Keunggulan />
-      <Testimony />
+      <Testimonies />
     </PageContainer>
   );
 }
