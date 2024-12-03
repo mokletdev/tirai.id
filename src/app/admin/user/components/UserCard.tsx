@@ -1,15 +1,16 @@
 "use client";
 
 import { deleteUserAction } from "@/actions/users";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Body3, Body4, H3 } from "@/components/ui/text";
 import { User } from "@prisma/client";
+import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
 
 export const UserCard = ({ data }: { data: User }) => {
   const [loading, setLoading] = useState(false);
+
   return (
     <figure className="rounded-lg border border-neutral-200 bg-white px-4 py-2 text-black">
       <div>
@@ -18,31 +19,39 @@ export const UserCard = ({ data }: { data: User }) => {
         <Body4>{data.email}</Body4>
       </div>
       <div className="mt-4 flex gap-3">
-        <Button
-          className="flex-grow"
-          onClick={() => {
-            redirect(`/admin/user/${data.id}`);
-          }}
+        <Link
+          href={`/admin/user/${data.id}`}
+          className={buttonVariants({
+            variant: "default",
+            className: "flex-grow",
+          })}
         >
           Edit
-        </Button>
+        </Link>
         <Button
           className="flex-grow"
           variant={"destructive"}
+          disabled={loading}
           onClick={async () => {
             setLoading(true);
-            const toastId = toast.loading("Menghapus User...");
+
+            const loadingToast = toast.loading("Menghapus User...");
             const delUserRes = await deleteUserAction({
               data: {
                 id: data.id,
               },
             });
+
             if (delUserRes.success) {
               setLoading(false);
-              return toast.success("Berhasil menghapus user!");
+              return toast.success("Berhasil menghapus user!", {
+                id: loadingToast,
+              });
             }
             setLoading(false);
-            return toast.error("Gagal menghapus user!");
+            return toast.error("Gagal menghapus user!", {
+              id: loadingToast,
+            });
           }}
         >
           Delete
