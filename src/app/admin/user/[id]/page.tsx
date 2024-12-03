@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import UserForm from "../add/components/UserForm";
 import { findUser } from "@/utils/database/user.query";
+import { notFound } from "next/navigation";
+import UserForm from "../components/UserForm";
 
 export default async function UpdateUser({
   params,
