@@ -1,6 +1,7 @@
 "use server";
 
 import { ActionResponse, ActionResponses } from "@/lib/actions";
+import { getServerSession } from "@/lib/next-auth";
 import { PaginatedResult } from "@/lib/paginator";
 import { ArticleWithUser } from "@/types/entityRelations";
 import {
@@ -13,7 +14,6 @@ import {
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { deleteImageCloudinary, uploadImageCloudinary } from "./fileUploader";
-import { getServerSession } from "@/lib/next-auth";
 
 const parseFormData = (data: FormData) => {
   const title = data.get("title") as string;
@@ -205,7 +205,7 @@ export const deleteArticle = async (
     const article = await findArticle({ id });
     if (article) {
       const deleteResult = await deleteImageCloudinary(article.cover_url);
-      if (deleteResult.error) {
+      if (!deleteResult.success) {
         return ActionResponses.serverError("Failed to delete article");
       }
     }
