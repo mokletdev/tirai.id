@@ -10,7 +10,8 @@ export default withAuth(function middleware(_) {}, {
         (pathname.startsWith("/auth") && token) ||
         (pathname.startsWith("/admin") && !token) ||
         (pathname.startsWith("/admin") && token?.role === "CUSTOMER") ||
-        (pathname.startsWith("/admin/user") && token?.role !== "SUPERADMIN")
+        (pathname.startsWith("/admin/user") && token?.role !== "SUPERADMIN") ||
+        (pathname.startsWith("/shop") && !token)
       ) {
         return false;
       }
@@ -19,7 +20,3 @@ export default withAuth(function middleware(_) {}, {
     },
   },
 });
-
-export const config = {
-  matcher: ["/"],
-};
