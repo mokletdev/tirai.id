@@ -56,9 +56,10 @@ model Product {
 }
 
 model Material {
-  id      String    @id @default(uuid())
-  name    String
-  price   Float
+  id             String @id @default(uuid())
+  name           String @unique
+  supplier_price Float
+  price          Float
 }
 
 model CustomOption {
@@ -77,7 +78,7 @@ model CustomOption {
 }
 
 model Model {
-  id          String    @id @default(uuid())
+  id          String @id @default(uuid())
   model       String
   description String
 }

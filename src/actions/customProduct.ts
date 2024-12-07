@@ -4,14 +4,14 @@ import { ActionResponses } from "@/lib/actions";
 import {
   createMaterial,
   createModel,
-  createProductCustom,
+  createCustomRequest,
   deleteMaterial,
   deleteModel,
-  deleteProductCustom,
+  deleteCustomRequest,
   updateMaterial,
   updateModel,
-  updateProductCustom,
-} from "@/utils/database/customProduct.query";
+  updateCustomRequest,
+} from "@/utils/database/customRequest.query";
 import { revalidatePath } from "next/cache";
 
 // handling user request custom product
@@ -24,7 +24,7 @@ export const addCustomProductByUser = async (data: FormData) => {
   const size = data.get("size") as string;
   const color = data.get("color") as string;
   try {
-    const productCustom = await createProductCustom({
+    const productCustom = await createCustomRequest({
       width,
       height,
       size,
@@ -52,7 +52,7 @@ export const updateCustomProduct = async (id: string, data: FormData) => {
   const size = data.get("size") as string;
   const color = data.get("color") as string;
   try {
-    const productCustom = await updateProductCustom(
+    const productCustom = await updateCustomRequest(
       { id },
       {
         width,
@@ -76,7 +76,7 @@ export const updateCustomProduct = async (id: string, data: FormData) => {
 
 export const deleteCustomProduct = async (id: string) => {
   try {
-    const deleteCustomReq = await deleteProductCustom({ id });
+    const deleteCustomReq = await deleteCustomRequest({ id });
     if (!deleteCustomReq) {
       return ActionResponses.serverError("Failed to delete Product Custom");
     }
