@@ -1,5 +1,6 @@
 "use client";
 
+import { removeCategory } from "@/actions/categories";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,12 +16,35 @@ import { ProductCategoryWithProductIds } from "@/types/entityRelations";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export const CategoryTable: FC<{
   categories: ProductCategoryWithProductIds[];
 }> = ({ categories }) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const deleteCategory = async (id: string) => {
+    setLoading(true);
+
+    const loading = toast.loading("Menghapus Kategori...");
+
+    try {
+      const upsertProductResult = await removeCategory(id);
+
+      if (!upsertProductResult.success) {
+        setLoading(false);
+        return toast.error(upsertProductResult.error?.message, { id: loading });
+      }
+
+      setLoading(false);
+      toast.success("Berhasil menghapus kategori!", { id: loading });
+    } catch (e) {
+      setLoading(false);
+      return toast.error("Gagal menghapus kategori!", { id: loading });
+    }
+  };
 
   const columns: ColumnDef<ProductCategoryWithProductIds>[] = useMemo(
     (): ColumnDef<ProductCategoryWithProductIds>[] => [
@@ -147,7 +171,11 @@ export const CategoryTable: FC<{
                   <Pencil />
                   <span>Edit</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => {}}>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    return await deleteCategory(row.original.id);
+                  }}
+                >
                   <Trash />
                   <span>Hapus</span>
                 </DropdownMenuItem>

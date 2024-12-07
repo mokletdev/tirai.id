@@ -13,7 +13,18 @@ export const findCategories = async (
 export const findCategory = async (
   where: Prisma.ProductCategoryWhereUniqueInput,
 ) => {
-  const category = await prisma.productCategory.findUnique({ where });
+  const category = await prisma.productCategory.findUnique({
+    where,
+    include: { products: { select: { name: true } } },
+  });
+
+  return category;
+};
+
+export const deleteCategory = async (
+  where: Prisma.ProductCategoryWhereUniqueInput,
+) => {
+  const category = await prisma.productCategory.delete({ where });
 
   return category;
 };

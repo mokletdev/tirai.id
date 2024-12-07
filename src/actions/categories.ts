@@ -3,6 +3,7 @@
 import { ActionResponse, ActionResponses } from "@/lib/actions";
 import {
   createCategory,
+  deleteCategory,
   findCategory,
   updateCategory,
 } from "@/utils/database/category.query";
@@ -46,5 +47,31 @@ export const upsertCategory = async (data: {
   } catch (error) {
     console.error(error);
     return ActionResponses.serverError("Failed to upsert category");
+  }
+};
+
+export const removeCategory = async (id: string) => {
+  try {
+    const category = await findCategory({ id });
+    if (!category)
+      return ActionResponses.error({
+        code: "NOT_FOUND",
+        message: "Category not Found",
+      });
+
+    if (category.products.length > 0)
+      return ActionResponses.error({
+        code: "CONFLICT",
+        message: "Category is not empty",
+      });
+
+    await deleteCategory({ id });
+    revalidatePath("/admin/shop/category");
+    return ActionResponses.success({
+      message: "Category deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return ActionResponses.serverError("Failed to delete category");
   }
 };
