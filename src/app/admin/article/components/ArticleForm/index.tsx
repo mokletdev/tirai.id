@@ -37,7 +37,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
 }) => {
   const router = useRouter();
   const [isManualSlug, setManualSLug] = useState(updateData ? true : false);
-  const createArticleSchema = useMemo(
+  const upsertArticleSchema = useMemo(
     () =>
       z.object({
         title: z.string().min(1, "Judul artikel wajib diisi."),
@@ -87,7 +87,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
       image: undefined,
       is_published: updateData?.is_published || false,
     },
-    schema: createArticleSchema,
+    schema: upsertArticleSchema,
   });
 
   const title = form.watch("title");
@@ -169,7 +169,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
 
   return (
     <Form {...form}>
-      <div className="mb-8 flex flex-col items-start gap-4">
+      <div className="mb-12 flex flex-col items-start gap-4">
         <Button
           variant={"link"}
           size={"link"}

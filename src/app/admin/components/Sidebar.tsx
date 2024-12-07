@@ -1,4 +1,10 @@
-import { CircleGauge, Home, Newspaper, User2 } from "lucide-react";
+import {
+  CircleGauge,
+  Home,
+  Newspaper,
+  ShoppingCart,
+  User2,
+} from "lucide-react";
 import { SidebarMainContent } from "./SidebarMainContent";
 
 import {
@@ -22,6 +28,22 @@ const SIDEBAR_ITEMS = [
     url: "/admin/user",
     icon: User2,
     isActive: true,
+  },
+  {
+    title: "Shop",
+    url: "/admin/shop",
+    icon: ShoppingCart,
+    isActive: true,
+    children: [
+      {
+        title: "Category",
+        url: "/admin/shop/category",
+      },
+      {
+        title: "Product",
+        url: "/admin/shop/product",
+      },
+    ],
   },
   {
     title: "Articles",
