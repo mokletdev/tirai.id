@@ -15,3 +15,25 @@ export type ProductCategoryWithProductIds = Prisma.ProductCategoryGetPayload<{
     products: { select: { id: true } };
   };
 }>;
+
+export type ProductWithCategoryReviewsVariants = Prisma.ProductGetPayload<{
+  include: {
+    category: {
+      select: {
+        name: true;
+        id: true;
+      };
+    };
+    reviews: {
+      select: {
+        rating: true;
+      };
+    };
+    variants: {
+      select: {
+        _count: true;
+        photo: true;
+      };
+    };
+  };
+}>;
