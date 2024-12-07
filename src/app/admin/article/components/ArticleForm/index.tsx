@@ -61,14 +61,9 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               .refine((file: File | undefined) => {
                 return file === undefined || file?.size <= MAX_FILE_SIZE;
               }, `Ukuran maksimal file adalah 5MB`)
-          : z
-              .instanceof(File)
-              .refine((file: File) => {
-                return ACCEPTED_IMAGE_TYPES.includes(file?.type);
-              }, "Hanya .jpeg, .png. yang valid")
-              .refine((file: File) => {
-                return file?.size <= MAX_FILE_SIZE;
-              }, `Ukuran maksimal file adalah 5MB`),
+          : z.instanceof(File).refine((file: File) => {
+              return file?.size <= MAX_FILE_SIZE;
+            }, `Ukuran maksimal file adalah 5MB`),
         is_published: z.boolean(),
       }),
     [updateData],
@@ -294,6 +289,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               <FormControl>
                 <Input
                   type="file"
+                  accept="image/*"
                   onChange={(e) => field.onChange(e.target.files?.[0])}
                   onBlur={field.onBlur}
                   name={field.name}
