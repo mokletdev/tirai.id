@@ -27,7 +27,7 @@ export default async function Articles({
     await getArticles({
       searchQuery: searchParams.title,
       tags: searchParams.tags,
-      order: searchParams.sort,
+      order: searchParams.sort ?? "latest",
       status:
         searchParams.status === "published"
           ? true
