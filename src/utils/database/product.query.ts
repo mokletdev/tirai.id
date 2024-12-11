@@ -17,7 +17,7 @@ export const deleteProduct = async (where: Prisma.ProductWhereUniqueInput) => {
   return await prisma.product.delete({ where });
 };
 
-export const findProduct = async (
+export const findProducts = async (
   perPage = 6,
   page = 1,
   sort: "latest" | "popular",
@@ -41,7 +41,6 @@ export const findProduct = async (
         variants: {
           select: {
             _count: true;
-            photo: true;
           };
         };
       };
@@ -75,7 +74,6 @@ export const findProduct = async (
         variants: {
           select: {
             _count: true,
-            photo: true,
           },
         },
       },
@@ -101,7 +99,6 @@ export const findProductById = async (id: string) => {
       variants: {
         select: {
           _count: true,
-          photo: true,
         },
       },
     },

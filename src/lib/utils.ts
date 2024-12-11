@@ -31,3 +31,5 @@ export const sanitizeInput = (searchTerm: string) => {
 
   return sanitized;
 };
+
+export const MAX_FILE_SIZE = 5_000_000;

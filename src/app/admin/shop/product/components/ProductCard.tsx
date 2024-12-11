@@ -4,7 +4,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Body1, Body3, Body4 } from "@/components/ui/text";
 import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
 import { Eye, EyeClosed } from "lucide-react";
-import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,16 +19,10 @@ export const ProductCard = ({
   ) => Promise<string | number | undefined>;
   isLoading: boolean;
 }) => {
-  const router = useRouter();
-
   return (
-    <div className="rounded-xl border border-neutral-100 px-4 py-3 text-black">
+    <div className="w-full rounded-xl border border-neutral-100 p-6 text-black">
       <Image
-        src={
-          data.variants.length > 0 && data.variants[0].photo
-            ? data.variants[0].photo
-            : "https://www.rallis.com/Upload/Images/thumbnail/Product-inside.png"
-        }
+        src={data.photos[0]}
         alt={`Gambar ${data.name}`}
         width={200}
         height={100}
@@ -41,7 +34,7 @@ export const ProductCard = ({
         <Body3>{data.category.name}</Body3>
         <Body4>{data.reviews.length} Review</Body4>
       </div>
-      <div className="inline-flex w-full gap-1">
+      <div className="mb-2 inline-flex w-full gap-1">
         <Button
           className="flex-shrink"
           disabled={isLoading}
@@ -61,6 +54,15 @@ export const ProductCard = ({
           Edit
         </Link>
       </div>
+      <Link
+        className={buttonVariants({
+          variant: "default",
+          className: "w-full",
+        })}
+        href={`/admin/shop/product/${data.id}/variant`}
+      >
+        Lihat Varian
+      </Link>
     </div>
   );
 };

@@ -125,7 +125,12 @@ const FileField = React.forwardRef<HTMLInputElement, FileInputProps>(
         )}
         {errorMessage && (
           <div className="mt-4 text-center">
-            <p className="mt-[6px] text-sm text-primary-400 text-red-500">
+            <p
+              className={cn(
+                "mt-[6px] text-sm text-primary-400",
+                errorMessage && "text-red-500",
+              )}
+            >
               {errorMessage}
             </p>
           </div>

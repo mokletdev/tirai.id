@@ -19,13 +19,13 @@ export default async function Shop({
         slug: true;
         description: true;
         is_published: true;
+        photos: true;
         created_at: true;
         updated_at: true;
         variants: {
           select: {
             stock: true;
             price: true;
-            photo: true;
           };
         };
         reviews: {
@@ -46,6 +46,7 @@ export default async function Shop({
         name: true,
         slug: true,
         description: true,
+        photos: true,
         is_published: true,
         created_at: true,
         updated_at: true,
@@ -53,7 +54,6 @@ export default async function Shop({
           select: {
             stock: true,
             price: true,
-            photo: true,
           },
         },
         reviews: {
@@ -66,13 +66,11 @@ export default async function Shop({
   );
 
   const productsCatalog = paginatedProducts.data.map((product) => {
-    // Calculate cumulative stock
     const cumulativeStock = product.variants.reduce(
       (sum, variant) => sum + variant.stock,
       0,
     );
 
-    // Find the cheapest price
     const cheapestPrice = Math.min(
       ...product.variants.map((variant) => variant.price),
     );
@@ -84,7 +82,7 @@ export default async function Shop({
       description: product.description,
       created_at: product.created_at,
       updated_at: product.updated_at,
-      image: product.variants[0]?.photo || null, // Use the first available photo or null if none
+      image: product.photos[0] || null, // Use the first available photo or null if none
       stock: cumulativeStock, // Total stock from all variants
       price: Number.isFinite(cheapestPrice) ? cheapestPrice : null, // Cheapest price among variants
       rating: product.reviews.length

@@ -1,11 +1,10 @@
 import { getProducts } from "@/actions/products";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { PageSelector } from "@/components/ui/PageSelector";
-import { H1 } from "@/components/ui/text";
-import { notFound } from "next/navigation";
-import { ProductContainer } from "./components/ProductContainer";
-import Link from "next/link";
+import { Body3, H1 } from "@/components/ui/text";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+import { ProductContainer } from "./components/ProductContainer";
 
 export default async function ProductAdmin({
   searchParams,
@@ -18,16 +17,13 @@ export default async function ProductAdmin({
   let curPage = page ? parseInt(page) : 1;
 
   const res = await getProducts(12, curPage, "latest");
-  if (!res.data) {
-    return notFound();
-  }
-  const products = res.data.data;
-  const meta = res.data.meta;
+
+  const products = res.data?.data;
 
   return (
     <div className="flex flex-col">
       <H1 className="mb-8 text-black">Manajemen Produk</H1>
-      <div className="mb-3 inline-flex w-full justify-end">
+      <div className="mb-3 flex w-full items-center justify-end">
         <Link
           className={buttonVariants({ variant: "default" })}
           href={"/admin/shop/product/add"}
@@ -35,10 +31,15 @@ export default async function ProductAdmin({
           <Plus /> Tambah Produk
         </Link>
       </div>
-      <div className="mb-2 grid grid-cols-4 gap-3">
-        <ProductContainer products={products} />
+      <div className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+        <ProductContainer products={products || []} />
       </div>
-      <PageSelector meta={meta} />
+      {res.data && res.data.data.length > 0 && res.data.meta && (
+        <PageSelector meta={res.data.meta} />
+      )}
+      {res.data?.data.length === 0 && (
+        <Body3 className="text-neutral-500">Belum ada produk apapun...</Body3>
+      )}
     </div>
   );
 }

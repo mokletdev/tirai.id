@@ -26,9 +26,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CoverPreview } from "./CoverPreview";
-
-const MAX_FILE_SIZE = 5_000_000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
+import { MAX_FILE_SIZE } from "@/lib/utils";
 
 export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   updateData,
@@ -52,12 +50,6 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
           ? z
               .instanceof(File)
               .optional()
-              .refine((file: File | undefined) => {
-                return (
-                  file === undefined ||
-                  ACCEPTED_IMAGE_TYPES.includes(file?.type)
-                );
-              }, "Hanya .jpeg, .png. yang valid")
               .refine((file: File | undefined) => {
                 return file === undefined || file?.size <= MAX_FILE_SIZE;
               }, `Ukuran maksimal file adalah 5MB`)

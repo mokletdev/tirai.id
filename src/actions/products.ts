@@ -6,17 +6,20 @@ import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
 import {
   createProduct,
   deleteProduct,
-  findProduct,
+  findProductById,
+  findProducts,
   updateProduct,
 } from "@/utils/database/product.query";
 import { revalidatePath } from "next/cache";
+import { deleteImageCloudinary, uploadImageCloudinary } from "./fileUploader";
 
-interface upsertData {
+interface UpsertProductData {
   id?: string;
   slug?: string;
   category?: string;
   name?: string;
   description?: string;
+  photos?: FormData;
 }
 
 export const getProducts = async (
@@ -26,31 +29,62 @@ export const getProducts = async (
 ): Promise<
   ActionResponse<PaginatedResult<ProductWithCategoryReviewsVariants>>
 > => {
-  try {
-    const product = await findProduct(perPage, page, sort);
-    ActionResponses.success("succes Get Product");
-    return ActionResponses.success(product);
-  } catch (error) {
-    console.log((error as Error).message);
-    return ActionResponses.serverError("Failed to get Product");
+  const paginatedProducts = await findProducts(perPage, page, sort);
+  return ActionResponses.success(paginatedProducts);
+};
+
+const handleImagesUpload = async (images: File[], productId?: string) => {
+  if (images.length === 0) return null;
+
+  if (productId) {
+    const existingProduct = await findProductById(productId);
+    if (existingProduct?.photos) {
+      for (const photoUrl of existingProduct.photos) {
+        await deleteImageCloudinary(photoUrl);
+      }
+    }
   }
+
+  let photoUrls: string[] = [];
+
+  for (const image of images) {
+    const imageBuffer = await image.arrayBuffer();
+    const uploadedImage = await uploadImageCloudinary(Buffer.from(imageBuffer));
+
+    const url = uploadedImage.data?.url;
+    if (url) {
+      photoUrls.push(url);
+    }
+  }
+
+  return photoUrls;
 };
 
 export const upsertProduct = async ({
   data,
 }: {
-  data: upsertData;
+  data: UpsertProductData;
 }): Promise<ActionResponse<string>> => {
   try {
+    const photos = data.photos?.getAll("photos") as File[] | undefined;
+
+    if (!data.id && !photos)
+      return ActionResponses.badRequest("Photos is required");
+
+    const photoUrls = photos ? await handleImagesUpload(photos) : undefined;
+
     if (!data.id) {
       await createProduct({
         category: { connect: { id: data.category } },
         description: data.description!,
         name: data.description!,
         slug: data.slug!,
+        photos: photoUrls!,
       });
+
       return ActionResponses.success("Success Create Product");
     }
+
     await updateProduct(
       { id: data.id },
       {
@@ -60,11 +94,13 @@ export const upsertProduct = async ({
         description: data.description,
         name: data.name,
         slug: data.slug,
+        photos: photoUrls as string[] | undefined,
       },
     );
+
     return ActionResponses.success("Success Update Product");
   } catch (error) {
-    console.log((error as Error).message);
+    console.log(error);
     return ActionResponses.serverError("Failed to upsert Product");
   }
 };

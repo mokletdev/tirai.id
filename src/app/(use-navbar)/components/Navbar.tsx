@@ -49,8 +49,8 @@ export const Navbar: FC = () => {
                 session?.user?.role && status === "authenticated"
                   ? ADMIN_ROLES.includes(session.user.role)
                     ? "/admin"
-                    : "#"
-                  : "/auth/login"
+                    : "/shop"
+                  : "/shop"
               }
               className={buttonVariants({
                 variant: "default",
@@ -111,8 +111,8 @@ export const Navbar: FC = () => {
                 session?.user?.role && status === "authenticated"
                   ? ADMIN_ROLES.includes(session.user.role)
                     ? "/admin"
-                    : "#"
-                  : "/auth/login"
+                    : "/shop"
+                  : "/shop"
               }
               className={buttonVariants({
                 variant: "default",

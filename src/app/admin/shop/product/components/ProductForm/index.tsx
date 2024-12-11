@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { H2 } from "@/components/ui/text";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { MAX_FILE_SIZE } from "@/lib/utils";
 import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
 import { ProductCategory } from "@prisma/client";
 import { ArrowLeft, Trash } from "lucide-react";
@@ -27,6 +28,8 @@ import { useRouter } from "next-nprogress-bar";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { PhotosPreview } from "./PhotosPreview";
+import { Textarea } from "@/components/ui/textarea";
 
 export const ProductForm = ({
   updateData,
@@ -40,7 +43,7 @@ export const ProductForm = ({
   const deleteProduct = async () => {
     setLoading(true);
 
-    const loading = toast.loading("Menghapus Kategori...");
+    const loading = toast.loading("Menghapus produk...");
 
     try {
       const upsertProductResult = await removeProduct(updateData?.id!);
@@ -51,8 +54,8 @@ export const ProductForm = ({
       }
 
       setLoading(false);
-      router.push("/admin/shop/product");
       toast.success("Berhasil menghapus produk!", { id: loading });
+      return router.push("/admin/shop/product");
     } catch (e) {
       setLoading(false);
       return toast.error("Gagal menghapus produk!", { id: loading });
@@ -62,34 +65,65 @@ export const ProductForm = ({
   const upsertProductSchema = useMemo(
     () =>
       z.object({
-        name: z.string().min(1, "Nama Product wajib diisi."),
+        name: z.string().min(1, "Nama produk wajib diisi."),
         description: z.string().min(1, "Deskripsi wajib diisi."),
         slug: z.string().min(1, "Deskripsi wajib diisi."),
         category: z.string().min(1, "Kategori wajib diisi."),
+        photos: updateData
+          ? z
+              .union([z.instanceof(FileList), z.undefined()])
+              .refine(
+                (files) =>
+                  !files ||
+                  Array.from(files).every(
+                    (file) => file?.size <= MAX_FILE_SIZE,
+                  ),
+                "Ukuran maksimum setiap file adalah 5MB",
+              )
+              .refine((files) => !files || files.length < 5)
+          : z
+              .instanceof(FileList)
+              .refine(
+                (files) =>
+                  Array.from(files).every(
+                    (file) => file?.size <= MAX_FILE_SIZE,
+                  ),
+                "Ukuran maksimum setiap file adalah 5MB",
+              )
+              .refine((files) => files.length > 0 && files.length < 5),
       }),
     [updateData],
   );
   const [loading, setLoading] = useState(false);
   const form = useZodForm({
     defaultValues: {
-      category: updateData ? updateData.category.id : undefined,
-      description: updateData ? updateData.description : undefined,
-      name: updateData ? updateData.name : undefined,
-      slug: updateData ? updateData.slug : undefined,
+      category: updateData ? updateData.category.id : "",
+      description: updateData ? updateData.description : "",
+      name: updateData ? updateData.name : "",
+      slug: updateData ? updateData.slug : "",
     },
     schema: upsertProductSchema,
   });
+
+  const images = form.watch("photos");
 
   const onSubmit = form.handleSubmit(async (values) => {
     setLoading(true);
 
     const loading = toast.loading(
-      updateData ? "Memperbarui Product..." : "Menambahkan Product...",
+      updateData ? "Memperbarui produk..." : "Menambahkan produk...",
     );
 
-    const { category, description, name, slug } = values;
+    const { category, description, name, slug, photos } = values;
 
     try {
+      const photosData = new FormData();
+      if (photos) {
+        Array.from(photos).forEach((photo) =>
+          photosData.append(`photos`, photo),
+        );
+      }
+
       const upsertProductResult = await upsertProduct({
         data: {
           id: updateData ? updateData.id : undefined,
@@ -97,6 +131,7 @@ export const ProductForm = ({
           description,
           name,
           slug,
+          photos: photos ? photosData : undefined,
         },
       });
 
@@ -104,8 +139,8 @@ export const ProductForm = ({
         setLoading(false);
         return toast.error(
           updateData
-            ? "Gagal memperbarui Product!"
-            : "Gagal menambahkan Product!",
+            ? "Gagal memperbarui produk!"
+            : "Gagal menambahkan produk!",
           { id: loading },
         );
       }
@@ -113,8 +148,8 @@ export const ProductForm = ({
       setLoading(false);
       toast.success(
         updateData
-          ? "Berhasil memperbarui Product!"
-          : "Berhasil menambahkan Product!",
+          ? "Berhasil memperbarui produk!"
+          : "Berhasil menambahkan produk!",
         { id: loading },
       );
       return router.push("/admin/shop/product");
@@ -122,9 +157,7 @@ export const ProductForm = ({
     } catch (e) {
       setLoading(false);
       return toast.error(
-        updateData
-          ? "Gagal memperbarui Product!"
-          : "Gagal menambahkan Product!",
+        updateData ? "Gagal memperbarui produk!" : "Gagal menambahkan produk!",
         { id: loading },
       );
     }
@@ -144,9 +177,9 @@ export const ProductForm = ({
           </Button>
           <H2 className="text-black">
             {updateData ? (
-              <>Edit Product {updateData.name}</>
+              <>Edit produk {updateData.name}</>
             ) : (
-              <>Buat Product Baru</>
+              <>Buat produk Baru</>
             )}
           </H2>
           {updateData && (
@@ -168,9 +201,9 @@ export const ProductForm = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="title">Nama Product</FormLabel>
+              <FormLabel htmlFor="name">Nama Produk</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Masukkan nama Product" />
+                <Input {...field} placeholder="Masukkan nama produk" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -181,22 +214,13 @@ export const ProductForm = ({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="title">Deskripsi Product</FormLabel>
+              <FormLabel htmlFor="title">Deskripsi Produk</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Masukkan Deskripsi Product" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel htmlFor="title">Slug Product</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="Masukkan Slug Product" />
+                <Textarea
+                  {...field}
+                  className="min-h-[120px]"
+                  placeholder="Masukkan Deskripsi Produk"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -207,7 +231,7 @@ export const ProductForm = ({
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="title">Kategori Product</FormLabel>
+              <FormLabel htmlFor="title">Kategori Produk</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={(value) => {
@@ -233,6 +257,41 @@ export const ProductForm = ({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="slug"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="title">Slug Produk</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="Masukkan slug produk" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="photos"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="photos">Foto-foto produk (max. 4)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => field.onChange(e.target.files)}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                  multiple
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <PhotosPreview images={images} updateData={updateData} />
         <Button disabled={loading} type="submit" className="w-full">
           Simpan
         </Button>

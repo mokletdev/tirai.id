@@ -72,6 +72,7 @@ model Product {
   id           String   @id @default(uuid())
   name         String
   description  String
+  photos       String[]
   slug         String   @unique
   is_published Boolean  @default(false)
   created_at   DateTime @default(now())
@@ -106,9 +107,8 @@ model Material {
 
 model ProductVariant {
   id         String   @id @default(uuid())
+  name       String   @unique
   size       String
-  color      String
-  photo      String
   price      Float
   stock      Int
   created_at DateTime @default(now())
@@ -117,8 +117,6 @@ model ProductVariant {
   product    Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
   product_id String
   items      OrderItem[]
-
-  @@unique([product_id, color, size])
 }
 
 model Model {

@@ -32,7 +32,6 @@ export type ProductWithCategoryReviewsVariants = Prisma.ProductGetPayload<{
     variants: {
       select: {
         _count: true;
-        photo: true;
       };
     };
   };
