@@ -1,5 +1,5 @@
-import { PageSelector } from "@/components/ui/PageSelector";
 import { H1 } from "@/components/ui/text";
+import { PageSelector } from "@/components/widget/PageSelector";
 import { findUsers } from "@/utils/database/user.query";
 import { UserTable } from "./components/UserTable";
 

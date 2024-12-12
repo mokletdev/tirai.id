@@ -71,6 +71,7 @@ export const Hero: FC = () => {
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
                   }}
+                  defaultValue={searchParams.get("term") || ""}
                 />
               </div>
               <Button
@@ -88,6 +89,7 @@ export const Hero: FC = () => {
                   currentParams.append("sortBy", value);
                   router.push(`/shop?${currentParams.toString()}`);
                 }}
+                defaultValue={searchParams.get("sortBy") || ""}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Diurutkan berdasarkan..." />

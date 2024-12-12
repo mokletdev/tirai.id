@@ -36,3 +36,27 @@ export type ProductWithCategoryReviewsVariants = Prisma.ProductGetPayload<{
     };
   };
 }>;
+
+export type ProductCatalog = Prisma.ProductGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    slug: true;
+    description: true;
+    is_published: true;
+    photos: true;
+    created_at: true;
+    updated_at: true;
+    variants: {
+      select: {
+        stock: true;
+        price: true;
+      };
+    };
+    reviews: {
+      select: {
+        rating: true;
+      };
+    };
+  };
+}>;

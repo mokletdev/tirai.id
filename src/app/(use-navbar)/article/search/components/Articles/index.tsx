@@ -1,10 +1,10 @@
 import { Body3, H2 } from "@/components/ui/text";
+import { PageSelector } from "@/components/widget/PageSelector";
 import { SectionTitle } from "@/components/widget/SectionTitle";
 import { PaginationMetadata } from "@/lib/paginator";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { FC } from "react";
 import { ArticleCard } from "./ArticleCard";
-import { PageSelector } from "./PageSelector";
 
 export const ArticlesResultDisplay: FC<{
   articles: ArticleWithUser[];
@@ -24,7 +24,7 @@ export const ArticlesResultDisplay: FC<{
           </Body3>
         )}
       </div>
-      {meta.lastPage > 0 && <PageSelector meta={meta} term={term} />}
+      {meta.lastPage > 0 && <PageSelector meta={meta} />}
     </div>
   );
 };

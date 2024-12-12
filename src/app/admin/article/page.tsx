@@ -1,10 +1,10 @@
 import { getArticles } from "@/actions/articles";
 import { Body3 } from "@/components/ui/text";
+import { PageSelector } from "@/components/widget/PageSelector";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { notFound } from "next/navigation";
 import ArticleCard from "./components/ArticleCard";
 import { ArticleFilter } from "./components/ArticleFilter";
-import { PageSelector } from "./components/PageSelector";
 
 export default async function Articles({
   searchParams: searchParamsPromise,

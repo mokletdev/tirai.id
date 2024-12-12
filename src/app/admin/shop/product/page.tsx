@@ -1,7 +1,7 @@
 import { getProducts } from "@/actions/products";
 import { buttonVariants } from "@/components/ui/button";
-import { PageSelector } from "@/components/ui/PageSelector";
 import { Body3, H1 } from "@/components/ui/text";
+import { PageSelector } from "@/components/widget/PageSelector";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { ProductContainer } from "./components/ProductContainer";

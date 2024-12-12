@@ -72,7 +72,7 @@ export const Products: FC<{ products?: Product[] }> = (
         </div>
         {/* TODO: Change this to the e-commerce route */}
         <Link
-          href={"#"}
+          href={"/shop"}
           className={buttonVariants({
             variant: "link",
             size: "link",
