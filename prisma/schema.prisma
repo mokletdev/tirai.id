@@ -108,7 +108,8 @@ model Material {
 model ProductVariant {
   id         String   @id @default(uuid())
   name       String   @unique
-  size       String
+  width      Float
+  height     Float
   price      Float
   stock      Int
   created_at DateTime @default(now())

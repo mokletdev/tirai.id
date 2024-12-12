@@ -177,9 +177,12 @@ export const ProductForm = ({
           </Button>
           <H2 className="text-black">
             {updateData ? (
-              <>Edit produk {updateData.name}</>
+              <>
+                Edit Produk{" "}
+                <span className="text-primary-900">"{updateData.name}"</span>
+              </>
             ) : (
-              <>Buat produk Baru</>
+              <>Buat Produk Baru</>
             )}
           </H2>
           {updateData && (

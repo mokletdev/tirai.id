@@ -14,7 +14,7 @@ export default async function EditProductPage({
   if (!product) return notFound();
 
   return (
-    <section id="update-article-form" className="w-full pb-8">
+    <section id="update-product-form" className="w-full pb-8">
       <ProductForm categories={categories} updateData={product} />
     </section>
   );
