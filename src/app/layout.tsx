@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import generalSansFont from "./fonts";
 import "./globals.css";
 import "./prosemirror.css";
+import Script from "next/script";
 
 const robots =
   process.env.APP_ENV != "production" ? "noindex, nofollow" : "index, follow";
@@ -94,6 +95,11 @@ export default function RootLayout({
         {process.env.APP_ENV === "production" && process.env.GA_ID && (
           <GoogleAnalytics gaId={process.env.GA_ID} />
         )}
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          async
+        ></Script>
         <body
           className={`${generalSansFont.className} overflow-x-hidden bg-white antialiased`}
         >
