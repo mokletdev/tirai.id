@@ -27,7 +27,10 @@ export const ProductCard: FC<{ product: ProductCatalog }> = ({ product }) => {
           {formatRupiah(
             product.price ||
               product.variants.sort((a, b) => a.price - b.price)[0].price,
-          )}
+          )}{" "}
+          {product.stock === 0 &&
+            product.variants.reduce((prev, curr) => prev + curr.stock, 0) ===
+              0 && <span className="text-destructive">(Sold Out)</span>}
         </H5>
       )}
     </Link>
