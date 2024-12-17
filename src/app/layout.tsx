@@ -93,9 +93,10 @@ export default function RootLayout({
   return (
     <NextAuthProvider>
       <html lang="en">
-        {process.env.APP_ENV === "production" && process.env.GA_ID && (
-          <GoogleAnalytics gaId={process.env.GA_ID} />
-        )}
+        {process.env.APP_ENV === "production" &&
+          process.env.NEXT_PUBLIC_GA_ID && (
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+          )}
         <Script
           src={MIDTRANS_SNAP_URL}
           data-client-key={MIDTRANS_CLIENT_KEY}
