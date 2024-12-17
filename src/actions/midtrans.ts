@@ -1,3 +1,4 @@
+"use server";
 import snapClient from "@/lib/midtrans-client";
 import { ActionResponses, ActionResponse } from "@/lib/actions";
 import {
