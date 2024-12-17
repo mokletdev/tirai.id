@@ -8,14 +8,23 @@ import { FC } from "react";
 export const ProductCard: FC<{ product: ProductCatalog }> = ({ product }) => {
   return (
     <Link href={`/shop/product/${product.slug}`} className="group block w-full">
-      <Image
-        src={product.photos[0]}
-        alt={`Gambar ${product.name}`}
-        unoptimized
-        className="mb-[1.375rem] aspect-video w-full rounded-[20px] object-cover"
-        width={280}
-        height={175}
-      />
+      <div className="relative h-fit w-full">
+        <Image
+          src={product.photos[0]}
+          alt={`Gambar ${product.name}`}
+          unoptimized
+          className="mb-[1.375rem] aspect-video w-full rounded-[20px] object-cover"
+          width={280}
+          height={175}
+        />
+        {product.stock === 0 &&
+          product.variants.reduce((prev, curr) => prev + curr.stock, 0) ===
+            0 && (
+            <Body3 className="absolute bottom-0 w-full rounded-b-[20px] bg-destructive py-2 text-center text-white">
+              Sold Out
+            </Body3>
+          )}
+      </div>
       <H4 className="mb-[1.375rem] line-clamp-1 text-black transition-all duration-300 group-hover:text-primary-900">
         {product.name}
       </H4>
@@ -28,9 +37,6 @@ export const ProductCard: FC<{ product: ProductCatalog }> = ({ product }) => {
             product.price ||
               product.variants.sort((a, b) => a.price - b.price)[0].price,
           )}{" "}
-          {product.stock === 0 &&
-            product.variants.reduce((prev, curr) => prev + curr.stock, 0) ===
-              0 && <span className="text-destructive">(Sold Out)</span>}
         </H5>
       )}
     </Link>
