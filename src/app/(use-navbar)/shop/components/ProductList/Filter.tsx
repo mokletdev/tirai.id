@@ -129,7 +129,7 @@ export const Filter: FC<{
       <div className="block">
         <H5 className="mb-3 text-black">Ketersediaan</H5>
         <RadioGroup
-          defaultValue={searchParams.get("availability") || "in-stock"}
+          defaultValue={searchParams.get("availability") || undefined}
           className="text-black"
           onValueChange={(e) => {
             const previousParams = new URLSearchParams(searchParams);
