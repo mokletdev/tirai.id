@@ -1,4 +1,5 @@
 import { Snap } from "./midtrans";
+import Invoice from "./midtrans/invoices";
 
 if (!process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY) {
   throw new Error("ENV NEXT_PUBLIC_MIDTRANS_CLIENT_KEY is required");
@@ -19,9 +20,15 @@ const snapClient = new Snap({
   clientKey: MIDTRANS_CLIENT_KEY,
 });
 
+const invoiceClient = new Invoice({
+  isProduction: !isSandbox,
+  serverKey: MIDTRANS_SERVER_KEY,
+  clientKey: MIDTRANS_CLIENT_KEY,
+});
+
 const MIDTRANS_SNAP_URL = `https://app.${
   isSandbox ? "sandbox." : ""
 }midtrans.com/snap/snap.js`;
 
-export { MIDTRANS_CLIENT_KEY, MIDTRANS_SNAP_URL };
+export { MIDTRANS_CLIENT_KEY, MIDTRANS_SNAP_URL, invoiceClient };
 export default snapClient;

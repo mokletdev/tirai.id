@@ -164,3 +164,131 @@ export interface CancelTransactionResponse {
   bank?: string; // Acquiring bank for the transaction (if applicable)
   gross_amount: string; // Total amount of the transaction in IDR
 }
+
+export interface ItemDetail {
+  item_id?: string;
+  description: string;
+  quantity: number;
+  price: number;
+}
+export interface PaymentLinkOptions {
+  is_custom_expiry?: boolean;
+  enabled_payments: string[];
+  credit_card?: {
+    secure: boolean;
+    type: string;
+    bank: string;
+    whitelist_bins: string[];
+    installment: {
+      required: boolean;
+      terms: {
+        mandiri: number[];
+        bca: number[];
+        bni: number[];
+        bri: number[];
+        cimb: number[];
+        maybank: number[];
+        offline: number[];
+      };
+    };
+  };
+  bca_va?: {
+    number: string; // 11 characters
+    free_text?: {
+      inquiry?: { id: string; en: string }[];
+      payment?: { id: string; en: string }[];
+    };
+  };
+  bni_va?: { number: string }; // 1-8 characters
+  permata_va?: {
+    number: string; // 10 characters
+    recipient_name?: string;
+  };
+  bri_va?: { number: string }; // 1-13 characters
+  cimb_va?: { number: string }; // 1-16 characters
+  expiry?: {
+    unit: string;
+    duration: number;
+    start_time: string;
+  };
+}
+
+export interface CustomerDetailsInvoice {
+  id?: string; // Optional, max 36 characters
+  name: string; // Required, max 40 characters
+  email?: string; // Optional, max 255 characters
+  phone?: string; // Optional, max 15 characters, cannot start with "0"
+}
+
+export interface AmountDetails {
+  vat: string; // Integer 0-99999999999
+  discount: string; // Integer 0-99999999999
+  shipping?: string; // Optional Integer 0-99999999999
+}
+export interface VirtualAccount {
+  name:
+    | "bca_va"
+    | "mandiri_bill"
+    | "bni_va"
+    | "bri_va"
+    | "cimb_va"
+    | "permata_va";
+  number?: string; // Optional custom VA number with specific length constraints
+  // Length constraints:
+  // bca_va: 11 characters
+  // mandiri_bill: 1-12 characters
+  // bni_va: 1-8 characters
+  // bri_va: 1-13 characters
+  // cimb_va: 1-16 characters
+  // permata_va: 10 characters
+}
+
+export interface InvoiceRequestBody {
+  order_id: string;
+  invoice_number: string;
+  due_date: string;
+  invoice_date: string;
+  customer_details: CustomerDetails;
+  payment_type: "payment_link" | "virtual_account";
+  reference?: string;
+  item_details: ItemDetail[];
+  notes?: string;
+  payment_link?: PaymentLinkOptions;
+  virtual_accounts?: VirtualAccount[];
+  amount?: AmountDetails;
+}
+
+export interface CreateInvoiceSuccessResponse {
+  order_id: string;
+  invoice_number: string;
+  published_date: string;
+  due_date: string;
+  invoice_date: string;
+  reference?: string;
+  customer_details: CustomerDetails;
+  item_details: ItemDetail[];
+  id: string;
+  status: "draft" | "pending" | "expired" | "overdue" | "paid" | "voided";
+  gross_amount: number;
+  pdf_url: string;
+  payment_type: "payment_link" | "virtual_account";
+  virtual_accounts: any[];
+  payment_link_url: string;
+}
+
+export type MidtransWebhookBody = {
+  transaction_time: string;
+  transaction_status: string;
+  transaction_id: string;
+  status_message: string;
+  status_code: string;
+  signature_key: string;
+  payment_type: string;
+  order_id: string;
+  merchant_id: string;
+  gross_amount: string;
+  fraud_status?: string;
+  settlement_time?: string;
+  currency: string;
+  [key: string]: unknown; // Allow additional fields for forward compatibility
+};
