@@ -1,10 +1,12 @@
 "use server";
-import snapClient from "@/lib/midtrans-client";
+import snapClient, { invoiceClient } from "@/lib/midtrans-client";
 import { ActionResponses, ActionResponse } from "@/lib/actions";
 import {
   CancelTransactionResponse,
+  CreateInvoiceSuccessResponse,
   CreateTransactionResponse,
   CreateTransactionSuccessResponse,
+  InvoiceRequestBody,
   RequestBody,
   TransactionStatusResponse,
 } from "@/types/midtrans";
@@ -20,6 +22,26 @@ export async function createTransaction(
   try {
     const transaction: CreateTransactionSuccessResponse =
       await snapClient.createTransaction(parameter);
+    return ActionResponses.success(transaction);
+  } catch (error: any) {
+    return ActionResponses.serverError(
+      error?.response?.data?.error_messages?.join(", ") ||
+        error?.message ||
+        "Unknown error occurred",
+    );
+  }
+}
+
+/**
+ * Create a transaction using Invoice API
+ * @param parameter - Parameters required to create a transaction
+ * @returns ActionResponse with transaction data or error
+ */
+export async function createTransactionInvoice(
+  parameter: InvoiceRequestBody,
+): Promise<ActionResponse<CreateInvoiceSuccessResponse>> {
+  try {
+    const transaction = await invoiceClient.createInvoice(parameter);
     return ActionResponses.success(transaction);
   } catch (error: any) {
     return ActionResponses.serverError(

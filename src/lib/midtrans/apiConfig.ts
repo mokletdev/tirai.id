@@ -23,6 +23,10 @@ class ApiConfig {
     "https://app.sandbox.midtrans.com/iris/api/v1";
   static readonly IRIS_PRODUCTION_BASE_URL =
     "https://app.midtrans.com/iris/api/v1";
+  static readonly INVOICE_SANDBOX_BASE_URL =
+    "https://api.midtrans.com/v1/invoices";
+  static readonly INVOICE_PRODUCTION_BASE_URL =
+    "https://api.sandbox.midtrans.com/v1/invoices";
 
   /**
    * Initiate with options
@@ -93,6 +97,12 @@ class ApiConfig {
     return this.isProduction
       ? ApiConfig.SNAP_PRODUCTION_BASE_URL
       : ApiConfig.SNAP_SANDBOX_BASE_URL;
+  }
+
+  getInvoiceApiBaseUrl(): string {
+    return this.isProduction
+      ? ApiConfig.INVOICE_PRODUCTION_BASE_URL
+      : ApiConfig.INVOICE_SANDBOX_BASE_URL;
   }
 
   /**
