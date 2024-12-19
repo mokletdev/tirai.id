@@ -37,16 +37,17 @@ export async function updateSeoById(
         page: page ?? seoCurrentData.page,
         title: title ?? seoCurrentData.title,
         description: description ?? seoCurrentData.description,
-        keywords: keywords ?? seoCurrentData.keywords,
+        keywords: keywords?.length ? keywords : seoCurrentData.keywords, 
         canonicalURL: canonicalURL ?? seoCurrentData.canonicalURL,
         ogTitle: ogTitle ?? seoCurrentData.ogTitle,
         ogDescription: ogDescription ?? seoCurrentData.ogDescription,
-        ogImage: ogImage.data?.url ?? seoCurrentData.ogImage,
+        ogImage: ogImage?.data?.url ?? seoCurrentData.ogImage,
         twitterCard: twitterCard ?? seoCurrentData.twitterCard,
         twitterTitle: twitterTitle ?? seoCurrentData.twitterTitle,
-        twitterDescription: twitterDescription ?? seoCurrentData.description,
-        twitterImage: twitterImg.data?.url ?? seoCurrentData.twitterImage,
+        twitterDescription: twitterDescription ?? seoCurrentData.twitterDescription,
+        twitterImage: twitterImg?.data?.url ?? seoCurrentData.twitterImage,
       });
+      
       if (!updateSeo) {
         throw new Error("invalid to update data");
       }
@@ -57,15 +58,15 @@ export async function updateSeoById(
         description,
         title,
         canonicalURL,
-        keywords,
+        keywords: keywords || [],
         ogDescription,
-        ogImage: ogImage.data?.url,
+        ogImage: ogImage?.data?.url,
         ogTitle,
         twitterCard,
         twitterDescription,
-        twitterImage: twitterImg.data?.url,
+        twitterImage: twitterImg?.data?.url,
         twitterTitle,
-      });
+      });      
       if (!createSeo) {
         throw new Error("invalid to create data");
       }
