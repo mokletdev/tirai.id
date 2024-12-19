@@ -17,6 +17,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Session } from "next-auth";
+import { useEffect } from "react";
 
 let SIDEBAR_ITEMS = [
   {
@@ -66,13 +67,15 @@ let SIDEBAR_ITEMS = [
 ];
 
 export function AppSidebar({ session }: { session: Session | null }) {
-  if (session?.user?.role === "SALES")
-    SIDEBAR_ITEMS.push({
-      title: "Chat",
-      url: "/admin/chat",
-      icon: MessageCircleMore,
-      isActive: true,
-    });
+  useEffect(() => {
+    if (session?.user?.role === "SALES")
+      SIDEBAR_ITEMS.push({
+        title: "Chat",
+        url: "/admin/chat",
+        icon: MessageCircleMore,
+        isActive: true,
+      });
+  }, []);
 
   return (
     <Sidebar collapsible="icon">

@@ -51,6 +51,7 @@ export const findUserInById = async (ids: string[]) => {
       id: true,
       email: true,
       name: true,
+      role: true,
     },
   });
 };

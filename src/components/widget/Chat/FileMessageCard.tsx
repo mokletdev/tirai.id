@@ -4,13 +4,16 @@ import { cn } from "@/lib/utils";
 import { CheckCheck, FileText } from "lucide-react";
 import Image from "next/image";
 import moment from "moment-timezone";
+import { ChatUser } from "@/types/entityRelations";
 
 export const FileMessageCard = ({
   message,
   isUser,
+  participants,
 }: {
   message: Message;
   isUser: boolean;
+  participants?: ChatUser[];
 }) => {
   const date = moment(message.created_at + "Z").tz("Asia/Jakarta");
   const hour = date.hour().toString();
@@ -65,9 +68,28 @@ export const FileMessageCard = ({
         <figure
           key={message.id}
           className={cn(
-            "relative max-w-[70%] rounded-lg bg-neutral-400 px-2 py-1 text-white",
+            "relative mt-5 max-w-[70%] rounded-lg bg-neutral-400 px-2 py-1 text-white",
+            participants &&
+              participants.findIndex((i) => i.id === message.sender_id) !==
+                -1 &&
+              (participants[
+                participants.findIndex((i) => i.id === message.sender_id)
+              ].role === "CUSTOMER"
+                ? "!bg-neutral-400"
+                : "!bg-[#6099FF]"),
           )}
         >
+          {participants &&
+            participants.findIndex((i) => i.id === message.sender_id) !==
+              -1 && (
+              <Body5 className="absolute -top-5 left-0 text-nowrap text-black">
+                {participants &&
+                  participants.findIndex((i) => i.id === message.sender_id) &&
+                  participants[
+                    participants.findIndex((i) => i.id === message.sender_id)
+                  ].name}
+              </Body5>
+            )}
           {message.file_url?.endsWith("pdf") ? (
             <div
               onClick={() => window.open(message.file_url!, "_blank")}

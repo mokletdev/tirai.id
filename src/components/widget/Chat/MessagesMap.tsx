@@ -5,13 +5,16 @@ import { strDateToEpoch } from "@/lib/utils";
 import { Session } from "next-auth";
 import React from "react";
 import { DateSeparator } from "./DateSpearator";
+import { ChatUser } from "@/types/entityRelations";
 
 export const MessagesMap = ({
   messages,
   session,
+  participants,
 }: {
   messages: Message[];
   session: Session;
+  participants?: ChatUser[];
 }) => {
   return (
     <>
@@ -23,12 +26,14 @@ export const MessagesMap = ({
               <FileMessageCard
                 message={i}
                 key={i.id}
+                participants={participants}
                 isUser={session?.user?.id === i.sender_id}
               />
             ) : (
               <MessageCard
                 message={i}
                 key={i.id}
+                participants={participants}
                 isUser={session?.user?.id === i.sender_id}
               />
             )
@@ -36,6 +41,7 @@ export const MessagesMap = ({
             <React.Fragment key={i.id}>
               <FileMessageCard
                 message={i}
+                participants={participants}
                 isUser={session?.user?.id === i.sender_id}
               />
               <DateSeparator
@@ -47,6 +53,7 @@ export const MessagesMap = ({
             <React.Fragment key={i.id}>
               <MessageCard
                 message={i}
+                participants={participants}
                 isUser={session?.user?.id === i.sender_id}
               />
               <DateSeparator
@@ -59,6 +66,7 @@ export const MessagesMap = ({
           <React.Fragment key={i.id}>
             <FileMessageCard
               message={i}
+              participants={participants}
               isUser={session?.user?.id === i.sender_id}
             />
             <DateSeparator
@@ -70,6 +78,7 @@ export const MessagesMap = ({
           <React.Fragment key={i.id}>
             <MessageCard
               message={i}
+              participants={participants}
               isUser={session?.user?.id === i.sender_id}
             />
             <DateSeparator

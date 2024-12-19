@@ -1,6 +1,6 @@
 "use client";
 
-import { findChatById, setReadMessage } from "@/actions/chat";
+import { findChatById, getChatUsers, setReadMessage } from "@/actions/chat";
 import { Button } from "@/components/ui/button";
 import { Body2, Body3 } from "@/components/ui/text";
 import { Message, useMessage } from "@/hooks/use-message";
@@ -33,6 +33,9 @@ export const ChatInterface = ({
     setActiveChat,
     setPage,
     setHasMore,
+    participants,
+    setParticipants,
+    addParticipant,
   } = useMessage();
 
   const [filteredConvo, setFilteredConvo] = useState<Message[]>(conversation);
@@ -63,11 +66,16 @@ export const ChatInterface = ({
   useEffect(() => {
     if (activeChat) {
       setPage(2);
+      setParticipants([]);
       setMessages([]);
       handleReadMessage(activeChat);
       findChatById(activeChat).then((i) => {
         const res = i.data?.data ?? [];
         const count = i.data?.count ?? 0;
+        let userIds = [...new Set(res.map((item) => item.customer_id))];
+        getChatUsers(userIds).then((i) => {
+          setParticipants(i.data ?? []);
+        });
         setMessages(res);
         if (messages.length < count) setHasMore(true);
         else setHasMore(false);
@@ -84,6 +92,13 @@ export const ChatInterface = ({
           (payload) => {
             const message = payload.new as Message;
             if (activeChat === message.customer_id) {
+              if (
+                participants.map((i) => i.id).indexOf(message.sender_id) === -1
+              ) {
+                getChatUsers([message.sender_id]).then((i) => {
+                  addParticipant(i.data ?? []);
+                });
+              }
               addMessage(message);
               scrollToBottom();
             }
@@ -218,7 +233,11 @@ export const ChatInterface = ({
               </div>
               <div className="relative z-0 flex h-[455px] min-h-max w-full flex-col-reverse gap-y-1 overflow-y-scroll px-4 pt-5">
                 <div ref={messagesEndRef} />
-                <MessagesMap messages={messages} session={session!} />
+                <MessagesMap
+                  messages={messages}
+                  session={session!}
+                  participants={participants}
+                />
                 {messages.length > 0 && hasMore && (
                   <div className="w-full text-black" ref={ref}>
                     Loading...

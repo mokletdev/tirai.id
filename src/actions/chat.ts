@@ -6,6 +6,8 @@ import supabase from "@/lib/supabase";
 import { uploadImageCloudinary } from "./fileUploader";
 import { getServerSession } from "@/lib/next-auth";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import { findUserInById } from "@/utils/database/user.query";
+import { ChatUser } from "@/types/entityRelations";
 
 export const findChatById = async (
   id: string,
@@ -104,6 +106,19 @@ export const sendFile = async (
       file_url: uploadFile.data?.url,
     });
     if (res.error) throw new Error("Failed to send message");
+
+    return ActionResponses.success(res);
+  } catch (error) {
+    console.error(error);
+    return ActionResponses.serverError("Failed to send message");
+  }
+};
+
+export const getChatUsers = async (
+  userIds: string[],
+): Promise<ActionResponse<ChatUser[]>> => {
+  try {
+    const res = await findUserInById(userIds);
 
     return ActionResponses.success(res);
   } catch (error) {

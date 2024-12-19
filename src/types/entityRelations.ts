@@ -68,5 +68,6 @@ export type ChatUser = Prisma.UserGetPayload<{
     email: true;
     name: true;
     id: true;
+    role: true;
   };
 }>;

@@ -1,4 +1,5 @@
 import { Database } from "@/types/chat.types";
+import { ChatUser } from "@/types/entityRelations";
 import { useState } from "react";
 
 export type Message = Database["public"]["Tables"]["messages"]["Row"];
@@ -12,6 +13,7 @@ const useMessage = () => {
   const [actionMessage, setActionmessage] = useState<Message | undefined>(
     undefined,
   );
+  const [participants, setParticipants] = useState<ChatUser[]>([]);
 
   const states = {
     hasMore,
@@ -21,6 +23,11 @@ const useMessage = () => {
     actionMessage,
     setPage,
     setHasMore,
+    participants,
+    setParticipants,
+    addParticipant: (user: ChatUser[]) => {
+      setParticipants((prev) => [...prev, ...user]);
+    },
     setActiveChat: (id: string | undefined) => {
       setActiveChat(id);
     },
