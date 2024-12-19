@@ -1,5 +1,6 @@
+import { paginator } from "@/lib/paginator";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, SEO } from "@prisma/client";
 
 export async function getSeo() {
   try {
@@ -12,6 +13,20 @@ export async function getSeo() {
     throw new Error((error as Error).message);
   }
 }
+
+export const findSEOEntries = async (
+  perPage = 6,
+  page = 1,
+  args?: Prisma.SEOFindManyArgs,
+) => {
+  const paginate = paginator({ perPage });
+
+  return await paginate<SEO, Prisma.SEOFindManyArgs>(
+    prisma.user,
+    { page },
+    args,
+  );
+};
 
 export async function getSeoPageById(id: number) {
   try {
