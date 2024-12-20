@@ -41,7 +41,10 @@ export const H3: FC<HTMLAttributes<HTMLParagraphElement>> = (props) => {
   return (
     <h3
       {...props}
-      className={cn("text-[26px] font-medium leading-[35px]", props.className)}
+      className={cn(
+        "text-[20px] font-medium leading-[35px] md:text-[26px]",
+        props.className,
+      )}
     />
   );
 };
