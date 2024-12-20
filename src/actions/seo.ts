@@ -24,7 +24,7 @@ async function uploadSeoImage(
     const imageBuffer = Buffer.from(imageBytes);
     const uploadResult = await uploadImageCloudinary(imageBuffer);
     return uploadResult.data?.url || null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

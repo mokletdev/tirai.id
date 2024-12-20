@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use server";
 import snapClient, { invoiceClient } from "@/lib/midtrans-client";
 import { ActionResponses, ActionResponse } from "@/lib/actions";
