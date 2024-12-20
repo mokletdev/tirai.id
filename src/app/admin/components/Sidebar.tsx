@@ -1,4 +1,4 @@
-import { CircleGauge, Home, Newspaper, User2 } from "lucide-react";
+import { CircleGauge, Home, Newspaper, User2, Building } from "lucide-react";
 import { SidebarMainContent } from "./SidebarMainContent";
 
 import {
@@ -39,6 +39,12 @@ const SIDEBAR_ITEMS = [
       },
     ],
   },
+  {
+    title: "SEO",
+    url: "/admin/seo",
+    icon: Building,
+    isActive: true,
+  }
 ];
 
 export function AppSidebar() {
