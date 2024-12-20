@@ -1,5 +1,5 @@
 import { PageSelector } from "@/components/ui/PageSelector";
-import { Body3, H1 } from "@/components/ui/text";
+import { H1 } from "@/components/ui/text";
 import { findSEOEntries } from "@/utils/database/seo.query";
 import { SEOTable } from "./_components/SeoTable";
 

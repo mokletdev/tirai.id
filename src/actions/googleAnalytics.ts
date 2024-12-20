@@ -93,6 +93,7 @@ async function runReport(
   request: google.analytics.data.v1beta.IRunReportRequest,
 ): Promise<CalculateResult[]> {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [response] = (await analyticsDataClient.runReport(request)) as any;
 
     return await calculatePercentageChangeByDimension(response);

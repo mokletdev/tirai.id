@@ -2,7 +2,7 @@ import NextAuthProvider from "@/components/provider/NextAuthProvider";
 import ProgressBarProvider from "@/components/provider/ProgressBarProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import generalSansFont from "./fonts";
 import "./globals.css";
 import "./prosemirror.css";

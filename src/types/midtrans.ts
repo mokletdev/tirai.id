@@ -272,7 +272,7 @@ export interface CreateInvoiceSuccessResponse {
   gross_amount: number;
   pdf_url: string;
   payment_type: "payment_link" | "virtual_account";
-  virtual_accounts: any[];
+  virtual_accounts: VirtualAccount[];
   payment_link_url: string;
 }
 
