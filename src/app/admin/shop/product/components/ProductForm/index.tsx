@@ -357,7 +357,7 @@ export const ProductForm = ({
                 <Input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => field.onChange(e.target.files)}
+                  onChange={(e) => field.onChange([...Array.from(e.target.files ?? [])])}
                   onBlur={field.onBlur}
                   name={field.name}
                   ref={field.ref}
