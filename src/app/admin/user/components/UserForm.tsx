@@ -15,14 +15,14 @@ import { H2 } from "@/components/ui/text";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { User } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next-nprogress-bar";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 export default function UserForm({ updateData }: { updateData?: User }) {
   const router = useRouter();
-  const createArticleSchema = useMemo(
+  const upsertUserSchema = useMemo(
     () =>
       z.object({
         username: z.string().min(1, "Nama User wajib diisi."),
@@ -45,7 +45,7 @@ export default function UserForm({ updateData }: { updateData?: User }) {
       phonenumber: updateData?.phone_number || "",
       password: "",
     },
-    schema: createArticleSchema,
+    schema: upsertUserSchema,
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
@@ -75,12 +75,13 @@ export default function UserForm({ updateData }: { updateData?: User }) {
       }
 
       setLoading(false);
-      return toast.success(
+      toast.success(
         updateData
           ? "Berhasil memperbarui user!"
           : "Berhasil menambahkan user!",
         { id: loading },
       );
+      return router.push("/admin/user");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       setLoading(false);
@@ -93,19 +94,19 @@ export default function UserForm({ updateData }: { updateData?: User }) {
 
   return (
     <Form {...form}>
-      {updateData && (
-        <div className="mb-5 flex items-center gap-4">
-          <Button
-            variant={"link"}
-            size={"link"}
-            onClick={() => router.back()}
-            type="button"
-          >
-            <ArrowLeft /> Kembali
-          </Button>
-          <H2 className="text-black">Edit User {updateData.email}</H2>
-        </div>
-      )}
+      <div className="mb-12 flex flex-col items-start gap-4">
+        <Button
+          variant={"link"}
+          size={"link"}
+          onClick={() => router.back()}
+          type="button"
+        >
+          <ArrowLeft /> Kembali
+        </Button>
+        <H2 className="text-black">
+          {updateData ? <>Edit User {updateData.email}</> : <>Buat User Baru</>}
+        </H2>
+      </div>
       <form onSubmit={onSubmit} className="max-w-screen-lg space-y-8">
         <FormField
           control={form.control}

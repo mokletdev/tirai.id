@@ -1,11 +1,11 @@
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { Body3, H1 } from "@/components/ui/text";
+import { PageSelector } from "@/components/widget/PageSelector";
+import { SectionTitle } from "@/components/widget/SectionTitle";
 import { PaginationMetadata } from "@/lib/paginator";
 import { ArticleWithUser } from "@/types/entityRelations";
 import { FC } from "react";
 import { ArticleCard } from "./ArticleCard";
-import { PageSelector } from "@/components/ui/PageSelector";
-import { SectionTitle } from "@/components/widget/SectionTitle";
 
 export const ArticlesDisplay: FC<{
   articles: ArticleWithUser[];

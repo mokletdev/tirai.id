@@ -16,7 +16,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = React.useState(false);
 
     return (
-      <div className="relative h-[3.25rem]">
+      <div className="relative h-[3.25rem] w-full flex-grow">
         <input
           type={
             type === "password" ? (showPassword ? "text" : "password") : type
@@ -125,7 +125,12 @@ const FileField = React.forwardRef<HTMLInputElement, FileInputProps>(
         )}
         {errorMessage && (
           <div className="mt-4 text-center">
-            <p className="mt-[6px] text-sm text-primary-400 text-red-500">
+            <p
+              className={cn(
+                "mt-[6px] text-sm text-primary-400",
+                errorMessage && "text-red-500",
+              )}
+            >
               {errorMessage}
             </p>
           </div>
