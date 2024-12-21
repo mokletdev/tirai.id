@@ -75,7 +75,7 @@ export const ProductForm = ({
         weight: z.string().min(1, "Berat wajib diisi."),
         photos: updateData
           ? z
-              .union([z.instanceof(FileList), z.undefined()])
+              .union([z.instanceof(File).array(), z.undefined()])
               .refine(
                 (files) =>
                   !files ||
@@ -86,7 +86,8 @@ export const ProductForm = ({
               )
               .refine((files) => !files || files.length < 5)
           : z
-              .instanceof(FileList)
+              .instanceof(File)
+              .array()
               .refine(
                 (files) =>
                   Array.from(files).every(

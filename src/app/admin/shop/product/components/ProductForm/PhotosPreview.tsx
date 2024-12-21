@@ -4,7 +4,7 @@ import Image from "next/image";
 import { FC, useMemo } from "react";
 
 export const PhotosPreview: FC<{
-  images?: FileList | null;
+  images?: File[] | null;
   updateData?: { photos: string[] };
 }> = ({ images, updateData }) => {
   // Memoize the object URL to avoid re-creating it on each render
