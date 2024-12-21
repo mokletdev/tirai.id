@@ -15,11 +15,11 @@ export const AddressTable: FC<{ addresses: ShippingAddress[] }> = ({
 
   return (
     <>
+      <div className="flex items-center justify-between border-b border-neutral-500 pb-4 text-neutral-500">
+        <H5>Penerima</H5>
+        <H5>Alamat</H5>
+      </div>
       <div className="mb-5 flex flex-col gap-y-4 divide-y divide-neutral-200">
-        <div className="flex items-center justify-between border-b border-neutral-500 pb-4 text-neutral-500">
-          <H5>Penerima</H5>
-          <H5>Alamat</H5>
-        </div>
         {addresses.map((address) => (
           <div
             key={address.id}
