@@ -5,7 +5,7 @@ import { Message } from "@/hooks/use-message";
 import { findUserInById } from "@/utils/database/user.query";
 
 export default async function AdminChatPage() {
-  const database = await supabase;
+  const database = await supabase();
   const data = await database.rpc("get_customers");
   const conversations = (data.data ?? []) as Message[];
   const customers = await findUserInById(

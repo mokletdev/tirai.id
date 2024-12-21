@@ -14,7 +14,7 @@ export const findChatById = async (
   page = 1,
 ): Promise<ActionResponse<PostgrestSingleResponse<Message[]>>> => {
   try {
-    const client = await supabase;
+    const client = await supabase();
     const perPage = 15;
     let from = (page - 1) * perPage;
     const to = from + perPage;
@@ -42,7 +42,7 @@ export const sendMessage = async (
   const session = await getServerSession();
   const content = formData.get("message") as string;
   try {
-    const client = await supabase;
+    const client = await supabase();
 
     const res = await client.from("messages").insert({
       customer_id: customerId,
@@ -66,7 +66,7 @@ export const setReadMessage = async (
 ): Promise<ActionResponse<PostgrestSingleResponse<null>>> => {
   const session = await getServerSession();
   try {
-    const client = await supabase;
+    const client = await supabase();
 
     const res = await client
       .from("messages")
@@ -95,7 +95,7 @@ export const sendFile = async (
   const file = formData.get("file") as File;
   const fileBuff = Buffer.from(await file.arrayBuffer());
   try {
-    const client = await supabase;
+    const client = await supabase();
     const uploadFile = await uploadImageCloudinary(fileBuff);
 
     const res = await client.from("messages").insert({

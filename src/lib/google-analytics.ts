@@ -11,5 +11,5 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
   },
 });
 
-export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GA_ID;
+export const GOOGLE_ANALYTICS_ID = process.env.GOOGLE_ANALYTICS_ID;
 export default analyticsDataClient;
