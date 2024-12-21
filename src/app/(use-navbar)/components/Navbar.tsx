@@ -1,22 +1,18 @@
 "use client";
 
 import { buttonVariants } from "@/components/ui/button";
+import { Body5 } from "@/components/ui/text";
 import { NAV_ITEMS } from "@/constants/main-nav-items";
-import { Role } from "@prisma/client";
+import { useCart } from "@/hooks/use-cart";
+import { ShoppingCart, UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { FC, useRef } from "react";
 
-const ADMIN_ROLES: Role[] = [
-  "ADMIN",
-  "SUPERADMIN",
-  "CONTENTWRITER",
-  "SALES",
-] as const;
-
 export const Navbar: FC = () => {
   const { data: session, status } = useSession();
   const navbarToggle = useRef<HTMLInputElement>(null);
+  const cart = useCart();
 
   return (
     <>
@@ -44,25 +40,68 @@ export const Navbar: FC = () => {
               </li>
             ))}
 
-            <Link
-              href={
-                session?.user?.role && status === "authenticated"
-                  ? ADMIN_ROLES.includes(session.user.role)
-                    ? "/admin"
-                    : "#"
-                  : "/auth/login"
-              }
-              className={buttonVariants({
-                variant: "default",
-                className: "ml-6 w-full text-center",
-              })}
-            >
-              {session?.user?.role && status === "authenticated"
-                ? ADMIN_ROLES.includes(session.user.role)
-                  ? "Dashboard"
-                  : "Belanja"
-                : "Belanja"}
-            </Link>
+            {status === "authenticated" &&
+              session.user?.role !== "CUSTOMER" &&
+              session.user?.role !== "SUPPLIER" && (
+                <Link
+                  href={"/admin"}
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "ml-6 w-full text-center",
+                  })}
+                >
+                  Dashboard
+                </Link>
+              )}
+            {status === "authenticated" &&
+              (session.user?.role === "CUSTOMER" ||
+                session.user?.role === "SUPPLIER") && (
+                <div className="ml-6 flex items-center gap-x-2">
+                  <Link
+                    href={"/profile"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full text-center",
+                    })}
+                  >
+                    <UserRound />
+                  </Link>
+                  <Link
+                    href={"/cart"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full text-center",
+                    })}
+                  >
+                    <ShoppingCart />
+                    {cart.cart && cart.cart.length > 0 && (
+                      <Body5>{cart.cart.length}</Body5>
+                    )}
+                  </Link>
+                </div>
+              )}
+            {status === "unauthenticated" && (
+              <div className="ml-6 flex items-center gap-x-2">
+                <Link
+                  href={"/auth/login"}
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "w-full text-center",
+                  })}
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href={"/auth/register"}
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "w-full text-center",
+                  })}
+                >
+                  Daftar
+                </Link>
+              </div>
+            )}
           </ul>
           <div className="flex items-center gap-2 lg:hidden">
             <input
@@ -106,25 +145,68 @@ export const Navbar: FC = () => {
           </div>
           <div className="flex w-full flex-col items-center justify-between gap-4 lg:hidden">
             {/* TODO: Change the href to e-commerce or something */}
-            <Link
-              href={
-                session?.user?.role && status === "authenticated"
-                  ? ADMIN_ROLES.includes(session.user.role)
-                    ? "/admin"
-                    : "#"
-                  : "/auth/login"
-              }
-              className={buttonVariants({
-                variant: "default",
-                className: "ml-6 w-full text-center",
-              })}
-            >
-              {session?.user?.role && status === "authenticated"
-                ? ADMIN_ROLES.includes(session.user.role)
-                  ? "Dashboard"
-                  : "Belanja"
-                : "Belanja"}
-            </Link>
+            {status === "authenticated" &&
+              session.user?.role !== "CUSTOMER" &&
+              session.user?.role !== "SUPPLIER" && (
+                <Link
+                  href={"/admin"}
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "ml-6 w-full text-center",
+                  })}
+                >
+                  Dashboard
+                </Link>
+              )}
+            {status === "authenticated" &&
+              (session.user?.role === "CUSTOMER" ||
+                session.user?.role === "SUPPLIER") && (
+                <div className="ml-6 flex items-center gap-x-2">
+                  <Link
+                    href={"/profile"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full text-center",
+                    })}
+                  >
+                    <UserRound />
+                  </Link>
+                  <Link
+                    href={"/cart"}
+                    className={buttonVariants({
+                      variant: "default",
+                      className: "w-full text-center",
+                    })}
+                  >
+                    <ShoppingCart />
+                    {cart.cart && cart.cart.length > 0 && (
+                      <Body5>{cart.cart.length}</Body5>
+                    )}
+                  </Link>
+                </div>
+              )}
+            {status === "unauthenticated" && (
+              <div className="ml-6 flex items-center gap-x-2">
+                <Link
+                  href={"/auth/login"}
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "w-full text-center",
+                  })}
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href={"/auth/register"}
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "w-full text-center",
+                  })}
+                >
+                  Daftar
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </aside>

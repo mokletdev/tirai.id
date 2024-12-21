@@ -26,9 +26,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CoverPreview } from "./CoverPreview";
-
-const MAX_FILE_SIZE = 5_000_000;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png"];
+import { MAX_FILE_SIZE } from "@/lib/utils";
 
 export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
   updateData,
@@ -37,7 +35,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
 }) => {
   const router = useRouter();
   const [isManualSlug, setManualSLug] = useState(updateData ? true : false);
-  const createArticleSchema = useMemo(
+  const upsertArticleSchema = useMemo(
     () =>
       z.object({
         title: z.string().min(1, "Judul artikel wajib diisi."),
@@ -53,22 +51,11 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               .instanceof(File)
               .optional()
               .refine((file: File | undefined) => {
-                return (
-                  file === undefined ||
-                  ACCEPTED_IMAGE_TYPES.includes(file?.type)
-                );
-              }, "Hanya .jpeg, .png. yang valid")
-              .refine((file: File | undefined) => {
                 return file === undefined || file?.size <= MAX_FILE_SIZE;
               }, `Ukuran maksimal file adalah 5MB`)
-          : z
-              .instanceof(File)
-              .refine((file: File) => {
-                return ACCEPTED_IMAGE_TYPES.includes(file?.type);
-              }, "Hanya .jpeg, .png. yang valid")
-              .refine((file: File) => {
-                return file?.size <= MAX_FILE_SIZE;
-              }, `Ukuran maksimal file adalah 5MB`),
+          : z.instanceof(File).refine((file: File) => {
+              return file?.size <= MAX_FILE_SIZE;
+            }, `Ukuran maksimal file adalah 5MB`),
         is_published: z.boolean(),
       }),
     [updateData],
@@ -87,7 +74,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
       image: undefined,
       is_published: updateData?.is_published || false,
     },
-    schema: createArticleSchema,
+    schema: upsertArticleSchema,
   });
 
   const title = form.watch("title");
@@ -169,7 +156,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
 
   return (
     <Form {...form}>
-      <div className="mb-8 flex flex-col items-start gap-4">
+      <div className="mb-12 flex flex-col items-start gap-4">
         <Button
           variant={"link"}
           size={"link"}
@@ -294,6 +281,7 @@ export const ArticleForm: FC<{ updateData?: ArticleWithUser }> = ({
               <FormControl>
                 <Input
                   type="file"
+                  accept="image/*"
                   onChange={(e) => field.onChange(e.target.files?.[0])}
                   onBlur={field.onBlur}
                   name={field.name}

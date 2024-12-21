@@ -22,7 +22,26 @@ model User {
   orders   Order[]
   cart     Cart?
 
-  tokens Token[]
+  tokens            Token[]
+  shipping_addreses ShippingAddress[]
+}
+
+model ShippingAddress {
+  id                     String   @id @default(uuid())
+  recipient_name         String
+  recipient_phone_number String
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
+
+  street          String
+  city            String
+  region          String
+  postal_code     String
+  additional_info String?
+  is_primary      Boolean @default(false)
+
+  user_id String
+  user    User   @relation(fields: [user_id], references: [id])
 }
 
 model Token {
@@ -33,68 +52,131 @@ model Token {
   purpose     TokenPurpose
   expiry_date DateTime
 
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [user_id], references: [id])
   user_id String @unique
 
   @@unique([user_id, purpose])
 }
 
-model Product {
-  id          String          @id @default(uuid())
-  name        String
-  description String
-  price       Float
-  stock       Int
-  category    ProductCategory
-  slug        String          @unique
-  is_public   Boolean         @default(false)
-  created_at  DateTime        @default(now())
-  updated_at  DateTime        @updatedAt
+model ProductCategory {
+  id         String   @id @default(uuid())
+  name       String
+  slug       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  custom_options CustomOption[]
-  order_products OrderItem[]
+  products Product[]
 }
 
-model CustomOption {
+model Product {
+  id           String   @id @default(uuid())
+  name         String
+  description  String
+  photos       String[]
+  stock        Int?
+  price        Float?
+  weight       Float?
+  slug         String   @unique
+  is_published Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  category    ProductCategory  @relation(fields: [category_id], references: [id])
+  category_id String
+  variants    ProductVariant[]
+  reviews     Review[]
+  items       OrderItem[]
+}
+
+model Review {
+  id      String @id @default(uuid())
+  rating  Float
+  content String
+
+  order_id      String
+  order         Order     @relation(fields: [order_id], references: [id])
+  order_item_id String    @unique
+  order_item    OrderItem @relation(fields: [order_item_id], references: [id], onDelete: Cascade)
+  product_id    String
+  product       Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([order_item_id, order_id])
+}
+
+model ProductVariant {
   id         String   @id @default(uuid())
-  size       String
-  color      String
-  photo      String
+  name       String   @unique
+  width      Float
+  height     Float
+  price      Float
+  stock      Int
+  weight     Float
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   product    Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
   product_id String
   items      OrderItem[]
+}
 
-  @@unique([product_id, color, size])
+model Material {
+  id    String @id @default(uuid())
+  name  String @unique
+  price Float
+}
+
+model Model {
+  id          String @id @default(uuid())
+  model       String @unique
+  description String
+}
+
+model CustomRequest {
+  id             String @id @default(uuid())
+  material       String
+  model          String
+  color          String
+  width          String
+  height         String
+  price          Float
+  size           String
+  supplier_price Float
+
+  item OrderItem?
 }
 
 model Order {
-  id          String      @id @default(uuid())
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @updatedAt
-  finished_at DateTime?
-  total_price Float
-  status      OrderStatus
+  id           String      @id @default(uuid())
+  finished_at  DateTime?
+  total_price  Float
+  status       OrderStatus
+  invoice_link String?
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
 
-  user     User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id  String
-  products OrderItem[]
+  reviews  Review[]
+  items    OrderItem[]
   payment  Payment?
   shipment Shipment?
+
+  user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id          String
+  shipping_address String // Shipping address from the table, but turned into a string to prevent 
 }
 
 model OrderItem {
   id       String @id @default(uuid())
   quantity Int
 
-  product          Product       @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  product_id       String
-  order            Order         @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  order_id         String
-  custom_option    CustomOption? @relation(fields: [custom_option_id], references: [id], onDelete: Cascade) // Jika user menginginkan custom option yang baru
-  custom_option_id String?
+  review            Review?
+  order             Order           @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order_id          String
+  product           Product?        @relation(fields: [product_id], references: [id])
+  product_id        String?
+  variant           ProductVariant? @relation(fields: [variant_id], references: [id], onDelete: Cascade) // Jika user menginginkan custom option yang baru
+  variant_id        String?
+  custom_request    CustomRequest?  @relation(fields: [custom_request_id], references: [id])
+  custom_request_id String?         @unique
 }
 
 model Article {
@@ -127,12 +209,13 @@ model Payment {
 }
 
 model Shipment {
-  id          String         @id @default(uuid())
-  carrier     String // Nama pengirim (i.e: JNE, J&T)
-  tracking_id String? // ID Tracking dari third party
-  status      ShipmentStatus
-  created_at  DateTime       @default(now())
-  updated_at  DateTime       @updatedAt
+  id                    String         @id @default(uuid())
+  carrier               String // Nama pengirim (i.e: JNE, J&T)
+  tracking_id           String? // ID Tracking dari third party
+  status                ShipmentStatus
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+  estimated_finish_time DateTime
 
   order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
   order_id String @unique
@@ -174,15 +257,11 @@ model SEO {
 
 enum Role {
   CUSTOMER
+  SUPPLIER
   ADMIN
   SUPERADMIN
   SALES
   CONTENTWRITER
-}
-
-enum ProductCategory {
-  READY_STOCK
-  CUSTOM
 }
 
 enum OrderStatus {

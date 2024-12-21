@@ -42,7 +42,7 @@ export const upsertUser = async ({
       }
     }
 
-    const userData: Prisma.UserCreateInput = {
+    const payload: Prisma.UserCreateInput = {
       name,
       email,
       phone_number,
@@ -53,7 +53,7 @@ export const upsertUser = async ({
 
     if (!id) {
       await createUser({
-        ...userData,
+        ...payload,
       });
       return ActionResponses.success({
         message: "User registered successfully",
@@ -63,7 +63,7 @@ export const upsertUser = async ({
     await updateUser(
       { id },
       {
-        ...userData,
+        ...payload,
       },
     );
 

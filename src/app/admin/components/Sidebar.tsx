@@ -1,4 +1,12 @@
-import { CircleGauge, Home, Newspaper, User2, Building } from "lucide-react";
+import {
+  CircleGauge,
+  Home,
+  MessageCircleMore,
+  Newspaper,
+  ShoppingCart,
+  User2,
+  Building,
+} from "lucide-react";
 import { SidebarMainContent } from "./SidebarMainContent";
 
 import {
@@ -9,6 +17,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Session } from "next-auth";
+import { useEffect } from "react";
 
 const SIDEBAR_ITEMS = [
   {
@@ -22,6 +32,22 @@ const SIDEBAR_ITEMS = [
     url: "/admin/user",
     icon: User2,
     isActive: true,
+  },
+  {
+    title: "Shop",
+    url: "/admin/shop",
+    icon: ShoppingCart,
+    isActive: true,
+    children: [
+      {
+        title: "Category",
+        url: "/admin/shop/category",
+      },
+      {
+        title: "Product",
+        url: "/admin/shop/product",
+      },
+    ],
   },
   {
     title: "Articles",
@@ -44,10 +70,20 @@ const SIDEBAR_ITEMS = [
     url: "/admin/seo",
     icon: Building,
     isActive: true,
-  }
+  },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ session }: { session: Session | null }) {
+  useEffect(() => {
+    if (session?.user?.role === "SALES")
+      SIDEBAR_ITEMS.push({
+        title: "Chat",
+        url: "/admin/chat",
+        icon: MessageCircleMore,
+        isActive: true,
+      });
+  }, []);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
