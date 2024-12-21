@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { ArrowLeft, Check, ShieldClose } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ResendVerificationMailButton } from "./components/resend-button";
+import { ResendVerificationMailButton } from "./components/ResendButton";
 
 export default async function VerifyEmail({
   searchParams,
