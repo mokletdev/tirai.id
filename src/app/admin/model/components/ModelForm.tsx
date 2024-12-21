@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { H2 } from "@/components/ui/text";
+import { H2, H5 } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { Model } from "@prisma/client";
@@ -20,6 +20,7 @@ import { useRouter } from "next-nprogress-bar";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import Image from "next/image";
 
 export default function ModelForm({ updateData }: { updateData?: Model }) {
   const router = useRouter();
@@ -28,6 +29,12 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
       z.object({
         model: z.string().min(1, "Nama model wajib diisi."),
         description: z.string().min(1, "Deskripsi wajib diisi."),
+        image: z
+          .instanceof(File)
+          .refine((file) => file.type.startsWith("image/"), {
+            message: "Berkas harus berupa gambar",
+          })
+          .optional(),
       }),
     [],
   );
@@ -37,6 +44,7 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
     defaultValues: {
       model: updateData?.model || "",
       description: updateData?.description || "",
+      image: undefined,
     },
     schema: upsertModelSchema,
   });
@@ -48,11 +56,18 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
       updateData ? "Memperbarui model..." : "Menambahkan model...",
     );
 
+    const imageFormData = new FormData();
+
+    if (values.image) imageFormData.append("image", values.image);
+
     try {
-      const upsertCategoryResult = await upsertModel({
-        id: updateData?.id,
-        ...values,
-      });
+      const upsertCategoryResult = await upsertModel(
+        {
+          id: updateData?.id,
+          ...values,
+        },
+        imageFormData,
+      );
       if (!upsertCategoryResult.success) {
         setLoading(false);
         return toast.error(
@@ -129,6 +144,35 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gambar (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                  placeholder="Unggah gambar"
+                  accept="image/*"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <H5 className="text-black">Gambar</H5>
+        {updateData?.image ? (
+          <Image
+            src={updateData?.image}
+            alt="Model preview"
+            height={200}
+            width={200}
+          />
+        ) : (
+          <p className="text-black text-sm">Tidak ada gambar</p>
+        )}
         <Button disabled={loading} type="submit" className="w-full">
           Simpan
         </Button>

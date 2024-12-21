@@ -23,6 +23,7 @@ model User {
 
   tokens            Token[]
   shipping_addreses ShippingAddress[]
+  CustomRequest     CustomRequest[]
 }
 
 model ShippingAddress {
@@ -121,15 +122,18 @@ model ProductVariant {
 }
 
 model Material {
-  id    String @id @default(uuid())
-  name  String @unique
-  price Float
+  id             String @id @default(uuid())
+  name           String @unique
+  price          Float
+  supplier_price Float
+  description    String
 }
 
 model Model {
-  id          String @id @default(uuid())
-  model       String @unique
-  description String
+  id          String  @id @default(uuid())
+  model       String  @unique
+  description String?
+  image       String?
 }
 
 model CustomRequest {
@@ -141,9 +145,12 @@ model CustomRequest {
   height         String
   price          Float
   size           String
-  supplier_price Float
+  shipping_price Float?
 
-  item OrderItem?
+  user User @relation(fields: [userId], references: [id])
+
+  item   OrderItem?
+  userId String
 }
 
 model Order {

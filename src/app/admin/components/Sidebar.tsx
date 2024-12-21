@@ -73,7 +73,7 @@ const SIDEBAR_ITEMS = [
     isActive: true,
     children: [
       {
-        title: "Material",
+        title: "Bahan",
         url: "/admin/material",
       },
       {
