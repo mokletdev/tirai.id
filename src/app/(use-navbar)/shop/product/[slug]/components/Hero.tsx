@@ -15,7 +15,6 @@ import { useCart } from "@/hooks/use-cart";
 import { cn, formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/types/cart";
 import { Prisma } from "@prisma/client";
-import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -41,7 +40,7 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
           item.productId === product.id &&
           selectedVariant?.id === item.variantId,
       ),
-    [cart],
+    [cart, product.id, selectedVariant?.id],
   );
   const maxStock = useMemo(
     () =>
@@ -165,7 +164,7 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
                   name: product.name,
                   photo: product.photos[0],
                   categoryName: product.category.name,
-                  pricePerItem: product.price ?? selectedVariant?.price!,
+                  pricePerItem: product.price ?? selectedVariant!.price,
                   quantity,
                   productId: product.id,
                   variantId: selectedVariant?.id,

@@ -1,5 +1,6 @@
 "use server";
 
+import prisma from "@/lib/prisma";
 import { ActionResponse, ActionResponses } from "@/lib/actions";
 import { PaginatedResult } from "@/lib/paginator";
 import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
@@ -12,6 +13,7 @@ import {
 } from "@/utils/database/product.query";
 import { revalidatePath } from "next/cache";
 import { deleteImageCloudinary, uploadImageCloudinary } from "./fileUploader";
+import { Prisma } from "@prisma/client";
 
 interface UpsertProductData {
   id?: string;
@@ -86,6 +88,7 @@ export const upsertProduct = async ({
         price: data.price,
         stock: data.stock,
         weight: data.weight,
+        is_published: true,
       });
 
       return ActionResponses.success("Success Create Product");
@@ -111,6 +114,28 @@ export const upsertProduct = async ({
   } catch (error) {
     console.log(error);
     return ActionResponses.serverError("Failed to upsert Product");
+  }
+};
+
+export const getProductById = async (
+  id: string,
+): Promise<
+  ActionResponse<{
+    product: Prisma.ProductGetPayload<{ include: { variants: true } }>;
+  }>
+> => {
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: { variants: true },
+    });
+
+    if (!product) return ActionResponses.notFound("Produk tidak ditemukan");
+
+    return ActionResponses.success({ product });
+  } catch (error) {
+    console.log((error as Error).message);
+    return ActionResponses.serverError("Failed to get product by ID");
   }
 };
 
