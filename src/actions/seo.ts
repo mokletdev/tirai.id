@@ -12,7 +12,7 @@ import { uploadImageCloudinary } from "./fileUploader";
 import { ActionResponse, ActionResponses } from "@/lib/actions";
 import { Prisma, SEO } from "@prisma/client";
 
-async function uploadSeoImage(
+export async function uploadSeoImage(
   imageFile: FormDataEntryValue | null,
 ): Promise<string | null> {
   if (!imageFile || !(imageFile instanceof Blob)) {

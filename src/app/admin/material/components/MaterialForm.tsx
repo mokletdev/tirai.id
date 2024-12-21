@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { H2 } from "@/components/ui/text";
+import { Textarea } from "@/components/ui/textarea";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { formatPrice } from "@/utils/format-price";
 import { Material } from "@prisma/client";
@@ -33,6 +34,7 @@ export default function MaterialForm({
         name: z.string().min(1, "Nama material wajib diisi."),
         price: z.string().min(1, "Harga wajib diisi."),
         supplier_price: z.string().min(1, "Harga untuk supplier wajib diisi."),
+        description: z.string().min(1, "Deskripsi wajib diisi"),
       }),
     [],
   );
@@ -43,6 +45,7 @@ export default function MaterialForm({
       name: updateData?.name || "",
       price: updateData?.price.toString() || "",
       supplier_price: updateData?.supplier_price.toString() || "",
+      description: updateData?.description?.toString(),
     },
     schema: upsertCategorySchema,
   });
@@ -101,9 +104,9 @@ export default function MaterialForm({
         </Button>
         <H2 className="text-black">
           {updateData ? (
-            <>Edit Material {updateData.name}</>
+            <>Edit Bahan {updateData.name}</>
           ) : (
-            <>Buat Material Baru</>
+            <>Tambah Bahan Baru</>
           )}
         </H2>
       </div>
@@ -114,9 +117,9 @@ export default function MaterialForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="title">Nama Material</FormLabel>
+              <FormLabel htmlFor="title">Nama Bahan</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Masukkan nama material" />
+                <Input {...field} placeholder="Masukkan nama bahan" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -127,7 +130,7 @@ export default function MaterialForm({
           name="price"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="price">Harga</FormLabel>
+              <FormLabel htmlFor="price">Harga (per m²)</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -147,7 +150,7 @@ export default function MaterialForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel htmlFor="supplier_price">
-                Harga untuk Supplier
+                Harga untuk Supplier (per m²)
               </FormLabel>
               <FormControl>
                 <Input
@@ -157,6 +160,19 @@ export default function MaterialForm({
                   }}
                   placeholder="Masukkan harga material untuk supplier"
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel htmlFor="description">Deskripsi</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Deskripsi bahan" />
               </FormControl>
               <FormMessage />
             </FormItem>

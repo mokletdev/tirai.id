@@ -16,14 +16,16 @@ export const upsertMaterial = async (data: {
   name: string;
   price: string;
   supplier_price: string;
+  description: string;
 }): Promise<ActionResponse<{ message: string }>> => {
-  const { id, name, price, supplier_price } = data;
+  const { id, name, price, supplier_price, description } = data;
 
   try {
     const payload: Prisma.MaterialCreateInput = {
       name,
       price: parsePrice(price),
       supplier_price: parsePrice(supplier_price),
+      description,
     };
 
     if (!id) {

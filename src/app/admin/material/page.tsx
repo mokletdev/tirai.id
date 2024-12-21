@@ -7,7 +7,7 @@ export default async function CustomProductMaterials() {
 
   return (
     <div className="flex flex-col">
-      <H1 className="mb-8 text-black">Manajemen Material</H1>
+      <H1 className="mb-8 text-black">Manajemen Bahan</H1>
       <div className="mb-2">
         <MaterialTable materials={materials} />
       </div>
