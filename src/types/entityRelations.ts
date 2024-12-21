@@ -71,3 +71,9 @@ export type ChatUser = Prisma.UserGetPayload<{
     role: true;
   };
 }>;
+
+export type ProductWithVariant = Prisma.ProductGetPayload<{
+  include: {
+    variants: true;
+  };
+}>;

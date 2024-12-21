@@ -35,9 +35,6 @@ export function useCart() {
   const editItem = (id: string, updates: Partial<Omit<CartItem, "id">>) => {
     if (cart === undefined) return;
 
-    console.log(
-      cart.map((item) => (item.id === id ? { ...item, ...updates } : item)),
-    );
     setCart(
       cart.map((item) => (item.id === id ? { ...item, ...updates } : item)),
     );

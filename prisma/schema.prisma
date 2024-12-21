@@ -163,10 +163,11 @@ model Order {
   created_at   DateTime    @default(now())
   updated_at   DateTime    @updatedAt
 
-  reviews  Review[]
-  items    OrderItem[]
-  payment  Payment?
-  shipment Shipment?
+  reviews              Review[]
+  items                OrderItem[]
+  payment              Payment?
+  shipment             Shipment?
+  desired_carrier_name String
 
   user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id          String
@@ -208,7 +209,6 @@ model Article {
 
 model Payment {
   id             String        @id @default(uuid())
-  method         PaymentMethod
   status         PaymentStatus
   created_at     DateTime      @default(now())
   transaction_id String? // ID Transaksi dari payment gateway
@@ -281,14 +281,6 @@ enum OrderStatus {
   DELIVERED // Telah dikirim di alamat tujuan
   FINISHED // Telah selesai
   CANCELED // Dibatalkan (jika sebelum packing)
-}
-
-enum PaymentMethod {
-  CREDIT_CARD
-  DEBIT_CARD
-  BANK_TRANSFER
-  QRIS
-  E_WALLET
 }
 
 enum PaymentStatus {
