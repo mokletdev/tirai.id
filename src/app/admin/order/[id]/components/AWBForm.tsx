@@ -1,6 +1,6 @@
 "use client";
 
-import { addResi, updateResi } from "@/actions/order";
+import { updateResi } from "@/actions/order";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Body2, Body3, H2 } from "@/components/ui/text";
@@ -27,7 +27,8 @@ export const AWBForm = ({
     try {
       await updateResi(order.id, trackingId);
       toast.success("Berhasil mengupdate resi", { id: loadingId });
-    } catch {
+    } catch (e) {
+      console.log(e);
       toast.error("Gagal mengupdate resi", { id: loadingId });
     } finally {
       setLoading(false);
@@ -35,12 +36,6 @@ export const AWBForm = ({
         id: loadingId,
       });
     }
-
-    await addResi(order.id, order.shipment!.carrier, trackingId);
-    setLoading(false);
-    return toast.success("Berhasil menambahkan resi", {
-      id: loadingId,
-    });
   };
 
   return (
