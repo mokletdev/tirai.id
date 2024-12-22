@@ -2,7 +2,7 @@
 
 import { updateCart } from "@/actions/cart";
 import { SectionContainer } from "@/components/layout/SectionContainer";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Body2, Body3, H1, H2, H3, H4 } from "@/components/ui/text";
 import { useCart } from "@/hooks/use-cart";
@@ -11,7 +11,6 @@ import { CustomRequestItem } from "@/types/cart";
 import { Prisma } from "@prisma/client";
 import { CreditCard, Package, Palette, Ruler } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
-import Link from "next/link";
 import { FC, useEffect, useState } from "react";
 import { EmptyCart } from "../EmptyCart";
 import { ItemCard } from "./ItemCard";
@@ -155,10 +154,8 @@ export const CartItems: FC<{
               </Body3>
             )}
             <Button
-              className={buttonVariants({
-                size: "lg",
-                className: "mb-3 w-full",
-              })}
+              size={"lg"}
+              className="mb-3 w-full"
               onClick={() => {
                 router.push("/shop/checkout");
               }}
@@ -222,12 +219,9 @@ export const CartItems: FC<{
                 </Body3>
               )}
             </div>
-            <Link
-              href={"/shop/checkout"}
-              className={buttonVariants({
-                size: "lg",
-                className: "mb-3 w-full",
-              })}
+            <Button
+              size={"lg"}
+              className="mb-3 w-full"
               onClick={async () => {
                 const filteredCart = cart.filter((item) => {
                   const product = products?.find(
@@ -243,10 +237,11 @@ export const CartItems: FC<{
                 });
 
                 await updateCart({ type: "ready-stock", items: filteredCart });
+                return router.push("/shop/checkout");
               }}
             >
               Proses ke Checkout
-            </Link>
+            </Button>
             <Body3 className="w-full text-neutral-500">
               Kami mengumpulkan data pribadi Anda untuk memproses pesanan dan
               memberikan pembaruan statusnya. Dengan melanjutkan Checkout, Anda

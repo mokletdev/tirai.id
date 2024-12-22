@@ -27,7 +27,7 @@ export const upsertCheckout = async (
 
       const user = await prisma.user.findUnique({
         where: {
-          id: session?.user?.id!,
+          id: session?.user?.id,
         },
       });
 
@@ -69,7 +69,7 @@ export const upsertCheckout = async (
         data: {
           shipping_address: buildShipmentAddressString(shipmentAddress),
           status: "UNPAID",
-          user_id: session?.user?.id!,
+          user_id: session?.user?.id,
           phone_number: shipmentAddress.recipient_phone_number,
           total_price: 0,
         },
@@ -85,7 +85,7 @@ export const upsertCheckout = async (
       });
 
       let amount = 0;
-      let itemDetail: ItemDetail[] = [];
+      const itemDetail: ItemDetail[] = [];
       await prisma.orderItem.createMany({
         data: cart.map((item) => {
           const product = products.find((j) => item.productId === j.id);
@@ -94,12 +94,11 @@ export const upsertCheckout = async (
             : null;
 
           amount +=
-            item.quantity *
-            (item.variantId ? variant?.price! : product?.price!);
+            item.quantity * (item.variantId ? variant!.price : product!.price!);
 
           itemDetail.push({
-            description: product?.name!,
-            price: item.variantId ? variant?.price! : product?.price!,
+            description: product!.name,
+            price: item.variantId ? variant!.price : product!.price!,
             quantity: item.quantity,
           });
 
@@ -121,12 +120,12 @@ export const upsertCheckout = async (
 
         if (variant) {
           return await prisma.productVariant.update({
-            where: { id: variant?.id! },
+            where: { id: variant?.id },
             data: { stock: { decrement: item.quantity } },
           });
         }
         await prisma.product.update({
-          where: { id: product?.id! },
+          where: { id: product?.id },
           data: { stock: { decrement: item.quantity } },
         });
       });
@@ -139,8 +138,8 @@ export const upsertCheckout = async (
       const result = await createTransactionInvoice({
         customer_details: {
           email: user?.email,
-          name: user?.name!,
-          id: user?.id!,
+          name: user!.name,
+          id: user?.id,
           phone: shipmentAddress.recipient_phone_number?.startsWith("0")
             ? shipmentAddress.recipient_phone_number.slice(1, 0)
             : shipmentAddress.recipient_phone_number!,
@@ -182,7 +181,7 @@ export const upsertCheckout = async (
         },
       });
 
-      await updateCart([]);
+      await updateCart({ type: "ready-stock", items: [] });
 
       return ActionResponses.success(data);
     },

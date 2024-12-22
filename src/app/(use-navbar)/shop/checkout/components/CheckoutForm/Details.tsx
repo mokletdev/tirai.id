@@ -4,26 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Body3, H3 } from "@/components/ui/text";
 import { useCart } from "@/hooks/use-cart";
 import { formatRupiah } from "@/lib/utils";
+import { CartItem } from "@/types/cart";
 import { ProductWithVariant } from "@/types/entityRelations";
 import { useMemo } from "react";
 
 export const Details = ({
+  cartItems,
   products,
   checkoutDisabled,
   handleCheckout,
   shippingPrice,
 }: {
+  cartItems: CartItem[];
   products: ProductWithVariant[];
   checkoutDisabled: boolean;
   handleCheckout: () => void;
   shippingPrice?: number;
 }) => {
-  const { cart } = useCart();
-
   const detailedCartItems = useMemo(() => {
-    if (!cart || !products) return [];
+    if (!cartItems || !products) return [];
 
-    return cart
+    return cartItems
       .map((item) => {
         const product = products.find(
           (product) => product.id === item.productId,
@@ -46,7 +47,7 @@ export const Details = ({
         };
       })
       .filter(Boolean);
-  }, [cart, products]);
+  }, [cartItems, products]);
 
   const productPrice = useMemo(() => {
     return detailedCartItems.reduce(
