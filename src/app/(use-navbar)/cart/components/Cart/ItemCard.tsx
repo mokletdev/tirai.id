@@ -14,6 +14,7 @@ import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Dispatch, FC, SetStateAction, useEffect, useMemo } from "react";
+import { toast } from "sonner";
 
 export const ItemCard: FC<{
   item: CartItem;
@@ -23,7 +24,7 @@ export const ItemCard: FC<{
   >;
   product?: Prisma.ProductGetPayload<{ include: { variants: true } }>;
 }> = ({ item, quantities, setQuantities, product }) => {
-  const { editReadyStockItem, removeReadyStockItem } = useCart();
+  const { editItem, removeItem } = useCart();
 
   const itemVariant = useMemo(
     () => product?.variants.find((variant) => variant.id === item.variantId),
@@ -86,7 +87,7 @@ export const ItemCard: FC<{
   }, [item, product]);
 
   useEffect(() => {
-    editReadyStockItem(item.id, { quantity });
+    editItem(item.id, { quantity });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [quantity, item.id]);
 
@@ -221,7 +222,7 @@ export const ItemCard: FC<{
                   return q;
                 }),
               );
-              editReadyStockItem(item.id, { quantity: Number(value) });
+              editItem(item.id, { quantity: Number(value) });
             }}
             value={quantity.toString()}
           >
@@ -242,8 +243,14 @@ export const ItemCard: FC<{
             </SelectContent>
           </Select>
           <button
-            onClick={() => {
-              removeReadyStockItem(item.id);
+            onClick={async () => {
+              const loadingToast = toast.loading("Loading...");
+
+              await removeItem(item.id);
+
+              toast.success("Berhasil menambahkan produk!", {
+                id: loadingToast,
+              });
               return location.reload();
             }}
             className="text-black"

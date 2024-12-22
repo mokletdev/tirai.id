@@ -23,6 +23,7 @@ import { User } from "next-auth";
 import { toast } from "sonner";
 import { addCustomProductByUser, saveAddress } from "../actions";
 import { useRouter } from "next/navigation";
+import { Body3, H1 } from "@/components/ui/text";
 
 export type Models = Prisma.ModelGetPayload<{
   select: { id: true; description: true; image: true; model: true };
@@ -147,12 +148,10 @@ export const Form: FC<{
     <SectionContainer id="custom-product">
       <div className="pb-8">
         <div className="mb-8 space-y-4">
-          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-blue-950">
-            Kustomisasi Tirai
-          </h1>
-          <p className="text-lg text-muted-foreground">
+          <H1 className="text-black">Kustomisasi Tirai</H1>
+          <Body3 className="text-neutral-500">
             Buat tirai sesuai dengan kebutuhan dan gaya interior Anda
-          </p>
+          </Body3>
           <Separator />
         </div>
 
@@ -180,12 +179,11 @@ export const Form: FC<{
                           />
                           <Label
                             htmlFor={`model-${model.id}`}
-                            className={`flex cursor-pointer flex-col items-center space-y-2 rounded-lg border-2 p-4 transition-all hover:bg-muted 
-                              ${
-                                selectedModel === model.model
-                                  ? "border-primary bg-primary/10 ring-2 ring-primary ring-offset-2"
-                                  : "border-muted"
-                              }`}
+                            className={`flex cursor-pointer flex-col items-center space-y-2 rounded-lg border-2 p-4 transition-all hover:bg-muted ${
+                              selectedModel === model.model
+                                ? "border-primary bg-primary/10 ring-primary ring-2 ring-offset-2"
+                                : "border-muted"
+                            }`}
                           >
                             {model.image ? (
                               <div className="relative h-32 w-full overflow-hidden rounded-md">

@@ -74,12 +74,7 @@ export const Navbar: FC = () => {
                     })}
                   >
                     <ShoppingCart />
-                    {cart &&
-                      cart.type === "ready-stock" &&
-                      cart.items.length > 0 && (
-                        <Body5>{cart.items.length}</Body5>
-                      )}
-                    {cart && cart.type === "custom" && <Body5>1</Body5>}
+                    {cart && cart.length > 0 && <Body5>{cart.length}</Body5>}
                   </Link>
                 </div>
               )}
@@ -191,12 +186,7 @@ export const Navbar: FC = () => {
                     }}
                   >
                     <ShoppingCart />
-                    {cart &&
-                      cart.type === "ready-stock" &&
-                      cart.items.length > 0 && (
-                        <Body5>{cart.items.length}</Body5>
-                      )}
-                    {cart && cart.type === "custom" && <Body5>1</Body5>}
+                    {cart && cart.length > 0 && <Body5>{cart.length}</Body5>}
                   </Link>
                 </div>
               )}

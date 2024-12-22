@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { ActionResponses } from "@/lib/actions";
 import { createProductCustom } from "@/utils/database/customProduct.query";
 import { buildShipmentAddressString } from "@/utils/build-shipment-address-string";
+import { updateCart } from "@/actions/cart";
 
 export const saveAddress = async (
   address: Prisma.ShippingAddressUncheckedCreateInput,
@@ -83,6 +84,16 @@ export const addCustomProductByUser = async (data: FormData) => {
     if (!productCustom) {
       return ActionResponses.serverError("Failed to create Product Custom");
     }
+
+    await updateCart({
+      type: "custom",
+      item: {
+        ...productCustom,
+        shipping_price: productCustom.shipping_price
+          ? productCustom.shipping_price
+          : undefined,
+      },
+    });
 
     revalidatePath("/");
 
