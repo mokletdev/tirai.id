@@ -13,7 +13,7 @@ export default function Home() {
     "@type": "OnlineStore",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${process.env.APP_URL}`,
+      "@id": `${process.env.NEXT_PUBLIC_APP_URL}`,
     },
     description: "E-Commerce tirai nomor 1 di Indonesia",
     publisher: {
@@ -21,12 +21,12 @@ export default function Home() {
       name: "Tirai.id",
       logo: {
         "@type": "ImageObject",
-        url: `${process.env.APP_URL}/assets/logo.png`,
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/assets/logo.png`,
       },
     },
     keywords:
       "curtain, tirai, gorden, kain, ecommerce, online, toko, bisnis, beli, jual, buy, sell, pengiriman, kirim, tirai.id, Tiraid, Tiraiid, id",
-    url: `${process.env.APP_URL}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL}`,
     isAccessibleForFree: true,
     inLanguage: "id",
     about: {

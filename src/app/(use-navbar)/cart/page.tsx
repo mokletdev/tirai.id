@@ -16,6 +16,7 @@ export default async function CartPage() {
     : "not found";
 
   if (cart === null) {
+    // Update the cart to empty array, because there is no way the cart will be null in the db unless the user is not adding anything yet
     await updateCart([]);
     return redirect("/cart");
   }

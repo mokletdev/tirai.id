@@ -80,7 +80,7 @@ export const requestVerificationMail = async ({
       to: email,
       html: verifyTemplate(
         name,
-        `${process.env.APP_URL}/auth/confirm-email/verify?token=${token.token}`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/auth/confirm-email/verify?token=${token.token}`,
       ),
     });
 
@@ -155,7 +155,7 @@ export const requestResetPasswordMail = async (
       to: email,
       html: resetPasswordTemplate(
         name,
-        `${process.env.APP_URL}/auth/reset-password/reset?token=${token.token}`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password/reset?token=${token.token}`,
       ),
     });
 

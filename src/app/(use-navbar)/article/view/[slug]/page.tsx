@@ -34,7 +34,7 @@ export async function generateMetadata(
       images: [article?.cover_url, ...previousImages],
       publishedTime: article.published_at!.toISOString(),
       description: article.description || undefined,
-      url: `${process.env.APP_URL}/article/view/${article.slug}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${article.slug}`,
     },
     authors: {
       name: article.author.name,
@@ -49,7 +49,7 @@ export async function generateMetadata(
       ...article.title.split(" "),
     ],
     alternates: {
-      canonical: `${process.env.APP_URL}/article/view/${article.slug}`,
+      canonical: `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${article.slug}`,
     },
     robots: {
       index: true,
@@ -86,7 +86,7 @@ export default async function ArticlePage({
     "@type": "NewsArticle",
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${process.env.APP_URL}/article/view/${article.slug}`,
+      "@id": `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${article.slug}`,
     },
     headline: article.title,
     description: article.description,
@@ -100,7 +100,7 @@ export default async function ArticlePage({
       name: "Tirai.id",
       logo: {
         "@type": "ImageObject",
-        url: `${process.env.APP_URL}/assets/logo.png`,
+        url: `${process.env.NEXT_PUBLIC_APP_URL}/assets/logo.png`,
       },
     },
     datePublished: article.published_at!.toISOString(),
@@ -108,7 +108,7 @@ export default async function ArticlePage({
     articleSection: "Interior Design",
     keywords: article.tags.join(", "),
     wordCount: article.content.split(" ").length,
-    url: `${process.env.APP_URL}/article/view/${article.slug}`,
+    url: `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${article.slug}`,
     isAccessibleForFree: true,
     speakable: {
       "@type": "SpeakableSpecification",
@@ -128,7 +128,7 @@ export default async function ArticlePage({
         <ArticleContent
           article={article}
           shareData={{
-            url: `${process.env.APP_URL}/article/view/${article.slug}`,
+            url: `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${article.slug}`,
           }}
         />
         <script

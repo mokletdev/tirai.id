@@ -3,21 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { Body3, H3 } from "@/components/ui/text";
 import { useCart } from "@/hooks/use-cart";
-import { ProductWithVariant } from "@/types/entityRelations";
-import { useEffect, useState, useMemo } from "react";
 import { formatRupiah } from "@/lib/utils";
+import { ProductWithVariant } from "@/types/entityRelations";
+import { useMemo } from "react";
 
 export const Details = ({
   products,
   checkoutDisabled,
   handleCheckout,
+  shippingPrice,
 }: {
   products: ProductWithVariant[];
   checkoutDisabled: boolean;
   handleCheckout: () => void;
+  shippingPrice?: number;
 }) => {
   const { cart } = useCart();
-  const [shippingPrice, setShippingPrice] = useState<number>(0);
 
   const detailedCartItems = useMemo(() => {
     if (!cart || !products) return [];
@@ -56,7 +57,7 @@ export const Details = ({
   }, [detailedCartItems]);
 
   const totalPrice = useMemo(
-    () => productPrice + shippingPrice,
+    () => productPrice + (shippingPrice === undefined ? 0 : shippingPrice),
     [productPrice, shippingPrice],
   );
 
@@ -71,9 +72,11 @@ export const Details = ({
         </div>
         <div className="flex flex-row justify-between">
           <Body3 className="text-black">Shipping</Body3>
-          <Body3 className="neutral-500 text-black">
-            {formatRupiah(shippingPrice)}
-          </Body3>
+          {shippingPrice && (
+            <Body3 className="neutral-500 text-black">
+              {formatRupiah(shippingPrice)}
+            </Body3>
+          )}
         </div>
         <div className="mt-2 flex flex-row justify-between">
           <H3 className="text-black">Total</H3>

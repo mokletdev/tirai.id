@@ -1,5 +1,6 @@
 "use client";
 
+import { buttonVariants } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -7,21 +8,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Body1 } from "@/components/ui/text";
 import { buildShipmentAddressString } from "@/utils/build-shipment-address-string";
 import { ShippingAddress } from "@prisma/client";
-import { Dispatch, SetStateAction } from "react";
 import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { Body1 } from "@/components/ui/text";
+import { Dispatch, SetStateAction } from "react";
 
 export const AddressSelector = ({
   addresses,
-  address,
-  setAddress,
+  addressId,
+  setAddressId,
 }: {
   addresses: ShippingAddress[];
-  address: string | undefined;
-  setAddress: Dispatch<SetStateAction<string | undefined>>;
+  addressId: string | undefined;
+  setAddressId: Dispatch<SetStateAction<string | undefined>>;
 }) => {
   return (
     <div className="w-full">
@@ -29,9 +29,9 @@ export const AddressSelector = ({
       <div className="flex w-full flex-col gap-2">
         <Select
           onValueChange={(value) => {
-            setAddress(value);
+            setAddressId(value);
           }}
-          value={address}
+          value={addressId}
           disabled={addresses.length === 0}
         >
           <SelectTrigger className="w-full">

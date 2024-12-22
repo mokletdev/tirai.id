@@ -1,14 +1,10 @@
+import { updateCart } from "@/actions/cart";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { Body1 } from "@/components/ui/text";
 import { getServerSession } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
 import { CartItem } from "@/types/cart";
-import { Details } from "./components/Details";
-import { ProductCard } from "./components/ProductCard";
-import { SectionContainer } from "@/components/layout/SectionContainer";
-import { AddressSelector } from "./components/AddressSelector";
+import { notFound, redirect } from "next/navigation";
 import { CheckoutForm } from "./components/CheckoutForm";
-import { notFound } from "next/navigation";
 
 export default async function Checkout() {
   const session = await getServerSession();
@@ -24,6 +20,7 @@ export default async function Checkout() {
     },
   });
   const cart = cartFetch?.json_content as CartItem[];
+
   const products = await prisma.product.findMany({
     where: {
       id: {
@@ -35,11 +32,28 @@ export default async function Checkout() {
     },
   });
 
+  // Update the cart in case the user does not come from the cart page
+  const filteredCart = cart.filter((item) => {
+    const product = products.find((product) => product.id === item.productId);
+    if (!product) return false;
+
+    if (product.price !== null) return true;
+
+    return product.variants.some((variant) => variant.id === item.variantId);
+  });
+
+  if (filteredCart.length !== cart.length) {
+    await updateCart(filteredCart);
+  }
+
+  // If the filteredCart is empty, then redirect to cart page
+  if (filteredCart.length === 0) {
+    return redirect("/cart");
+  }
+
   return (
     <PageContainer className="flex h-[90vh] px-4 text-black">
-      <SectionContainer id="checkout">
-        <CheckoutForm addresses={addresses} cart={cart} products={products} />
-      </SectionContainer>
+      <CheckoutForm addresses={addresses} cart={cart} products={products} />
     </PageContainer>
   );
 }
