@@ -23,6 +23,7 @@ import * as googleAnalytics from "@/actions/googleAnalytics";
 import * as dashboardData from "@/actions/eCommerceAnalytics";
 import { CalculateResult } from "@/actions/googleAnalytics";
 import { CardSkeleton, TopFiveData, Card as CardCustom } from "./Card";
+import { formatRupiah } from "@/lib/utils";
 
 interface GoogleAnalyticsData {
   newUsers: CalculateResult | null;
@@ -142,7 +143,7 @@ export default function Dashboard() {
         monthlyRevenue,
         topProducts,
         topCustomers,
-        customerRetention,
+        getAverageRating,
         lowStockProducts,
         paymentDistribution,
         ordersByCategory,
@@ -151,7 +152,7 @@ export default function Dashboard() {
         dashboardData.getMonthlyRevenueTrend(),
         dashboardData.getTopProducts(),
         dashboardData.getTopCustomers(),
-        dashboardData.getCustomerRetentionRate(),
+        dashboardData.getAverageRating(),
         dashboardData.getLowStockProducts(),
         dashboardData.getPaymentMethodDistribution(),
         dashboardData.getOrderCountByCategory(),
@@ -162,7 +163,7 @@ export default function Dashboard() {
         monthlyRevenue,
         topProducts,
         topCustomers,
-        customerRetention: customerRetention[0]?.retention_rate || 0,
+        customerRetention: getAverageRating,
         lowStockProducts,
         paymentDistribution,
         ordersByCategory,
@@ -273,7 +274,7 @@ export default function Dashboard() {
                         </p>
                       </div>
                       <Badge variant="secondary">
-                        ${customer.totalPurchases.toFixed(2)}
+                        {formatRupiah(customer.totalPurchases)}
                       </Badge>
                     </div>
                   ))}
@@ -283,16 +284,13 @@ export default function Dashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Customer Retention</CardTitle>
+                <CardTitle>Average Rating</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <div className="text-4xl font-bold">
-                    {prismaData.customerRetention}%
+                    {prismaData.customerRetention}/10
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Returning customers
-                  </p>
                 </div>
               </CardContent>
             </Card>
