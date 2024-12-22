@@ -27,7 +27,7 @@ export const AWBForm = ({
     try {
       await UpdateResi(order.id, trackingId);
       toast.success("Berhasil mengupdate resi", { id: loadingId });
-    } catch (error) {
+    } catch {
       toast.error("Gagal mengupdate resi", { id: loadingId });
     } finally {
       setLoading(false);

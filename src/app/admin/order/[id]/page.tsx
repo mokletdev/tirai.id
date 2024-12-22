@@ -131,6 +131,7 @@ export default async function OrderDetail({
                         <Body3>
                           {i.quantity} x{" "}
                           {formatRupiah(
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
                             i.variant ? i.variant.price! : i.product?.price!,
                           )}
                         </Body3>
