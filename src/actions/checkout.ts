@@ -17,7 +17,7 @@ export const upsertCheckout = async (
 ): Promise<ActionResponse<CreateInvoiceSuccessResponse>> => {
   const session = await getServerSession();
 
-  await prisma.$transaction(
+  const data = await prisma.$transaction(
     async (prisma) => {
       const itemIds = cartItem.map((i) => i.productId);
 
@@ -58,7 +58,13 @@ export const upsertCheckout = async (
       });
 
       let amount = 0;
-      let itemDetail: ItemDetail[] = [];
+      let itemDetail: ItemDetail[] = [
+        {
+          description: "cobek",
+          price: 1,
+          quantity: 1,
+        },
+      ];
 
       await prisma.orderItem.createMany({
         data: cartItem.map((item) => {
@@ -71,11 +77,11 @@ export const upsertCheckout = async (
             item.quantity *
             (item.variantId ? variant?.price! : product?.price!);
 
-          itemDetail.push({
-            description: product?.name!,
-            price: item.variantId ? variant?.price! : product?.price!,
-            quantity: item.quantity,
-          });
+          // itemDetail.push({
+          //   description: product?.name!,
+          //   price: item.variantId ? variant?.price! : product?.price!,
+          //   quantity: item.quantity,
+          // });
 
           return {
             order_id: order.id,
@@ -141,22 +147,21 @@ export const upsertCheckout = async (
         },
       });
 
-      const transactionInvoice = result.data;
+      const data = result.data!;
 
       await prisma.payment.create({
         data: {
           order_id: order.id,
           status: "PENDING",
-          transaction_id: transactionInvoice?.id,
+          transaction_id: data.id,
         },
       });
 
+      return ActionResponses.success(data);
       // TODO: Decrease the stock of a product/variant
-
-      return ActionResponses.success(transactionInvoice);
     },
     { isolationLevel: "Serializable" },
   );
 
-  return ActionResponses.serverError();
+  return data;
 };

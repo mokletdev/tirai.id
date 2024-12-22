@@ -45,10 +45,8 @@ export const ProductCard = ({
       </div>
       <div className="products-end flex h-full flex-col justify-between">
         <Body3 className="mb-4 text-black">
-          {formatRupiah(
-            cartItem.quantity *
-              (product.price ? product.price : variant?.price!),
-          )}
+          {cartItem.quantity} x{" "}
+          {formatRupiah(product.price ? product.price : variant?.price!)}
         </Body3>
       </div>
     </div>
