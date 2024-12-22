@@ -2,13 +2,20 @@ import { getServerSession } from "@/lib/next-auth";
 import { Form } from "./components/Form";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+import { isCustomCart, isReadyStockCart } from "@/lib/utils";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { SectionContainer } from "@/components/layout/SectionContainer";
+import { Ban } from "lucide-react";
+import { Body3, H1 } from "@/components/ui/text";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 export default async function Page() {
   const session = await getServerSession();
 
   if (!session?.user) return;
 
-  const [models, bahans, addresses] = await prisma.$transaction([
+  const [models, bahans, addresses, cart] = await prisma.$transaction([
     prisma.model.findMany({
       select: {
         id: true,
@@ -42,16 +49,52 @@ export default async function Page() {
         is_primary: true,
       },
     }),
+    prisma.cart.findUnique({ where: { user_id: session.user.id } }),
   ]);
+
+  if (
+    cart &&
+    ((isReadyStockCart(cart.json_content) &&
+      cart.json_content.items.length > 0) ||
+      (isCustomCart(cart.json_content) && cart.json_content.item))
+  ) {
+    return (
+      <PageContainer>
+        <SectionContainer id="already-filled">
+          <div className="mx-auto flex w-full max-w-md flex-col items-center justify-center text-center">
+            <Ban className="mb-16 size-28 text-primary-900" />
+            <H1 className="mb-2 text-black">Keranjang Sudah Terisi</H1>
+            <Body3 className="mb-8 text-balance text-neutral-500">
+              Anda hanya bisa memasukkan satu produk kustom ke dalam keranjang.
+              Anda juga tidak dapat memasukkan produk kustom jika sudah ada
+              produk ready-stock di dalam keranjang anda.
+            </Body3>
+            <Link
+              href={"/cart"}
+              className={buttonVariants({
+                variant: "default",
+                className: "mb-3 min-w-64",
+                size: "lg",
+              })}
+            >
+              Lihat keranjang
+            </Link>
+          </div>
+        </SectionContainer>
+      </PageContainer>
+    );
+  }
 
   if (models.length < 1 || bahans.length < 1) return notFound();
 
   return (
-    <Form
-      models={models}
-      bahans={bahans}
-      addresses={addresses}
-      user={session.user}
-    />
+    <PageContainer>
+      <Form
+        models={models}
+        bahans={bahans}
+        addresses={addresses}
+        user={session.user}
+      />
+    </PageContainer>
   );
 }
