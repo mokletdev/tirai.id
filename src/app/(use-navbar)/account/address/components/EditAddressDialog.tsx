@@ -133,7 +133,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="street">Jalan</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Masukkan alamat jalan" />
+                      <Input {...field} placeholder="Jl. Danau Ranau No. G6B" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -147,10 +147,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="village">Kelurahan/Desa</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Masukkan nama kelurahan/desa"
-                      />
+                      <Input {...field} placeholder="Sawojajar" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -164,7 +161,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="district">Kecamatan</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Masukkan nama kecamatan" />
+                      <Input {...field} placeholder="Kedungkandang" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -178,10 +175,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="city">Kota/Kabupaten</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Masukkan nama kota/kabupaten"
-                      />
+                      <Input {...field} placeholder="Kota Malang" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,7 +189,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="province">Provinsi</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Masukkan nama provinsi" />
+                      <Input {...field} placeholder="Jawa Timur" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -209,7 +203,7 @@ export const EditAddressDialog: FC<
                   <FormItem className="flex flex-col space-y-1.5">
                     <FormLabel htmlFor="postal_code">Kode Pos</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Masukkan kode pos" />
+                      <Input {...field} placeholder="65139" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,10 +219,7 @@ export const EditAddressDialog: FC<
                       Info Tambahan
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Masukkan informasi tambahan"
-                      />
+                      <Input {...field} placeholder="Di depan kios abc" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
