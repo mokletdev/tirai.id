@@ -146,6 +146,8 @@ model CustomRequest {
   price          Float
   shipping_price Float?
 
+  address String
+
   user User @relation(fields: [userId], references: [id])
 
   item   OrderItem?
