@@ -211,7 +211,7 @@ model Payment {
   id             String        @id @default(uuid())
   status         PaymentStatus
   created_at     DateTime      @default(now())
-  transaction_id String? // ID Transaksi dari payment gateway
+  transaction_id String?       @unique // ID Transaksi dari payment gateway
 
   order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
   order_id String @unique
