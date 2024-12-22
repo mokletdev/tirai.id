@@ -13,6 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { H3 } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { CustomRequest } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
@@ -20,8 +27,14 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { z } from "zod";
 
+interface Courier {
+  code: string;
+  description: string;
+}
+
 interface CustomRequestFormProps {
   updateData: CustomRequest & { user: { email: string } };
+  courierList: Courier[];
 }
 
 const customRequestSchema = z.object({
@@ -37,12 +50,14 @@ const customRequestSchema = z.object({
     .nullable()
     .optional(),
   address: z.string().min(1, "Alamat wajib diisi"),
+  carrier_code: z.string().min(1, "Kurir wajib dipilih"),
 });
 
 type CustomRequestFormValues = z.infer<typeof customRequestSchema>;
 
 export default function CustomRequestForm({
   updateData,
+  courierList,
 }: Readonly<CustomRequestFormProps>) {
   const router = useRouter();
 
@@ -56,6 +71,7 @@ export default function CustomRequestForm({
       price: updateData.price,
       shipping_price: updateData.shipping_price,
       address: updateData.address,
+      carrier_code: updateData.carrier_code || "",
     },
     schema: customRequestSchema,
   });
@@ -220,6 +236,34 @@ export default function CustomRequestForm({
                       placeholder="Masukkan ongkos kirim"
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="carrier_code"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kurir</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih kurir pengiriman" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {courierList.map((courier) => (
+                        <SelectItem key={courier.code} value={courier.code}>
+                          {courier.description}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

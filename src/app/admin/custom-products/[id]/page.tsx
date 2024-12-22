@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import CustomRequestForm from "../_components/CustomRequestForm";
 import prisma from "@/lib/prisma";
+import { getCourierList } from "../actions";
 
 export default async function UpdateCustomRequest({
   params,
@@ -15,5 +16,9 @@ export default async function UpdateCustomRequest({
   });
   if (!customRequest) return notFound();
 
-  return <CustomRequestForm updateData={customRequest} />;
+  const courierList = await getCourierList();
+
+  return (
+    <CustomRequestForm updateData={customRequest} courierList={courierList} />
+  );
 }
