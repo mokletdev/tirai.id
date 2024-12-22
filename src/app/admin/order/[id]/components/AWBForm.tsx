@@ -27,17 +27,9 @@ export const AWBForm = ({
       });
     }
 
-    if (order.shipment) {
-      await UpdateResi(order.id, trackingId);
-      setLoading(false);
-      return toast.success("Berhasil mengupdate resi", {
-        id: loadingId,
-      });
-    }
-
-    await AddResi(order.id, order.desired_carrier_name, trackingId);
+    await UpdateResi(order.id, trackingId);
     setLoading(false);
-    return toast.success("Berhasil menambahkan resi", {
+    return toast.success("Berhasil mengupdate resi", {
       id: loadingId,
     });
   };
@@ -48,7 +40,7 @@ export const AWBForm = ({
         <H2 className="py-0">Pengiriman</H2>
         <div className="flex w-full items-center justify-between">
           <Body2>Kurir Pilihan</Body2>
-          <Body3>{order.desired_carrier_name}</Body3>
+          <Body3>{order.shipment?.carrier.toUpperCase()}</Body3>
         </div>
         <div className="flex w-full items-start justify-between">
           <Body2>Alamat Pengiriman</Body2>
@@ -56,7 +48,7 @@ export const AWBForm = ({
             {order.shipping_address}
           </Body3>
         </div>
-        {order.status !== "UNPAID" && (
+        {order.status === "PACKING" && (
           <div className="flex w-full flex-col items-start">
             <Body2>No. Resi</Body2>
             <Input
