@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         if (body.fraud_status === "accept") {
           const payment = await prisma.payment.update({
             where: {
-              transaction_id: body.transaction_id,
+              order_id: body.order_id,
             },
             data: {
               status: "COMPLETED",
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
       case "pending":
         await prisma.payment.update({
           where: {
-            transaction_id: body.transaction_id,
+            order_id: body.order_id,
           },
           data: {
             status: "PENDING",
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       case "cancel":
         const payment = await prisma.payment.update({
           where: {
-            transaction_id: body.transaction_id,
+            order_id: body.order_id,
           },
           data: {
             status: "FAILED",

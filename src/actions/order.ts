@@ -1,9 +1,9 @@
 "use server";
 
 import { ActionResponse, ActionResponses } from "@/lib/actions";
-import { findOrderById, updateOrder } from "@/utils/database/order.query";
-import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
+import { updateOrder } from "@/utils/database/order.query";
+import { revalidatePath } from "next/cache";
 
 export const ConfirmOrder = async (
   orderId: string,
@@ -71,6 +71,16 @@ export const UpdateResi = async (
       },
       data: {
         tracking_id: trackingId,
+        status: "PENDING",
+      },
+    });
+
+    await prisma.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status: "SHIPPING",
       },
     });
 
