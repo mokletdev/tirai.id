@@ -19,11 +19,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date().toISOString(),
     },
     ...articles.map(({ slug, updated_at }) => ({
-      url: `${process.env.APP_URL}/article/view/${slug}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/article/view/${slug}`,
       lastModified: updated_at.toISOString(),
     })),
     ...tags.map((tag) => ({
-      url: `${process.env.APP_URL}/article/tags/${tag}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL}/article/tags/${tag}`,
       lastModified: new Date(),
     })),
   ];

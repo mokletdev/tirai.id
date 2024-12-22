@@ -2,6 +2,7 @@ import { getServerSession } from "@/lib/next-auth";
 import { Form } from "./components/Form";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
+
 export default async function Page() {
   const session = await getServerSession();
 

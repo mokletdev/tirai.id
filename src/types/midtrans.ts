@@ -248,7 +248,7 @@ export interface InvoiceRequestBody {
   invoice_number: string;
   due_date: string;
   invoice_date: string;
-  customer_details: CustomerDetails;
+  customer_details: CustomerDetailsInvoice;
   payment_type: "payment_link" | "virtual_account";
   reference?: string;
   item_details: ItemDetail[];
@@ -265,7 +265,7 @@ export interface CreateInvoiceSuccessResponse {
   due_date: string;
   invoice_date: string;
   reference?: string;
-  customer_details: CustomerDetails;
+  customer_details: CustomerDetailsInvoice;
   item_details: ItemDetail[];
   id: string;
   status: "draft" | "pending" | "expired" | "overdue" | "paid" | "voided";

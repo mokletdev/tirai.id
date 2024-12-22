@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { H2 } from "@/components/ui/text";
+import { H2, Body3 } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { formatNumber, MAX_FILE_SIZE, parseNumberInput } from "@/lib/utils";
@@ -70,9 +70,9 @@ export const ProductForm = ({
         description: z.string().min(1, "Deskripsi wajib diisi."),
         slug: z.string().min(1, "Deskripsi wajib diisi."),
         category: z.string().min(1, "Kategori wajib diisi."),
-        price: z.string().min(1, "Harga wajib diisi."),
-        stock: z.string().min(1, "Stok wajib diisi."),
-        weight: z.string().min(1, "Berat wajib diisi."),
+        price: z.string().optional(),
+        stock: z.string().optional(),
+        weight: z.string().optional(),
         photos: updateData
           ? z
               .union([z.instanceof(File).array(), z.undefined()])
@@ -140,9 +140,9 @@ export const ProductForm = ({
           description,
           name,
           slug,
-          price: parseNumberInput(price),
-          stock: parseNumberInput(stock),
-          weight: parseNumberInput(weight),
+          price: price ? parseNumberInput(price) : undefined,
+          stock: stock ? parseNumberInput(stock) : undefined,
+          weight: weight ? parseNumberInput(weight) : undefined,
           photos: photos ? photosData : undefined,
         },
       });
@@ -199,6 +199,10 @@ export const ProductForm = ({
               <>Buat Produk Baru</>
             )}
           </H2>
+          <Body3 className="text-neutral-500">
+            Berat, Stok, dan Harga tidak wajib diisi jika produk akan memiliki
+            varian nantinya
+          </Body3>
           {updateData && (
             <div className="inline-flex w-full justify-end">
               <Button
@@ -357,7 +361,9 @@ export const ProductForm = ({
                 <Input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => field.onChange([...Array.from(e.target.files ?? [])])}
+                  onChange={(e) =>
+                    field.onChange([...Array.from(e.target.files ?? [])])
+                  }
                   onBlur={field.onBlur}
                   name={field.name}
                   ref={field.ref}

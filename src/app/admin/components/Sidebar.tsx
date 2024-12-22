@@ -7,6 +7,7 @@ import {
   SquarePen,
   User2,
   Building,
+  Receipt,
 } from "lucide-react";
 import { SidebarMainContent } from "./SidebarMainContent";
 
@@ -91,6 +92,12 @@ const SIDEBAR_ITEMS = [
     url: "/admin/seo",
     icon: Building,
     isActive: false,
+  },
+  {
+    title: "Order",
+    url: "/admin/order",
+    icon: Receipt,
+    isActive: true,
   },
 ];
 

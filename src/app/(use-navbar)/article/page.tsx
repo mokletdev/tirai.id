@@ -52,7 +52,7 @@ export async function generateMetadata({
     title: "Kumpulan artikel dari Tirai.id",
     description: `Jelajahi koleksi artikel kami: ${titles}`,
     alternates: {
-      canonical: `${process.env.APP_URL}/article`,
+      canonical: `${process.env.NEXT_PUBLIC_APP_URL}/article`,
     },
     keywords: titles,
     openGraph: {

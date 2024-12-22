@@ -2,12 +2,14 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { MidtransWebhookBody } from "@/types/midtrans";
+import prisma from "@/lib/prisma";
 
 const MIDTRANS_SERVER_KEY = process.env.MIDTRANS_SERVER_KEY || "";
 
 export async function POST(req: Request) {
   try {
     const body: MidtransWebhookBody = await req.json();
+    console.log(body);
 
     const expectedSignature = crypto
       .createHash("sha512")
@@ -27,16 +29,53 @@ export async function POST(req: Request) {
       case "capture":
       case "settlement":
         if (body.fraud_status === "accept") {
-          // TODO: Update order to 'success'
+          const payment = await prisma.payment.update({
+            where: {
+              transaction_id: body.transaction_id,
+            },
+            data: {
+              status: "COMPLETED",
+            },
+          });
+          await prisma.order.update({
+            where: {
+              id: payment.order_id,
+            },
+            data: {
+              status: "PENDING",
+            },
+          });
         }
         break;
       case "pending":
-        // TODO: Update order to 'waiting payment'
+        await prisma.payment.update({
+          where: {
+            transaction_id: body.transaction_id,
+          },
+          data: {
+            status: "PENDING",
+          },
+        });
         break;
       case "deny":
       case "expire":
       case "cancel":
-        // TODO: Update order to 'failure or cancel'
+        const payment = await prisma.payment.update({
+          where: {
+            transaction_id: body.transaction_id,
+          },
+          data: {
+            status: "FAILED",
+          },
+        });
+        await prisma.order.update({
+          where: {
+            id: payment.order_id,
+          },
+          data: {
+            status: "CANCELED",
+          },
+        });
         break;
       default:
         // Handle unexpected status
