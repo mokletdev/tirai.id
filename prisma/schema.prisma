@@ -1,241 +1,241 @@
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 model User {
-  id          String   @id @default(uuid())
-  name        String
-  email       String   @unique
-  is_verified Boolean
-  password    String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  role        Role     @default(CUSTOMER)
+    id          String   @id @default(uuid())
+    name        String
+    email       String   @unique
+    is_verified Boolean
+    password    String?
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    role        Role     @default(CUSTOMER)
 
-  articles Article[]
-  orders   Order[]
-  cart     Cart?
+    articles Article[]
+    orders   Order[]
+    cart     Cart?
 
-  tokens            Token[]
-  shipping_addreses ShippingAddress[]
-  CustomRequest     CustomRequest[]
+    tokens            Token[]
+    shipping_addreses ShippingAddress[]
+    CustomRequest     CustomRequest[]
 }
 
 model ShippingAddress {
-  id                     String   @id @default(uuid())
-  recipient_name         String
-  recipient_phone_number String
-  created_at             DateTime @default(now())
-  updated_at             DateTime @updatedAt
+    id                     String   @id @default(uuid())
+    recipient_name         String
+    recipient_phone_number String
+    created_at             DateTime @default(now())
+    updated_at             DateTime @updatedAt
 
-  street          String
-  village         String
-  district        String
-  city            String
-  province        String
-  postal_code     String
-  additional_info String?
-  is_primary      Boolean @default(false)
+    street          String
+    village         String
+    district        String
+    city            String
+    province        String
+    postal_code     String
+    additional_info String?
+    is_primary      Boolean @default(false)
 
-  user_id String
-  user    User   @relation(fields: [user_id], references: [id])
+    user_id String
+    user    User   @relation(fields: [user_id], references: [id])
 }
 
 model Token {
-  id          String       @id @default(uuid())
-  token       String       @unique
-  last_sent   DateTime?
-  sent_count  Int          @default(0)
-  purpose     TokenPurpose
-  expiry_date DateTime
+    id          String       @id @default(uuid())
+    token       String       @unique
+    last_sent   DateTime?
+    sent_count  Int          @default(0)
+    purpose     TokenPurpose
+    expiry_date DateTime
 
-  user    User   @relation(fields: [user_id], references: [id])
-  user_id String @unique
+    user    User   @relation(fields: [user_id], references: [id])
+    user_id String @unique
 
-  @@unique([user_id, purpose])
+    @@unique([user_id, purpose])
 }
 
 model ProductCategory {
-  id         String   @id @default(uuid())
-  name       String
-  slug       String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+    id         String   @id @default(uuid())
+    name       String
+    slug       String   @unique
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 
-  products Product[]
+    products Product[]
 }
 
 model Product {
-  id           String   @id @default(uuid())
-  name         String
-  description  String
-  photos       String[]
-  stock        Int?
-  price        Float?
-  weight       Float?
-  slug         String   @unique
-  is_published Boolean  @default(false)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+    id           String   @id @default(uuid())
+    name         String
+    description  String
+    photos       String[]
+    stock        Int?
+    price        Float?
+    weight       Float?
+    slug         String   @unique
+    is_published Boolean  @default(false)
+    created_at   DateTime @default(now())
+    updated_at   DateTime @updatedAt
 
-  category    ProductCategory  @relation(fields: [category_id], references: [id])
-  category_id String
-  variants    ProductVariant[]
-  reviews     Review[]
-  items       OrderItem[]
+    category    ProductCategory  @relation(fields: [category_id], references: [id])
+    category_id String
+    variants    ProductVariant[]
+    reviews     Review[]
+    items       OrderItem[]
 }
 
 model Review {
-  id      String @id @default(uuid())
-  rating  Float
-  content String
+    id      String @id @default(uuid())
+    rating  Float
+    content String
 
-  order_id      String
-  order         Order     @relation(fields: [order_id], references: [id])
-  order_item_id String    @unique
-  order_item    OrderItem @relation(fields: [order_item_id], references: [id], onDelete: Cascade)
-  product_id    String
-  product       Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    order_id      String
+    order         Order     @relation(fields: [order_id], references: [id])
+    order_item_id String    @unique
+    order_item    OrderItem @relation(fields: [order_item_id], references: [id], onDelete: Cascade)
+    product_id    String
+    product       Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
-  @@unique([order_item_id, order_id])
+    @@unique([order_item_id, order_id])
 }
 
 model ProductVariant {
-  id         String   @id @default(uuid())
-  name       String   @unique
-  width      Float
-  height     Float
-  price      Float
-  stock      Int
-  weight     Float
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+    id         String   @id @default(uuid())
+    name       String   @unique
+    width      Float
+    height     Float
+    price      Float
+    stock      Int
+    weight     Float
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
 
-  product    Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  product_id String
-  items      OrderItem[]
+    product    Product     @relation(fields: [product_id], references: [id], onDelete: Cascade)
+    product_id String
+    items      OrderItem[]
 }
 
 model Material {
-  id             String @id @default(uuid())
-  name           String @unique
-  price          Float
-  supplier_price Float
-  description    String
+    id             String @id @default(uuid())
+    name           String @unique
+    price          Float
+    supplier_price Float
+    description    String
 }
 
 model Model {
-  id          String  @id @default(uuid())
-  model       String  @unique
-  description String?
-  image       String?
+    id          String  @id @default(uuid())
+    model       String  @unique
+    description String?
+    image       String?
 }
 
 model CustomRequest {
-  id             String @id @default(uuid())
-  material       String
-  model          String
-  color          String
-  width          String
-  height         String
-  price          Float
-  shipping_price Float?
+    id             String @id @default(uuid())
+    material       String
+    model          String
+    color          String
+    width          String
+    height         String
+    price          Float
+    shipping_price Float?
 
-  address String
+    address String
 
-  user User @relation(fields: [userId], references: [id])
+    user User @relation(fields: [userId], references: [id])
 
-  item   OrderItem?
-  userId String
+    item   OrderItem?
+    userId String
 }
 
 model Order {
-  id           String      @id @default(uuid())
-  finished_at  DateTime?
-  total_price  Float
-  phone_number String
-  status       OrderStatus
-  invoice_link String?
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @updatedAt
+    id           String      @id @default(uuid())
+    finished_at  DateTime?
+    total_price  Float
+    phone_number String
+    status       OrderStatus
+    invoice_link String?
+    created_at   DateTime    @default(now())
+    updated_at   DateTime    @updatedAt
 
-  reviews              Review[]
-  items                OrderItem[]
-  payment              Payment?
-  shipment             Shipment?
-  desired_carrier_name String
+    reviews  Review[]
+    items    OrderItem[]
+    payment  Payment?
+    shipment Shipment?
 
-  user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id          String
-  shipping_address String // Shipping address from the table, but turned into a string to prevent 
+    user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    user_id          String
+    shipping_address String // Shipping address from the table, but turned into a string to prevent 
 }
 
 model OrderItem {
-  id       String @id @default(uuid())
-  quantity Int
+    id       String @id @default(uuid())
+    quantity Int
 
-  review            Review?
-  order             Order           @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  order_id          String
-  product           Product?        @relation(fields: [product_id], references: [id])
-  product_id        String?
-  variant           ProductVariant? @relation(fields: [variant_id], references: [id], onDelete: Cascade) // Jika user menginginkan custom option yang baru
-  variant_id        String?
-  custom_request    CustomRequest?  @relation(fields: [custom_request_id], references: [id])
-  custom_request_id String?         @unique
+    review            Review?
+    order             Order           @relation(fields: [order_id], references: [id], onDelete: Cascade)
+    order_id          String
+    product           Product?        @relation(fields: [product_id], references: [id])
+    product_id        String?
+    variant           ProductVariant? @relation(fields: [variant_id], references: [id], onDelete: Cascade) // Jika user menginginkan custom option yang baru
+    variant_id        String?
+    custom_request    CustomRequest?  @relation(fields: [custom_request_id], references: [id])
+    custom_request_id String?         @unique
 }
 
 model Article {
-  id           String    @id @default(uuid())
-  title        String
-  slug         String    @unique
-  tags         String[]
-  content      String
-  cover_url    String
-  published_at DateTime?
-  created_at   DateTime  @default(now())
-  updated_at   DateTime  @updatedAt
-  is_published Boolean   @default(false)
-  views        Int       @default(0)
-  description  String
+    id           String    @id @default(uuid())
+    title        String
+    slug         String    @unique
+    tags         String[]
+    content      String
+    cover_url    String
+    published_at DateTime?
+    created_at   DateTime  @default(now())
+    updated_at   DateTime  @updatedAt
+    is_published Boolean   @default(false)
+    views        Int       @default(0)
+    description  String
 
-  author    User   @relation(fields: [author_id], references: [id], onDelete: Cascade)
-  author_id String
+    author    User   @relation(fields: [author_id], references: [id], onDelete: Cascade)
+    author_id String
 }
 
 model Payment {
-  id             String        @id @default(uuid())
-  status         PaymentStatus
-  created_at     DateTime      @default(now())
-  transaction_id String?       @unique // ID Transaksi dari payment gateway
+    id             String        @id @default(uuid())
+    method         PaymentMethod
+    status         PaymentStatus
+    created_at     DateTime      @default(now())
+    transaction_id String? // ID Transaksi dari payment gateway
 
-  order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  order_id String @unique
+    order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
+    order_id String @unique
 }
 
 model Shipment {
-  id                    String         @id @default(uuid())
-  carrier               String // Nama pengirim (i.e: JNE, J&T)
-  tracking_id           String? // ID Tracking dari third party
-  status                ShipmentStatus
-  created_at            DateTime       @default(now())
-  updated_at            DateTime       @updatedAt
-  estimated_finish_time DateTime
+    id                    String         @id @default(uuid())
+    carrier               String // Nama pengirim (i.e: JNE, J&T)
+    tracking_id           String? // ID Tracking dari third party
+    status                ShipmentStatus
+    created_at            DateTime       @default(now())
+    updated_at            DateTime       @updatedAt
+    estimated_finish_time DateTime
 
-  order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
-  order_id String @unique
+    order    Order  @relation(fields: [order_id], references: [id], onDelete: Cascade)
+    order_id String @unique
 }
 
 model Cart {
-  id           String @id @default(uuid())
-  user         User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id      String @unique
-  json_content Json
+    id           String @id @default(uuid())
+    user         User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+    user_id      String @unique
+    json_content Json
 }
 
 // cart: [
@@ -248,56 +248,64 @@ model Cart {
 // ],
 
 model SEO {
-  id                 Int      @id @default(autoincrement())
-  page               String   @unique
-  title              String
-  description        String
-  keywords           String[]
-  canonicalURL       String?
-  ogTitle            String?
-  ogDescription      String?
-  ogImage            String?
-  twitterCard        String? // Summary, Summary_large_image, etc.
-  twitterTitle       String?
-  twitterDescription String?
-  twitterImage       String?
-  updatedAt          DateTime @updatedAt
-  createdAt          DateTime @default(now())
+    id                 Int      @id @default(autoincrement())
+    page               String   @unique
+    title              String
+    description        String
+    keywords           String[]
+    canonicalURL       String?
+    ogTitle            String?
+    ogDescription      String?
+    ogImage            String?
+    twitterCard        String? // Summary, Summary_large_image, etc.
+    twitterTitle       String?
+    twitterDescription String?
+    twitterImage       String?
+    updatedAt          DateTime @updatedAt
+    createdAt          DateTime @default(now())
 }
 
 enum Role {
-  CUSTOMER
-  SUPPLIER
-  ADMIN
-  SUPERADMIN
-  SALES
-  CONTENTWRITER
+    CUSTOMER
+    SUPPLIER
+    ADMIN
+    SUPERADMIN
+    SALES
+    CONTENTWRITER
 }
 
 enum OrderStatus {
-  UNPAID // Belum dibayar
-  PENDING // Sudah dibayar, belum diapprove sales
-  PACKING // sudah diapprove sales
-  SHIPPING // Order bersama kurir
-  DELIVERED // Telah dikirim di alamat tujuan
-  FINISHED // Telah selesai
-  CANCELED // Dibatalkan (jika sebelum packing)
+    UNPAID // Belum dibayar
+    PENDING // Sudah dibayar, belum diapprove sales
+    PACKING // sudah diapprove sales
+    SHIPPING // Order bersama kurir
+    DELIVERED // Telah dikirim di alamat tujuan
+    FINISHED // Telah selesai
+    CANCELED // Dibatalkan (jika sebelum packing)
+}
+
+enum PaymentMethod {
+    CREDIT_CARD
+    DEBIT_CARD
+    BANK_TRANSFER
+    QRIS
+    E_WALLET
 }
 
 enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
+    PENDING
+    COMPLETED
+    FAILED
 }
 
 enum ShipmentStatus {
-  PENDING
-  SHIPPED
-  DELIVERED
-  CANCELED
+    PENDING
+    SHIPPED
+    DELIVERED
+    CANCELED
 }
 
 enum TokenPurpose {
-  RESET_PASSWORD
-  EMAIL_VERIFICATION
+    RESET_PASSWORD
+    EMAIL_VERIFICATION
 }
