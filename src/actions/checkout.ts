@@ -165,7 +165,7 @@ export const upsertCheckout = async (
           due_date: addMinutes(new Date(), 10).toISOString(),
           invoice_date: new Date().toISOString(),
           invoice_number: `${
-            process.env.NODE_ENV === "production" ? "TRX" : "DEV"
+            process.env.APP_ENV === "production" ? "TRX" : "DEV"
           }-${generateToken(12)}`,
           item_details: itemDetail,
           payment_type: "payment_link",
