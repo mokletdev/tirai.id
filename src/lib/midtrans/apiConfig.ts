@@ -24,9 +24,9 @@ class ApiConfig {
   static readonly IRIS_PRODUCTION_BASE_URL =
     "https://app.midtrans.com/iris/api/v1";
   static readonly INVOICE_SANDBOX_BASE_URL =
-    "https://api.midtrans.com/v1/invoices";
-  static readonly INVOICE_PRODUCTION_BASE_URL =
     "https://api.sandbox.midtrans.com/v1/invoices";
+  static readonly INVOICE_PRODUCTION_BASE_URL =
+    "https://api.midtrans.com/v1/invoices";
 
   /**
    * Initiate with options

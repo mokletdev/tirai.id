@@ -71,3 +71,29 @@ export type ChatUser = Prisma.UserGetPayload<{
     role: true;
   };
 }>;
+
+export type ProductWithVariant = Prisma.ProductGetPayload<{
+  include: {
+    variants: true;
+  };
+}>;
+
+export type OrderWithItemsPaymentShipment = Prisma.OrderGetPayload<{
+  include: {
+    items: true;
+    payment: true;
+    shipment: true;
+  };
+}>;
+
+export type OrderWithItemsProductsPaymentShipment = Prisma.OrderGetPayload<{
+  include: {
+    items: {
+      include: {
+        product: true;
+      };
+    };
+    payment: true;
+    shipment: true;
+  };
+}>;

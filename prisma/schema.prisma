@@ -8,15 +8,14 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  name         String
-  email        String   @unique
-  phone_number String?  @unique
-  is_verified  Boolean
-  password     String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-  role         Role     @default(CUSTOMER)
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  is_verified Boolean
+  password    String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  role        Role     @default(CUSTOMER)
 
   articles Article[]
   orders   Order[]
@@ -24,6 +23,7 @@ model User {
 
   tokens            Token[]
   shipping_addreses ShippingAddress[]
+  CustomRequest     CustomRequest[]
 }
 
 model ShippingAddress {
@@ -34,8 +34,10 @@ model ShippingAddress {
   updated_at             DateTime @updatedAt
 
   street          String
+  village         String
+  district        String
   city            String
-  region          String
+  province        String
   postal_code     String
   additional_info String?
   is_primary      Boolean @default(false)
@@ -120,35 +122,46 @@ model ProductVariant {
 }
 
 model Material {
-  id    String @id @default(uuid())
-  name  String @unique
-  price Float
+  id             String @id @default(uuid())
+  name           String @unique
+  price          Float
+  supplier_price Float
+  description    String
 }
 
 model Model {
-  id          String @id @default(uuid())
-  model       String @unique
-  description String
+  id          String  @id @default(uuid())
+  model       String  @unique
+  description String?
+  image       String?
 }
 
 model CustomRequest {
-  id             String @id @default(uuid())
+  id             String  @id @default(uuid())
   material       String
   model          String
   color          String
   width          String
   height         String
   price          Float
-  size           String
-  supplier_price Float
+  shipping_price Float?
+  carrier_code   String?
 
-  item OrderItem?
+  address                String
+  recipient_phone_number String
+  recipient_name         String
+
+  user User @relation(fields: [userId], references: [id])
+
+  item   OrderItem?
+  userId String
 }
 
 model Order {
   id           String      @id @default(uuid())
   finished_at  DateTime?
   total_price  Float
+  phone_number String
   status       OrderStatus
   invoice_link String?
   created_at   DateTime    @default(now())

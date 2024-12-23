@@ -12,7 +12,7 @@ import { FC, useRef } from "react";
 export const Navbar: FC = () => {
   const { data: session, status } = useSession();
   const navbarToggle = useRef<HTMLInputElement>(null);
-  const cart = useCart();
+  const { cart } = useCart();
 
   return (
     <>
@@ -58,7 +58,7 @@ export const Navbar: FC = () => {
                 session.user?.role === "SUPPLIER") && (
                 <div className="ml-6 flex items-center gap-x-2">
                   <Link
-                    href={"/profile"}
+                    href={"/account"}
                     className={buttonVariants({
                       variant: "default",
                       className: "w-full text-center",
@@ -74,9 +74,7 @@ export const Navbar: FC = () => {
                     })}
                   >
                     <ShoppingCart />
-                    {cart.cart && cart.cart.length > 0 && (
-                      <Body5>{cart.cart.length}</Body5>
-                    )}
+                    {cart && cart.length > 0 && <Body5>{cart.length}</Body5>}
                   </Link>
                 </div>
               )}
@@ -154,6 +152,9 @@ export const Navbar: FC = () => {
                     variant: "default",
                     className: "ml-6 w-full text-center",
                   })}
+                  onClick={() => {
+                    navbarToggle.current!.checked = false;
+                  }}
                 >
                   Dashboard
                 </Link>
@@ -163,11 +164,14 @@ export const Navbar: FC = () => {
                 session.user?.role === "SUPPLIER") && (
                 <div className="ml-6 flex items-center gap-x-2">
                   <Link
-                    href={"/profile"}
+                    href={"/account"}
                     className={buttonVariants({
                       variant: "default",
                       className: "w-full text-center",
                     })}
+                    onClick={() => {
+                      navbarToggle.current!.checked = false;
+                    }}
                   >
                     <UserRound />
                   </Link>
@@ -177,11 +181,12 @@ export const Navbar: FC = () => {
                       variant: "default",
                       className: "w-full text-center",
                     })}
+                    onClick={() => {
+                      navbarToggle.current!.checked = false;
+                    }}
                   >
                     <ShoppingCart />
-                    {cart.cart && cart.cart.length > 0 && (
-                      <Body5>{cart.cart.length}</Body5>
-                    )}
+                    {cart && cart.length > 0 && <Body5>{cart.length}</Body5>}
                   </Link>
                 </div>
               )}
@@ -193,6 +198,9 @@ export const Navbar: FC = () => {
                     variant: "default",
                     className: "w-full text-center",
                   })}
+                  onClick={() => {
+                    navbarToggle.current!.checked = false;
+                  }}
                 >
                   Masuk
                 </Link>
@@ -202,6 +210,9 @@ export const Navbar: FC = () => {
                     variant: "outline",
                     className: "w-full text-center",
                   })}
+                  onClick={() => {
+                    navbarToggle.current!.checked = false;
+                  }}
                 >
                   Daftar
                 </Link>

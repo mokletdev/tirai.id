@@ -1,9 +1,10 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { SectionContainer } from "@/components/layout/SectionContainer";
 import { getServerSession } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { Cart } from "./components/Cart";
-import { CartItem } from "@/types/cart";
+import { isCustomCart, isReadyStockCart } from "@/lib/utils";
+import { CartItems } from "./components/Cart";
+import { EmptyCart } from "./components/EmptyCart";
 
 export default async function CartPage() {
   const session = await getServerSession();
@@ -15,26 +16,51 @@ export default async function CartPage() {
     : "not found";
 
   if (cart === null) {
-    return notFound();
+    return (
+      <SectionContainer id="cart">
+        <EmptyCart />
+      </SectionContainer>
+    );
   }
 
   const products =
-    cart !== "not found"
+    cart !== "not found" && isReadyStockCart(cart.json_content)
       ? await prisma.product.findMany({
           where: {
             id: {
-              in: (cart.json_content as CartItem[]).map(
-                (item) => item.productId,
-              ),
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              in: cart.json_content.items.map((item) => item.productId),
             },
           },
           include: { variants: true },
         })
       : null;
 
+  const customRequestCart =
+    cart !== "not found" && isCustomCart(cart.json_content)
+      ? cart.json_content.item
+      : null;
+
+  const customRequest =
+    customRequestCart !== null
+      ? await prisma.customRequest.findUnique({
+          where: { id: customRequestCart.id },
+        })
+      : null;
+
   return (
     <PageContainer>
-      <Cart products={products} />
+      <CartItems
+        products={products}
+        customRequest={
+          customRequest
+            ? {
+                ...customRequest,
+                shipping_price: customRequest?.shipping_price ?? undefined,
+              }
+            : null
+        }
+      />
     </PageContainer>
   );
 }

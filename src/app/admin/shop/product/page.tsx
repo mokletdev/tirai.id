@@ -1,10 +1,10 @@
-import { getProducts } from "@/actions/products";
 import { buttonVariants } from "@/components/ui/button";
 import { Body3, H1 } from "@/components/ui/text";
 import { PageSelector } from "@/components/widget/PageSelector";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { ProductContainer } from "./components/ProductContainer";
+import { findProducts } from "@/utils/database/product.query";
 
 export default async function ProductAdmin({
   searchParams,
@@ -16,9 +16,9 @@ export default async function ProductAdmin({
   const { page } = await searchParams;
   const curPage = page ? parseInt(page) : 1;
 
-  const res = await getProducts(12, curPage, "latest");
+  const res = await findProducts(12, curPage, "latest");
 
-  const products = res.data?.data;
+  const products = res.data;
 
   return (
     <div className="flex flex-col">
@@ -34,10 +34,10 @@ export default async function ProductAdmin({
       <div className="mb-2 grid grid-cols-1 gap-2 md:grid-cols-3">
         <ProductContainer products={products || []} />
       </div>
-      {res.data && res.data.data.length > 0 && res.data.meta && (
-        <PageSelector meta={res.data.meta} />
+      {res.data && res.data.length > 0 && res.meta && (
+        <PageSelector meta={res.meta} />
       )}
-      {res.data?.data.length === 0 && (
+      {res.data.length === 0 && (
         <Body3 className="text-neutral-500">Belum ada produk apapun...</Body3>
       )}
     </div>

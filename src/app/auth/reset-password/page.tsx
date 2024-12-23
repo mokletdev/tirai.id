@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ResetPasswordEmailForm } from "./components/forms/reset-password-email-form";
-import { HasSentWarning } from "./components/has-sent-warning";
+import { ResetPasswordEmailForm } from "./components/forms/EmailForm";
+import { HasSentWarning } from "./components/HasSentWarning";
 
 export default function ResetPasswordConfirmation() {
   const [loading, setLoading] = useState(false);

@@ -23,7 +23,10 @@ type Product = Prisma.ProductGetPayload<{
   include: { variants: true; category: { select: { name: true } } };
 }>;
 
-export const Hero: FC<{ product: Product }> = ({ product }) => {
+export const Hero: FC<{ product: Product; hasCustomCart: boolean }> = ({
+  product,
+  hasCustomCart,
+}) => {
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants.find((variant) => variant.stock > 0),
   );
@@ -35,11 +38,13 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
 
   const productInCart = useMemo(
     () =>
-      cart?.find(
-        (item) =>
-          item.productId === product.id &&
-          selectedVariant?.id === item.variantId,
-      ),
+      cart
+        ? cart.find(
+            (item) =>
+              item.productId === product.id &&
+              selectedVariant?.id === item.variantId,
+          )
+        : undefined,
     [cart, product.id, selectedVariant?.id],
   );
   const maxStock = useMemo(
@@ -131,7 +136,7 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
                   setQuantity(Number(value));
                 }}
                 value={quantity.toString()}
-                disabled={maxStock === 0}
+                disabled={maxStock === 0 || hasCustomCart}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue>{quantity}</SelectValue>
@@ -155,8 +160,8 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
             <Button
               variant={"default"}
               className="w-full"
-              disabled={maxStock === 0 || loading}
-              onClick={() => {
+              disabled={maxStock === 0 || loading || hasCustomCart}
+              onClick={async () => {
                 setLoading(true);
                 const loadingToast = toast.loading("Loading...");
 
@@ -171,7 +176,7 @@ export const Hero: FC<{ product: Product }> = ({ product }) => {
                   variantName: selectedVariant?.name,
                 };
 
-                addItem(cartItem);
+                await addItem(cartItem);
 
                 setLoading(false);
                 toast.success("Berhasil menambahkan produk!", {

@@ -1,3 +1,21 @@
+export type Cart =
+  | {
+      type: "custom";
+      item: CustomRequestItem | undefined;
+    }
+  | { type: "ready-stock"; items: CartItem[] };
+
+export type CustomRequestItem = {
+  id: string;
+  material: string;
+  model: string;
+  color: string;
+  width: string;
+  height: string;
+  price: number;
+  shipping_price?: number;
+};
+
 export type CartItem = {
   id: string; // Unique identifier for the cart item
   categoryName: string;

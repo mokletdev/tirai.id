@@ -11,7 +11,9 @@ export default withAuth(
     if (
       (pathname.startsWith("/admin") && !token) ||
       (pathname.startsWith("/shop/cart") && !token) ||
-      (pathname.startsWith("/shop/product") && !token)
+      (pathname.startsWith("/shop/product") && !token) ||
+      (pathname.startsWith("/account") && !token) ||
+      (pathname.startsWith("/shop/custom-product") && !token)
     ) {
       return NextResponse.redirect(
         new URL(`/auth/login?callbackUrl=${pathname}`, req.url),

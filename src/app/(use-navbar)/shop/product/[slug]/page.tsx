@@ -1,5 +1,7 @@
 import { PageContainer } from "@/components/layout/PageContainer";
+import { getServerSession } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
+import { isCustomCart } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Hero } from "./components/Hero";
 import { Keunggulan } from "./components/Keunggulan";
@@ -11,6 +13,7 @@ export default async function ProductDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const session = await getServerSession();
 
   const product = await prisma.product.findUnique({
     where: { slug },
@@ -18,7 +21,7 @@ export default async function ProductDetail({
   });
   if (!product) return notFound();
 
-  const [productsFromSameCategory, others] = await prisma.$transaction([
+  const [productsFromSameCategory, others, cart] = await prisma.$transaction([
     prisma.product.findMany({
       where: { id: { not: product.id }, category_id: product.category_id },
       include: { variants: true },
@@ -35,11 +38,14 @@ export default async function ProductDetail({
       include: { variants: true },
       take: 4,
     }),
+    prisma.cart.findUnique({ where: { user_id: session?.user?.id } }),
   ]);
+
+  const hasCustomCart = cart !== null && isCustomCart(cart.json_content);
 
   return (
     <PageContainer>
-      <Hero product={product} />
+      <Hero product={product} hasCustomCart={hasCustomCart} />
       <Keunggulan />
       {others.length > 0 && (
         <Others title={"Mungkin Anda juga Suka"} products={others} />
