@@ -147,7 +147,9 @@ model CustomRequest {
   shipping_price Float?
   carrier_code   String?
 
-  address String
+  address                String
+  recipient_phone_number String
+  recipient_name         String
 
   user User @relation(fields: [userId], references: [id])
 
