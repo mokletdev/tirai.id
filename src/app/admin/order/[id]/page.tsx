@@ -11,9 +11,10 @@ import { ConfirmButton } from "./components/ConfirmButton";
 export default async function OrderDetail({
   params,
 }: Readonly<{
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }>) {
-  const order = await findOrderById(params.id);
+  const { id } = await params;
+  const order = await findOrderById(id);
 
   if (!order) return notFound();
 
