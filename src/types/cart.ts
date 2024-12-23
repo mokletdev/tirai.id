@@ -1,7 +1,7 @@
 export type Cart =
   | {
       type: "custom";
-      item: CustomRequestItem;
+      item: CustomRequestItem | undefined;
     }
   | { type: "ready-stock"; items: CartItem[] };
 

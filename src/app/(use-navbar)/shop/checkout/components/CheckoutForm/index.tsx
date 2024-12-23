@@ -36,31 +36,33 @@ export const CheckoutForm: FC<{
   const router = useRouter();
 
   const handleCheckout = async () => {
-    if (selectedAddressId && selectedCourier) {
-      toast.loading("Loading...");
+    toast.loading("Loading...");
 
-      setLoading(true);
+    setLoading(true);
+    if (selectedAddressId && selectedCourier) {
       if (cartItems) {
         const res = await upsertCheckout(
-          cartItems,
+          { cartItems },
           selectedAddressId,
           selectedCourier,
         );
+        if (!res.success) {
+          setLoading(false);
+        }
         router.push(res.data?.payment_link_url!);
       }
 
-      // TODO: Handle when the customRequest are available
-      if (customRequest) {
-        // const res = await upsertCheckout(
-        //   customRequest,
-        //   selectedAddressId,
-        //   selectedCourier,
-        // );
-        // router.push(res.data?.payment_link_url!);
-      }
-
-      setLoading(false);
+      // Handle when the customRequest are available
     }
+    if (customRequest) {
+      const res = await upsertCheckout({ customRequest });
+      if (!res.success) {
+        setLoading(false);
+      }
+      router.push(res.data?.payment_link_url!);
+    }
+
+    setLoading(false);
   };
 
   if (customRequest !== undefined) {

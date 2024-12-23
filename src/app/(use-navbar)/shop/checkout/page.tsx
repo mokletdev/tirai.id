@@ -72,7 +72,7 @@ export default async function Checkout() {
 
   const customRequest =
     cart.type === "custom"
-      ? await prisma.customRequest.findUnique({ where: { id: cart.item.id } })
+      ? await prisma.customRequest.findUnique({ where: { id: cart.item?.id } })
       : undefined;
 
   return (
