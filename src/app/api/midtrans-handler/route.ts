@@ -23,13 +23,15 @@ export async function POST(req: Request) {
       );
     }
 
+    const orderId = body.order_id.split("-").slice(0, 5).join("-");
+
     switch (body.transaction_status) {
       case "capture":
       case "settlement":
         if (body.fraud_status === "accept") {
           const payment = await prisma.payment.update({
             where: {
-              order_id: body.order_id,
+              order_id: orderId,
             },
             data: {
               status: "COMPLETED",
@@ -49,7 +51,7 @@ export async function POST(req: Request) {
       case "pending":
         await prisma.payment.update({
           where: {
-            order_id: body.order_id,
+            order_id: orderId,
           },
           data: {
             status: "PENDING",
@@ -62,7 +64,7 @@ export async function POST(req: Request) {
       case "cancel": {
         const payment = await prisma.payment.update({
           where: {
-            order_id: body.order_id,
+            order_id: orderId,
           },
           data: {
             status: "FAILED",
