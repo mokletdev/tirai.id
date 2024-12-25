@@ -233,7 +233,7 @@ export const ChatInterface = ({
                   {recipients.find((j) => j.id === activeChat)?.name}
                 </Body2>
               </div>
-              <div className="relative z-0 flex h-[455px] min-h-max w-full flex-col-reverse gap-y-1 overflow-y-scroll px-4 pt-5">
+              <div className="relative z-0 flex h-[455px] w-full flex-col-reverse gap-y-1 overflow-y-scroll px-4 pt-5">
                 <div ref={messagesEndRef} />
                 <MessagesMap
                   messages={messages}

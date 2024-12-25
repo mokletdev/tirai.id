@@ -29,7 +29,9 @@ export const MessageCard = ({
         >
           {message.content}
           <div className="absolute bottom-0 right-0 flex items-end gap-[2px] p-1">
-            <Body5 className="text-[10px]">{`${hour.length < 2 ? `0${hour}` : hour}:${minute.length < 2 ? `0${minute}` : minute}`}</Body5>
+            <Body5 className="text-[10px]">{`${
+              hour.length < 2 ? `0${hour}` : hour
+            }:${minute.length < 2 ? `0${minute}` : minute}`}</Body5>
             <CheckCheck
               size={12}
               className={cn(
@@ -44,7 +46,7 @@ export const MessageCard = ({
         <figure
           key={message.id}
           className={cn(
-            "relative mt-5 w-fit rounded-lg bg-neutral-400 px-2 py-1 pe-8 text-white",
+            "relative w-fit rounded-lg bg-neutral-400 px-2 py-1 pe-8 text-white",
             participants &&
               participants.findIndex((i) => i.id === message.sender_id) !==
                 -1 &&
@@ -67,7 +69,9 @@ export const MessageCard = ({
             )}
           {message.content}
           <div className="absolute bottom-0 right-0 flex items-end gap-[2px] p-1">
-            <Body5 className="text-[9px]">{`${hour.length < 2 ? `0${hour}` : hour}:${minute.length < 2 ? `0${minute}` : minute}`}</Body5>
+            <Body5 className="text-[9px]">{`${
+              hour.length < 2 ? `0${hour}` : hour
+            }:${minute.length < 2 ? `0${minute}` : minute}`}</Body5>
           </div>
         </figure>
       )}

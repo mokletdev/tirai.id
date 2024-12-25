@@ -4,13 +4,15 @@ import { findChatById, setReadMessage } from "@/actions/chat";
 import { Message, useMessage } from "@/hooks/use-message";
 import { supabaseBrowser } from "@/lib/supabase-browser";
 import { cn } from "@/lib/utils";
-import { MessageSquareMore, X } from "lucide-react";
+import { MessageSquareMore, X, MessageCircle } from "lucide-react";
 import { Session } from "next-auth";
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { ChatForm } from "../widget/Chat/ChatForm";
 import { SendFileDialog } from "../widget/Chat/dialog/SendFileDialog";
 import { MessagesMap } from "../widget/Chat/MessagesMap";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export const ChatProvider = ({ session }: { session: Session }) => {
   const [isOpen, setOpen] = useState(false);
@@ -148,29 +150,68 @@ export const ChatProvider = ({ session }: { session: Session }) => {
       <button
         onClick={() => setOpen(!isOpen)}
         className={cn(
-          "fixed bottom-[20px] right-[20px] z-30 inline-flex aspect-square h-12 items-center justify-center overflow-hidden rounded-full bg-primary-600 p-4 text-white transition-all duration-300 sm:h-14",
+          "fixed bottom-[20px] right-[20px] z-30 inline-flex aspect-square h-12 items-center justify-center overflow-hidden rounded-full bg-primary-600 p-4 text-white transition-all duration-300 hover:bg-primary-700 sm:h-14",
         )}
       >
         {isOpen ? <X size={20} /> : <MessageSquareMore size={20} />}
       </button>
       {isOpen && (
         <div className="fixed !bottom-[10%] !right-[5%] z-30 !h-[80vh] !w-[90vw] sm:bottom-16 sm:right-20 sm:h-[70vh] sm:w-[40vw] sm:-translate-x-0 sm:-translate-y-0">
-          <div className="h-full w-full overflow-hidden rounded-lg border border-neutral-200 bg-blue-50">
-            <div className="flex h-[100%] w-full flex-col-reverse gap-1 overflow-y-scroll px-3 pb-[90px] pt-4">
-              <div ref={messagesEndRef} />
-              <MessagesMap session={session} messages={messages} />
-              {messages.length > 0 && hasMore && (
-                <div className="w-full text-black" ref={ref}>
-                  Loading...
+          <Card className="flex h-full w-full flex-col overflow-hidden">
+            <CardHeader className="border-b px-4 py-3">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10 bg-primary-100">
+                  <AvatarFallback className="bg-primary-100 text-primary-600">
+                    <MessageCircle className="h-5 w-5" />
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-sm">Chat Admin</CardTitle>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Senin - Jumat, 09.00 - 17.00 WIB
+                  </p>
                 </div>
-              )}
-            </div>
-          </div>
-          <ChatForm
-            activeChat={session.user.id}
-            session={session}
-            setFile={setFile}
-          />
+              </div>
+            </CardHeader>
+
+            <CardContent className="flex-1 overflow-y-auto p-0">
+              <div className="flex h-full w-full flex-col-reverse gap-1 px-3 pb-[90px] pt-4 overflow-y-scroll">
+                <div ref={messagesEndRef} />
+                {messages.length === 0 ? (
+                  <div className="flex h-full flex-col items-center justify-center p-4 text-center">
+                    <MessageCircle className="mb-3 h-12 w-12 text-primary-600" />
+                    <h3 className="mb-2 text-base font-semibold">
+                      Chat dengan Admin
+                    </h3>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                      Silakan kirim pesan kepada admin kami untuk mendapatkan
+                      bantuan
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <MessagesMap session={session} messages={messages} />
+                    {hasMore && (
+                      <div
+                        className="w-full text-center text-sm text-muted-foreground"
+                        ref={ref}
+                      >
+                        Loading...
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </CardContent>
+
+            <ChatForm
+              activeChat={session.user.id}
+              session={session}
+              setFile={setFile}
+            />
+          </Card>
         </div>
       )}
     </>
