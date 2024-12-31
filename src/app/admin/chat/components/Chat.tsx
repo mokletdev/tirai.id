@@ -176,8 +176,6 @@ export const ChatInterface = ({
           if (message.customer_id === message.sender_id) {
             sendNotification();
           }
-
-          sendNotification();
           setFilteredConvo((prev) => {
             const list = prev;
             const index = list.findIndex(
