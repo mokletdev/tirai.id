@@ -1,13 +1,12 @@
 import { FileMessageCard } from "@/components/widget/Chat/FileMessageCard";
 import { MessageCard } from "@/components/widget/Chat/MessageCard";
 import { Message } from "@/hooks/use-message";
-import { strDateToEpoch } from "@/lib/utils";
+import { strDateToEpoch, cn } from "@/lib/utils";
 import { Session } from "next-auth";
 import React from "react";
 import { DateSeparator } from "./DateSpearator";
 import { ChatProduct, ChatUser } from "@/types/entityRelations";
-import { cn } from "@/lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProductMessageCard } from "./ProductMessage";
 import moment from "moment-timezone";
 
@@ -121,7 +120,12 @@ export const MessagesMap = ({
   );
 
   return (
-    <div className="flex flex-col-reverse gap-2">
+    <div
+      className={cn(
+        "flex flex-col-reverse",
+        window.location.pathname.includes("admin") ? "gap-4" : "gap-2",
+      )}
+    >
       {messages.map((message, idx) => {
         const isUser = session?.user?.id === message.sender_id;
         const nextMessage = messages[idx + 1];
