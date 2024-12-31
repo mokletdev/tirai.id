@@ -57,6 +57,7 @@ export const ChatProvider = ({ session }: { session: Session }) => {
           event: "INSERT",
           table: "messages",
           schema: "public",
+          filter: `customer_id=eq.${session.user?.id}`,
         },
         (payload) => {
           const message = payload.new as Message;
@@ -85,6 +86,7 @@ export const ChatProvider = ({ session }: { session: Session }) => {
           event: "UPDATE",
           table: "messages",
           schema: "public",
+          filter: `customer_id=eq.${session.user?.id}`,
         },
         (payload) => {
           const message = payload.new as Message;
