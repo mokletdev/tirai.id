@@ -41,7 +41,10 @@ export default async function ProductDetail({
     prisma.cart.findUnique({ where: { user_id: session?.user?.id } }),
   ]);
 
-  const hasCustomCart = cart !== null && isCustomCart(cart.json_content);
+  const hasCustomCart =
+    cart !== null &&
+    isCustomCart(cart.json_content) &&
+    cart.json_content.item !== undefined;
 
   return (
     <PageContainer>
