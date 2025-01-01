@@ -37,7 +37,6 @@ export function useCart() {
       return;
     }
 
-    console.log();
     setCart([...cart, { ...item, id: (cart.length + 1).toString() }]);
     await updateCart({
       type: "ready-stock",
@@ -73,11 +72,10 @@ export function useCart() {
     });
   };
 
-  const clearCart = async () => {
+  const clearCart = () => {
     if (cart === undefined) return;
 
     setCart([]);
-    await updateCart({ type: "ready-stock", items: [] });
   };
 
   useEffect(() => {

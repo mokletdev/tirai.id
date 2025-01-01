@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useCart } from "@/hooks/use-cart";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next-nprogress-bar";
@@ -28,6 +29,7 @@ export const EditAccountForm: FC<{
   });
 
   const [loading, setLoading] = useState(false);
+  const { clearCart } = useCart();
 
   const form = useZodForm({
     defaultValues: {
@@ -112,7 +114,10 @@ export const EditAccountForm: FC<{
           <Button
             variant={"destructive"}
             type="button"
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={() => {
+              signOut({ callbackUrl: "/" });
+              clearCart();
+            }}
             disabled={loading}
           >
             Logout
