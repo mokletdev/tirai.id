@@ -82,6 +82,7 @@ model Product {
   is_published Boolean  @default(false)
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
+  is_vat       Boolean?
 
   category    ProductCategory  @relation(fields: [category_id], references: [id])
   category_id String
@@ -178,6 +179,12 @@ model Order {
   shipping_address String // Shipping address from the table, but turned into a string to prevent 
 }
 
+model Discount {
+  id                  String @id @default(uuid())
+  discount_in_percent Float
+  target_role         Role   @unique
+}
+
 model OrderItem {
   id       String @id @default(uuid())
   quantity Int
@@ -271,6 +278,8 @@ model SEO {
 
 enum Role {
   CUSTOMER
+  AFFILIATE
+  AGENT
   SUPPLIER
   ADMIN
   SUPERADMIN
