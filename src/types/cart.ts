@@ -27,3 +27,8 @@ export type CartItem = {
   pricePerItem: number; // Price per product or variant
   quantity: number; // Quantity of the item
 };
+
+export type CartObject = {
+  cartItems?: CartItem[];
+  customRequest?: CustomRequestItem;
+};

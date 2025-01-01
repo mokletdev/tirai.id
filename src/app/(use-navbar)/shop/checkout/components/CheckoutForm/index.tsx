@@ -36,33 +36,42 @@ export const CheckoutForm: FC<{
   const router = useRouter();
 
   const handleCheckout = async () => {
-    toast.loading("Loading...");
+    try {
+      toast.loading("Loading...");
+      setLoading(true);
 
-    setLoading(true);
-    if (selectedAddressId && selectedCourier) {
-      if (cartItems) {
-        const res = await upsertCheckout(
+      let checkoutResponse;
+
+      if (customRequest) {
+        checkoutResponse = await upsertCheckout({ customRequest });
+      } else if (cartItems && selectedAddressId && selectedCourier) {
+        checkoutResponse = await upsertCheckout(
           { cartItems },
           selectedAddressId,
           selectedCourier,
         );
-        if (!res.success) {
-          setLoading(false);
-        }
-        router.push(res.data?.payment_link_url!);
+      } else {
+        toast.error("Please complete all required fields");
+        return;
       }
 
-      // Handle when the customRequest are available
-    }
-    if (customRequest) {
-      const res = await upsertCheckout({ customRequest });
-      if (!res.success) {
-        setLoading(false);
+      if (!checkoutResponse.success) {
+        toast.error("Checkout failed");
+        return;
       }
-      router.push(res.data?.payment_link_url!);
-    }
 
-    setLoading(false);
+      if (checkoutResponse.data?.payment_link_url) {
+        router.push(checkoutResponse.data.payment_link_url);
+      } else {
+        toast.error("Payment link not found");
+      }
+    } catch (error) {
+      toast.error("An error occurred during checkout");
+      console.error("Checkout error:", error);
+    } finally {
+      setLoading(false);
+      toast.dismiss();
+    }
   };
 
   if (customRequest !== undefined) {
