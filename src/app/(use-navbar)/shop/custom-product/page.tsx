@@ -16,7 +16,8 @@ export default async function Page() {
 
   if (!session?.user) return;
 
-  const [models, bahans, addresses, cart] = await prisma.$transaction([
+  const [colors, models, bahans, addresses, cart] = await prisma.$transaction([
+    prisma.customColor.findMany(),
     prisma.model.findMany({
       select: {
         id: true,
@@ -98,6 +99,7 @@ export default async function Page() {
         addresses={addresses}
         user={session.user}
         discount={discount}
+        colors={colors}
       />
     </PageContainer>
   );

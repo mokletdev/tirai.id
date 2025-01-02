@@ -84,6 +84,7 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     requiredRole: ["SALES", "ADMIN", "SUPERADMIN"],
     children: [
       { title: "Request", url: "/admin/custom-products" },
+      { title: "Warna", url: "/admin/colors" },
       { title: "Bahan", url: "/admin/material" },
       { title: "Model", url: "/admin/model" },
     ],

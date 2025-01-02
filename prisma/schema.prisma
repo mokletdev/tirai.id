@@ -259,6 +259,12 @@ model Cart {
 // }
 // ],
 
+model CustomColor {
+  id        Int    @id @default(autoincrement())
+  name      String
+  colorCode String
+}
+
 model SEO {
   id                 Int      @id @default(autoincrement())
   page               String   @unique

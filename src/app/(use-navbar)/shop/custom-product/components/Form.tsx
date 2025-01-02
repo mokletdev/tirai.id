@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Settings, Palette } from "lucide-react";
 import FabricIcon from "@/components/svg-tsxIcon/fabricIcon";
-import { Discount, Prisma } from "@prisma/client";
+import { CustomColor, Discount, Prisma } from "@prisma/client";
 import Image from "next/image";
 import {
   Tooltip,
@@ -43,9 +43,10 @@ export const Form: FC<{
   models: Models[];
   bahans: Bahans[];
   addresses: ShippingAddress[];
+  colors: CustomColor[];
   user: Session["user"];
   discount?: Discount | null;
-}> = ({ models, bahans, addresses, user, discount }) => {
+}> = ({ models, bahans, addresses, user, discount, colors }) => {
   const [dimensions, setDimensions] = useState({ length: 0, width: 0 });
   const [selectedMaterial, setSelectedMaterial] = useState<Bahans | null>(null);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
@@ -273,14 +274,33 @@ export const Form: FC<{
               <CardTitle>Warna</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <Input
-                  type="color"
-                  name="color"
-                  defaultValue="#ffffff"
-                  className="h-16 w-full cursor-pointer"
-                />
-              </div>
+              <RadioGroup
+                name="color"
+                className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+              >
+                {colors.map((color) => (
+                  <Label
+                    key={color.id}
+                    className="group relative flex cursor-pointer flex-col space-y-2 rounded-lg border p-4 transition-all hover:bg-muted
+                [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 [&:has([data-state=checked])]:ring-2 [&:has([data-state=checked])]:ring-primary"
+                  >
+                    <RadioGroupItem
+                      value={color.colorCode}
+                      id={`color-${color.id}`}
+                      className="peer sr-only"
+                    />
+                    <div className="flex items-center justify-center">
+                      <div
+                        className="h-16 w-16 rounded-full border shadow-sm transition-transform group-hover:scale-105 [.group:has([data-state=checked])_&]:scale-110"
+                        style={{ backgroundColor: color.colorCode }}
+                      />
+                    </div>
+                    <div className="text-center">
+                      <span className="text-sm font-medium">{color.name}</span>
+                    </div>
+                  </Label>
+                ))}
+              </RadioGroup>
             </CardContent>
           </Card>
 
