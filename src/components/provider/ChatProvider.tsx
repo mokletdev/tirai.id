@@ -161,7 +161,6 @@ export const ChatProvider = ({ session }: { session: Session }) => {
       const userIds = res.map((i) => i.sender_id);
 
       getChatUsers(userIds).then((users) => {
-        console.log(users.data ?? []);
         setParticipants(users.data ?? []);
       });
 

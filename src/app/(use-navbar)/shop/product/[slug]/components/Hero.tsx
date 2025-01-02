@@ -17,6 +17,7 @@ import { cn, formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/types/cart";
 import { Discount, Prisma } from "@prisma/client";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
+import { StarIcon } from "lucide-react";
 import { Session } from "next-auth";
 import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
@@ -30,9 +31,10 @@ type Product = Prisma.ProductGetPayload<{
 export const Hero: FC<{
   product: Product;
   hasCustomCart: boolean;
+  productReview: number;
   session: Session | null | undefined;
   discount?: Discount | null;
-}> = ({ product, hasCustomCart, session, discount }) => {
+}> = ({ product, hasCustomCart, session, discount, productReview }) => {
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants.find((variant) => variant.stock > 0),
   );
@@ -131,7 +133,14 @@ export const Hero: FC<{
           />
         </div>
         <div className="flex w-full flex-col md:max-w-[38%]">
-          <H3 className="mb-[.75rem] text-black">{product.name}</H3>
+          <div className="mb-[.75rem] inline-flex items-center gap-2 text-black">
+            <H3 className="text-black">{product.name}</H3>
+            <div className="aspect-square h-1 rounded-full bg-black" />
+            <span className="inline-flex items-center gap-1 text-black">
+              <StarIcon className="text-yellow-400" fill="#facc15" />
+              <Body3>{productReview}/5</Body3>
+            </span>
+          </div>
           <Body3 className="mb-[3.5rem] text-neutral-500">
             {product.description}
           </Body3>
