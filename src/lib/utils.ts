@@ -1,4 +1,5 @@
 import { Cart } from "@/types/cart";
+import { generateToken } from "@/utils/random-string";
 import { clsx, type ClassValue } from "clsx";
 import moment from "moment-timezone";
 import { twMerge } from "tailwind-merge";
@@ -123,4 +124,13 @@ export const isReadyStockCart = (
     content !== null &&
     (content as Cart).type === "ready-stock"
   );
+};
+
+export const formatPhoneNumber = (phone: string) => {
+  return phone.startsWith("0") ? phone.slice(1) : phone;
+};
+
+export const generateInvoiceNumber = () => {
+  const prefix = process.env.APP_ENV === "production" ? "TRX" : "DEV";
+  return `${prefix}-${generateToken(12)}`;
 };

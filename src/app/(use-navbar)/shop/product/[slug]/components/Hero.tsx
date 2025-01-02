@@ -18,6 +18,7 @@ import { CartItem } from "@/types/cart";
 import { Discount, Prisma } from "@prisma/client";
 import { ChatBubbleIcon } from "@radix-ui/react-icons";
 import { Session } from "next-auth";
+import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
 import { FC, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ export const Hero: FC<{
   const [loading, setLoading] = useState(false);
 
   const { cart, addItem } = useCart();
+  const router = useRouter();
 
   const productInCart = useMemo(
     () =>
@@ -73,7 +75,7 @@ export const Hero: FC<{
         : product.price === null
           ? selectedVariant?.price || 0
           : product.price,
-    [product.price, selectedVariant],
+    [discount, product.price, selectedVariant?.price],
   );
 
   useEffect(() => {
@@ -234,6 +236,34 @@ export const Hero: FC<{
                 {maxStock === 0 ? "Sold Out" : "Masukkan Keranjang"}
               </Button>
             </div>
+            {maxStock !== 0 && (
+              <Button
+                variant={"default"}
+                className="w-full"
+                disabled={loading || hasCustomCart}
+                onClick={async () => {
+                  setLoading(true);
+
+                  const cartItem: Omit<CartItem, "id"> = {
+                    name: product.name,
+                    photo: product.photos[0],
+                    categoryName: product.category.name,
+                    pricePerItem: product.price ?? selectedVariant!.price,
+                    quantity,
+                    productId: product.id,
+                    variantId: selectedVariant?.id,
+                    variantName: selectedVariant?.name,
+                  };
+
+                  await addItem(cartItem);
+
+                  setLoading(false);
+                  return router.push("/shop/checkout");
+                }}
+              >
+                Beli sekarang
+              </Button>
+            )}
           </div>
         </div>
       </div>

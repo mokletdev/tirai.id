@@ -49,7 +49,7 @@ export default async function ProductDetail({
 
   const discount =
     session && session.user
-      ? await findDiscountByRole(session?.user?.role!)
+      ? await findDiscountByRole(session?.user?.role)
       : null;
 
   return (

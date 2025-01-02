@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Body3, H3 } from "@/components/ui/text";
+import { Body3, H5 } from "@/components/ui/text";
 import { formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/types/cart";
 import { ProductWithVariant } from "@/types/entityRelations";
@@ -57,14 +57,13 @@ export const Details = ({
         };
       })
       .filter(Boolean);
-  }, [cartItems, products]);
+  }, [cartItems, discount, products]);
 
-  const productPrice = useMemo(() => {
-    return detailedCartItems.reduce(
-      (sum, item) => sum + item!.totalItemPrice,
-      0,
-    );
-  }, [detailedCartItems]);
+  const productPrice = useMemo(
+    () =>
+      detailedCartItems.reduce((sum, item) => sum + item!.totalItemPrice, 0),
+    [detailedCartItems],
+  );
 
   const totalVat = useMemo(() => {
     return detailedCartItems.reduce((sum, item) => sum + item!.vat, 0);
@@ -117,8 +116,8 @@ export const Details = ({
           )}
         </div>
         <div className="mt-2 flex flex-row justify-between">
-          <H3 className="text-black">Total</H3>
-          <H3 className="text-black">{formatRupiah(totalPrice)}</H3>
+          <H5 className="text-black">Total</H5>
+          <H5 className="text-black">{formatRupiah(totalPrice)}</H5>
         </div>
       </div>
       <Button
