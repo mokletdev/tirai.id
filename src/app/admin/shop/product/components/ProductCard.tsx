@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Body1, Body3, Body4 } from "@/components/ui/text";
 import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,6 +19,14 @@ export const ProductCard = ({
   ) => Promise<string | number | undefined>;
   isLoading: boolean;
 }) => {
+  const ratingMean =
+    data.reviews.reduce((sum, i) => (sum += i.rating), 0) /
+      data.reviews.length >
+    0
+      ? data.reviews.reduce((sum, i) => (sum += i.rating), 0) /
+        data.reviews.length
+      : 0;
+
   return (
     <div className="w-full rounded-xl border border-neutral-100 p-6 text-black">
       <Image
@@ -32,7 +40,12 @@ export const ProductCard = ({
       <div className="mb-6 mt-3">
         <Body1>{data.name}</Body1>
         <Body3>{data.category.name}</Body3>
-        <Body4>{data.reviews.length} Review</Body4>
+        <span className="inline-flex items-center gap-1">
+          <StarIcon className="text-yellow-400" fill="#facc15" size={10} />{" "}
+          <Body4>{ratingMean.toFixed(1)}</Body4>
+          <div className="aspect-square h-1 rounded-full bg-black" />
+          <Body4>({data.reviews.length} Review)</Body4>
+        </span>
       </div>
       <div className="mb-2 inline-flex w-full gap-1">
         <Button
@@ -54,14 +67,25 @@ export const ProductCard = ({
           Edit
         </Link>
       </div>
+      {!data.price && (
+        <Link
+          className={buttonVariants({
+            variant: "default",
+            className: "w-full",
+          })}
+          href={`/admin/shop/product/${data.id}/variant`}
+        >
+          Lihat Varian
+        </Link>
+      )}
       <Link
         className={buttonVariants({
           variant: "default",
-          className: "w-full",
+          className: "mt-1 w-full",
         })}
-        href={`/admin/shop/product/${data.id}/variant`}
+        href={`/admin/shop/product/${data.id}/reviews`}
       >
-        Lihat Varian
+        Lihat Ulasan
       </Link>
     </div>
   );

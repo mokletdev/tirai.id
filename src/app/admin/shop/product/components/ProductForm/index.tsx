@@ -152,7 +152,7 @@ export const ProductForm = ({
           description,
           name,
           slug,
-          price: price ? parseNumberInput(price) : undefined,
+          price: price ? parseNumberInput(price) : null,
           stock: stock ? parseNumberInput(stock) : undefined,
           weight: weight ? parseNumberInput(weight) : undefined,
           photos: photos ? photosData : undefined,

@@ -7,6 +7,9 @@ import { Hero } from "./components/Hero";
 import { Keunggulan } from "./components/Keunggulan";
 import { Others } from "./components/Others";
 import { findDiscountByRole } from "@/utils/database/discount.query";
+import { findReviews } from "@/utils/database/review.query";
+import { SectionContainer } from "@/components/layout/SectionContainer";
+import { Reviews } from "./components/Reviews";
 
 export default async function ProductDetail({
   params,
@@ -18,7 +21,11 @@ export default async function ProductDetail({
 
   const product = await prisma.product.findUnique({
     where: { slug },
-    include: { variants: true, category: { select: { name: true } } },
+    include: {
+      variants: true,
+      category: { select: { name: true } },
+      reviews: true,
+    },
   });
   if (!product) return notFound();
 
@@ -42,6 +49,26 @@ export default async function ProductDetail({
     prisma.cart.findUnique({ where: { user_id: session?.user?.id } }),
   ]);
 
+  const ratingMean =
+    product.reviews.reduce((sum, i) => (sum += i.rating), 0) /
+      product.reviews.length >
+    0
+      ? product.reviews.reduce((sum, i) => (sum += i.rating), 0) /
+        product.reviews.length
+      : 0;
+
+  const reviews = await findReviews({
+    page: 1,
+    perPage: 3,
+    args: {
+      where: {
+        product: {
+          slug,
+        },
+      },
+    },
+  });
+
   const hasCustomCart =
     cart !== null &&
     isCustomCart(cart.json_content) &&
@@ -59,6 +86,7 @@ export default async function ProductDetail({
         hasCustomCart={hasCustomCart}
         session={session}
         discount={discount}
+        productReview={ratingMean}
       />
       <Keunggulan />
       {others.length > 0 && (
@@ -70,6 +98,7 @@ export default async function ProductDetail({
           products={productsFromSameCategory}
         />
       )}
+      <Reviews reviews={reviews.data} slug={slug} />
     </PageContainer>
   );
 }

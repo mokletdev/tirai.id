@@ -1,9 +1,6 @@
-import { buttonVariants } from "@/components/ui/button";
-import { Body3, H1, H2 } from "@/components/ui/text";
+import { H1 } from "@/components/ui/text";
 import { findDiscounts } from "@/utils/database/discount.query";
 import { Role } from "@prisma/client";
-import { BadgePercent, Plus } from "lucide-react";
-import Link from "next/link";
 import { RoleCard } from "./components/RoleCard";
 
 export default async function DiscountManagement() {
@@ -17,13 +14,11 @@ export default async function DiscountManagement() {
         {roles.map((i) => (
           <RoleCard
             role={i}
+            key={i}
             discount={discounts.find((j) => j.target_role === i)}
           />
         ))}
       </div>
-      {discounts.length === 0 && (
-        <Body3 className="text-neutral-500">Belum ada diskon apapun...</Body3>
-      )}
     </div>
   );
 }
