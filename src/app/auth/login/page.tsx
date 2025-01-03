@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { LoginForm } from "./components/forms/LoginForm";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Login ke Akun Tirai.id",
@@ -24,7 +25,9 @@ export default function Login() {
           </Link>
         </Body3>
 
-        <LoginForm />
+        <Suspense>
+          <LoginForm />
+        </Suspense>
       </div>
       <Image
         src={"/assets/login.png"}

@@ -18,6 +18,7 @@ import { addDays, addMinutes } from "date-fns";
 import { updateCart } from "./cart";
 import { createTransactionInvoice } from "./midtrans";
 import { Service } from "./shippingPrice/scraper";
+import { revalidatePath } from "next/cache";
 
 interface CartObject {
   cartItems?: CartItem[];
@@ -200,6 +201,7 @@ const handleStandardCheckout = async (
       ]);
 
       await updateCart({ type: "ready-stock", items: [] });
+      revalidatePath("/", "layout");
       return ActionResponses.success(result.data);
     },
     {
@@ -333,7 +335,7 @@ const handleCustomRequestCheckout = async (
 
     // Clear the user's cart
     await updateCart({ type: "ready-stock", items: [] });
-
+    revalidatePath("/", "layout");
     return ActionResponses.success(result.data);
   } catch (error) {
     console.error("Error in handleCustomRequestCheckout:", error);
@@ -366,5 +368,6 @@ export const upsertCheckout = async (
     );
   }
 
+  revalidatePath("/", "layout");
   return ActionResponses.badRequest("Invalid cart data.");
 };
