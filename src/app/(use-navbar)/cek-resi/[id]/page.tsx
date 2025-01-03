@@ -1,10 +1,10 @@
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Body3, H2, H3 } from "@/components/ui/text";
 import prisma from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { getShipmentStatus } from "@/utils/couriers";
-import { ArrowLeft, Clock, MapPin, TruckIcon } from "lucide-react";
+import { ArrowLeft, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -99,7 +99,10 @@ export default async function OrderDetail({
                   </Body3>
                   <Body3 className="text-sm text-slate-600">
                     {shipmentStatus.detail.destination.length > 35
-                      ? `${shipmentStatus.detail.destination.substring(0, 35)}...`
+                      ? `${shipmentStatus.detail.destination.substring(
+                          0,
+                          35,
+                        )}...`
                       : shipmentStatus.detail.destination}
                   </Body3>
                 </div>

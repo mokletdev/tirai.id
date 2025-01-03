@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const ReviewForm: FC<{ review: Review | null }> = ({ review }) => {
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   const router = useRouter();
 

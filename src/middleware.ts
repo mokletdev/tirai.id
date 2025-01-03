@@ -42,7 +42,10 @@ export default withAuth(
       });
     }
 
-    return NextResponse.next();
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-next-pathname", pathname);
+
+    return NextResponse.next({ headers: requestHeaders });
   },
   {
     callbacks: {
