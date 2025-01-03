@@ -175,8 +175,8 @@ const handleStandardCheckout = async (
         payment_type: "payment_link",
         amount: {
           // TODO: Fix the gross_amount not match itemDetails
-          vat: "0",
-          discount: "0",
+          vat: vat.toString(),
+          discount: discountPrice.toString(),
           shipping: shipmentCost.toString(),
         },
       });

@@ -24,13 +24,14 @@ import { useZodForm } from "@/hooks/use-zod-form";
 import { formatNumber, MAX_FILE_SIZE, parseNumberInput } from "@/lib/utils";
 import { ProductWithCategoryReviewsVariants } from "@/types/entityRelations";
 import { ProductCategory } from "@prisma/client";
-import { ArrowLeft, Trash } from "lucide-react";
+import { ArrowLeft, OctagonAlert, Trash } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { PhotosPreview } from "./PhotosPreview";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const ProductForm = ({
   updateData,
@@ -191,6 +192,14 @@ export const ProductForm = ({
   return (
     <Form {...form}>
       <div className="mb-8 max-w-screen-lg space-y-8">
+        <Alert variant={"warn"}>
+          <OctagonAlert className="h-4 w-4" />
+          <AlertTitle>Harga Produk</AlertTitle>
+          <AlertDescription>
+            Perhatian! Jika harga diisi, maka tidak bisa menambahkan varian
+            produk.
+          </AlertDescription>
+        </Alert>
         <div className="mb-2 flex flex-col items-start gap-4">
           <Button
             variant={"link"}

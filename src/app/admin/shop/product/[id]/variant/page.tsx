@@ -11,7 +11,7 @@ export default async function ProductVariantsPage({
   const { id } = await params;
 
   const product = await prisma.product.findUnique({ where: { id } });
-  if (!product) return notFound();
+  if (!product || product.price) return notFound();
 
   const variants = await prisma.productVariant.findMany({
     where: { product_id: id },

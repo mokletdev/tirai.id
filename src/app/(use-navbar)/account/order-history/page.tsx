@@ -32,7 +32,11 @@ export default async function OrderHistory({
             product: true;
             variant: true;
             custom_request: true;
-            review: true;
+            review: {
+              include: {
+                order: { include: { user: true } };
+              };
+            };
           };
         };
       };
@@ -56,7 +60,11 @@ export default async function OrderHistory({
             product: true,
             variant: true,
             custom_request: true,
-            review: true,
+            review: {
+              include: {
+                order: { include: { user: true } },
+              },
+            },
           },
         },
       },

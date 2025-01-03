@@ -14,7 +14,11 @@ export const OrderItemCard: FC<{
       product: true;
       variant: true;
       custom_request: true;
-      review: true;
+      review: {
+        include: {
+          order: { include: { user: true } };
+        };
+      };
     };
   }>;
   status: OrderStatus;
@@ -90,7 +94,16 @@ export const OrderItemCard: FC<{
             </div>
           </div>
 
-          {status === "FINISHED" && <ReviewForm review={item.review} />}
+          {status === "FINISHED" && (
+            <ReviewForm
+              data={{
+                order_id: item.order_id,
+                order_item_id: item.id,
+                product_id: item.product_id ?? item.variant_id!,
+              }}
+              review={item.review}
+            />
+          )}
         </CardContent>
       </Card>
     );
@@ -122,7 +135,16 @@ export const OrderItemCard: FC<{
         </div>
       </div>
 
-      {status === "FINISHED" && <ReviewForm review={item.review} />}
+      {status === "FINISHED" && (
+        <ReviewForm
+          data={{
+            order_id: item.order_id,
+            order_item_id: item.id,
+            product_id: item.product_id ?? item.variant_id!,
+          }}
+          review={item.review}
+        />
+      )}
     </div>
   );
 };
