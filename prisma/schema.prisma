@@ -24,6 +24,7 @@ model User {
   tokens            Token[]
   shipping_addreses ShippingAddress[]
   CustomRequest     CustomRequest[]
+  Referal           Referal[]
 }
 
 model ShippingAddress {
@@ -125,31 +126,33 @@ model ProductVariant {
 }
 
 model Material {
-  id             String @id @default(uuid())
-  name           String @unique
+  id             String  @id @default(uuid())
+  name           String  @unique
   price          Float
   supplier_price Float
-  description    String
+  description    String?
+  image          String
 }
 
 model Model {
   id          String  @id @default(uuid())
-  model       String  @unique
+  name        String  @unique
   description String?
-  image       String?
+  image       String
 }
 
 model CustomRequest {
-  id             String  @id @default(uuid())
-  material       String
-  model          String
-  color          String
-  width          String
-  height         String
-  price          Float
-  shipping_price Float?
-  carrier_code   String?
-  is_vat         Boolean @default(false)
+  id                String  @id @default(uuid())
+  material          String
+  model             String
+  width             String
+  height            String
+  price             Float
+  shipping_price    Float?
+  carrier_code      String?
+  is_custom_carrier Boolean @default(false)
+  is_vat            Boolean @default(false)
+  quantity          Int     @default(1)
 
   address                String
   recipient_phone_number String
@@ -176,6 +179,7 @@ model Order {
   items    OrderItem[]
   payment  Payment?
   shipment Shipment?
+  referal  Referal[]
 
   user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id          String
@@ -235,6 +239,7 @@ model Payment {
 model Shipment {
   id                    String         @id @default(uuid())
   carrier               String // Nama pengirim (i.e: JNE, J&T)
+  is_custom_carrier     Boolean        @default(false)
   tracking_id           String? // ID Tracking dari third party
   status                ShipmentStatus
   created_at            DateTime       @default(now())
@@ -261,10 +266,14 @@ model Cart {
 // }
 // ],
 
-model CustomColor {
-  id        Int    @id @default(autoincrement())
-  name      String
-  colorCode String
+model Referal {
+  id                  Int     @id @default(autoincrement())
+  user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id             String
+  code                String
+  fee_in_percent      Float
+  discount_in_percent Float
+  order               Order[]
 }
 
 model SEO {
