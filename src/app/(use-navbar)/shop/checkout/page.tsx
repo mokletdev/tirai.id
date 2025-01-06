@@ -2,11 +2,11 @@ import { updateCart } from "@/actions/cart";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { getServerSession } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
+import { isCustomCart } from "@/lib/utils";
 import { Cart } from "@/types/cart";
+import { findDiscountByRole } from "@/utils/database/discount.query";
 import { notFound, redirect } from "next/navigation";
 import { CheckoutForm } from "./components/CheckoutForm";
-import { isCustomCart } from "@/lib/utils";
-import { findDiscountByRole } from "@/utils/database/discount.query";
 
 export default async function Checkout() {
   const session = await getServerSession();

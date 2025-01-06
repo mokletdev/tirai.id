@@ -1,15 +1,18 @@
 "use client";
 
-import { upsertCheckout } from "@/actions/checkout";
+import { applyReferalCode, upsertCheckout } from "@/actions/checkout";
+import { Service } from "@/actions/shippingPrice/scraper";
 import { SectionContainer } from "@/components/layout/SectionContainer";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Body2, Body3, H3, H4 } from "@/components/ui/text";
 import { formatRupiah } from "@/lib/utils";
 import { CartItem, CustomRequestItem } from "@/types/cart";
 import { ProductWithVariant } from "@/types/entityRelations";
 import { calculateCartWeight } from "@/utils/calculate-cart-weight";
 import { Discount, ShippingAddress } from "@prisma/client";
-import { CreditCard, Package, Palette, Ruler } from "lucide-react";
+import { CreditCard, Package, Ruler } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
@@ -17,8 +20,6 @@ import { toast } from "sonner";
 import { AddressSelector } from "./AddressSelector";
 import { Details } from "./Details";
 import { ProductCard } from "./ProductCard";
-import { Button } from "@/components/ui/button";
-import { Service } from "@/actions/shippingPrice/scraper";
 
 const CourierSelector = dynamic(() => import("./CourierSelector"), {
   ssr: false,
@@ -34,6 +35,8 @@ export const CheckoutForm: FC<{
   const [selectedAddressId, setSelectedAddressId] = useState<string>();
   const [selectedCourier, setSelectedCourier] = useState<Service>();
   const [loading, setLoading] = useState(false);
+  const [referalCode, setReferalCode] = useState<string>();
+  const [referalDiscount, setReferalDiscount] = useState<number>();
   const router = useRouter();
 
   const handleCheckout = async () => {
@@ -50,6 +53,7 @@ export const CheckoutForm: FC<{
           { cartItems },
           selectedAddressId,
           selectedCourier,
+          referalDiscount ? referalCode : undefined,
         );
       } else {
         toast.error("Please complete all required fields");
@@ -80,7 +84,6 @@ export const CheckoutForm: FC<{
       id,
       material,
       model,
-      color,
       width,
       height,
       price,
@@ -108,20 +111,6 @@ export const CheckoutForm: FC<{
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <Palette className="h-5 w-5 text-gray-500" />
-                      <span>Warna</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-6 w-6 rounded-full border border-gray-200"
-                        style={{ backgroundColor: color }}
-                      />
-                      <span className="text-sm text-gray-600">{color}</span>
-                    </div>
-                  </div>
-
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <Ruler className="h-5 w-5 text-gray-500" />
@@ -168,6 +157,47 @@ export const CheckoutForm: FC<{
           </div>
           <div className="flex h-full w-full flex-col items-stretch overflow-y-hidden lg:w-1/3">
             <div className="mb-6 flex flex-col gap-y-2">
+              <div className="my-2 flex flex-col items-center justify-between gap-1 md:flex-row">
+                <Input
+                  placeholder="Kode Referal"
+                  onChange={(e) => {
+                    setReferalCode(e.target.value);
+                  }}
+                />
+                <Button
+                  onClick={async () => {
+                    if (!referalCode) {
+                      return;
+                    }
+
+                    const loadingToast = toast.loading("Loading...");
+                    setLoading(true);
+
+                    try {
+                      const appliedReferalCode =
+                        await applyReferalCode(referalCode);
+
+                      if (appliedReferalCode.data) {
+                        setReferalDiscount(
+                          appliedReferalCode.data.discount_in_percent,
+                        );
+                      }
+
+                      toast.success("Berhasil mengaplikasikan kode referal!", {
+                        id: loadingToast,
+                      });
+                      setLoading(false);
+                    } catch (e) {
+                      console.log(e);
+                      toast.error("Terjadi kesalahan!", { id: loadingToast });
+                    }
+                  }}
+                  type="button"
+                  disabled={loading}
+                >
+                  Apply
+                </Button>
+              </div>
               <div className="flex flex-row justify-between">
                 <Body3 className="text-black">Subtotal (Kustom)</Body3>
                 <Body3 className="text-black">{formatRupiah(price)}</Body3>
@@ -177,6 +207,16 @@ export const CheckoutForm: FC<{
                   <Body3 className="text-black">PPN (11%)</Body3>
                   <Body3 className="text-black">
                     {formatRupiah((price * 11) / 100)}
+                  </Body3>
+                </div>
+              )}
+              {referalDiscount && (
+                <div className="flex flex-row justify-between">
+                  <Body3 className="text-black">
+                    Diskon Referal ({referalDiscount}%)
+                  </Body3>
+                  <Body3 className="text-green-500">
+                    -{formatRupiah(price * (referalDiscount / 100))}
                   </Body3>
                 </div>
               )}
@@ -190,7 +230,7 @@ export const CheckoutForm: FC<{
                 <H3 className="text-black">Total</H3>
                 <H3 className="text-black">
                   {formatRupiah(
-                    shipping_price! + price + (is_vat ? (price * 11) / 100 : 0),
+                    shipping_price! + price + (is_vat ? price * (11 / 100) : 0),
                   )}
                 </H3>
               </div>
@@ -256,6 +296,10 @@ export const CheckoutForm: FC<{
               selectedCourier ? Number(selectedCourier.price) : undefined
             }
             discount={discount}
+            referalCode={referalCode}
+            setReferalCode={setReferalCode}
+            referalDiscount={referalDiscount}
+            setReferalDiscount={setReferalDiscount}
           />
         )}
       </div>

@@ -15,10 +15,10 @@ import { findDiscountByRole } from "@/utils/database/discount.query";
 import { Prisma, PrismaClient, Role } from "@prisma/client";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 import { addDays, addMinutes } from "date-fns";
+import { revalidatePath } from "next/cache";
 import { updateCart } from "./cart";
 import { createTransactionInvoice } from "./midtrans";
 import { Service } from "./shippingPrice/scraper";
-import { revalidatePath } from "next/cache";
 
 interface CartObject {
   cartItems?: CartItem[];
@@ -27,9 +27,9 @@ interface CartObject {
 
 const BATCH_SIZE = 2; // Process items in smaller batches
 
-export function generateOrderId(
+const generateOrderId = (
   options: { prefix?: string; minLength?: number; maxLength?: number } = {},
-): string {
+): string => {
   const { prefix = "TRI", minLength = 9, maxLength = 12 } = options;
 
   // Generate random length between min and max
@@ -57,7 +57,7 @@ export function generateOrderId(
 
   // Create the final order ID
   return `${prefix}-${uniquePart}`;
-}
+};
 
 const processBatch = async (
   tx: Omit<
@@ -117,6 +117,7 @@ const handleStandardCheckout = async (
   courier: Service,
   userId: string,
   userRole: Role,
+  referalCode?: string,
 ): Promise<ActionResponse<CreateInvoiceSuccessResponse>> => {
   const [discount, products, shipmentAddress] = await Promise.all([
     findDiscountByRole(userRole),
@@ -129,6 +130,16 @@ const handleStandardCheckout = async (
 
   if (!shipmentAddress) {
     return ActionResponses.notFound("Shipping address not found!");
+  }
+
+  const referal = await prisma.referal.findUnique({
+    where: { code: referalCode },
+  });
+
+  if (referalCode && !referal) {
+    return ActionResponses.notFound(
+      "Kode referal yang anda pakai tidak valid!",
+    );
   }
 
   const shipmentCost = await getCostByCourierCode({
@@ -148,7 +159,12 @@ const handleStandardCheckout = async (
     cartItems,
     products,
     shipmentCost,
-    discount ?? undefined,
+    {
+      // Adds the referal discount + generic discount
+      discount_in_percent:
+        (discount?.discount_in_percent || 0) +
+        (referal?.discount_in_percent || 0),
+    },
   );
 
   // Process in transaction with batching
@@ -168,6 +184,7 @@ const handleStandardCheckout = async (
             shipmentAddress.recipient_phone_number,
           ),
           total_price: amount - discountPrice + shipmentCost + vat,
+          referal_id: referal?.id,
         },
       });
 
@@ -208,7 +225,6 @@ const handleStandardCheckout = async (
         item_details: itemDetails,
         payment_type: "payment_link",
         amount: {
-          // TODO: Fix the gross_amount not match itemDetails
           vat: vat.toString(),
           discount: discountPrice.toString(),
           shipping: shipmentCost.toString(),
@@ -247,12 +263,23 @@ const handleStandardCheckout = async (
 const handleCustomRequestCheckout = async (
   customRequestItem: CustomRequestItem,
   userId: string,
+  referalCode?: string,
 ): Promise<ActionResponse<CreateInvoiceSuccessResponse>> => {
   try {
     // Fetch the custom request and validate its existence and shipping details
     const customRequest = await prisma.customRequest.findUnique({
       where: { id: customRequestItem.id },
     });
+
+    const referal = await prisma.referal.findUnique({
+      where: { code: referalCode },
+    });
+
+    if (referalCode && !referal) {
+      return ActionResponses.notFound(
+        "Kode referal yang anda pakai tidak valid!",
+      );
+    }
 
     if (
       !customRequest ||
@@ -275,7 +302,13 @@ const handleCustomRequestCheckout = async (
     const vat = customRequest.is_vat ? (customRequest.price * 11) / 100 : 0;
 
     // Create an order entry
-    const totalPrice = customRequest.shipping_price + customRequest.price + vat;
+    const totalPrice =
+      customRequest.shipping_price +
+      (customRequest.price -
+        (referal
+          ? customRequest.price * (referal.discount_in_percent / 100)
+          : customRequest.price)) +
+      vat;
     const order = await prisma.order.create({
       data: {
         id: generateOrderId(),
@@ -285,6 +318,7 @@ const handleCustomRequestCheckout = async (
         phone_number: customRequest.recipient_phone_number,
         total_price: totalPrice,
         shipping_price: customRequest.shipping_price,
+        referal_id: referal?.id,
       },
     });
 
@@ -378,10 +412,33 @@ const handleCustomRequestCheckout = async (
   }
 };
 
+export const applyReferalCode = async (
+  referalCode: string,
+): Promise<
+  ActionResponse<{ message: string; discount_in_percent: number }>
+> => {
+  try {
+    const referal = await prisma.referal.findUnique({
+      where: { code: referalCode },
+    });
+
+    if (!referal) return ActionResponses.notFound("Kode referal tidak valid!");
+
+    return ActionResponses.success({
+      message: "Berhasil mengaplikasikan kode referal!",
+      discount_in_percent: referal.discount_in_percent,
+    });
+  } catch (error) {
+    console.log(error);
+    return ActionResponses.serverError();
+  }
+};
+
 export const upsertCheckout = async (
   cart: CartObject,
   shipmentAddressId?: string,
   courier?: Service,
+  referalCode?: string,
 ): Promise<ActionResponse<CreateInvoiceSuccessResponse>> => {
   const session = await getServerSession();
   if (!session?.user) return ActionResponses.unauthorized();
@@ -393,6 +450,7 @@ export const upsertCheckout = async (
       courier,
       session.user.id,
       session.user.role,
+      referalCode,
     );
   }
 
@@ -400,6 +458,7 @@ export const upsertCheckout = async (
     return await handleCustomRequestCheckout(
       cart.customRequest,
       session.user.id,
+      referalCode,
     );
   }
 

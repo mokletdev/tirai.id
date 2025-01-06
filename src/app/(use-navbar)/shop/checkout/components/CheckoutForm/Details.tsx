@@ -1,12 +1,15 @@
 "use client";
 
+import { applyReferalCode } from "@/actions/checkout";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Body3, H5 } from "@/components/ui/text";
 import { formatRupiah } from "@/lib/utils";
 import { CartItem } from "@/types/cart";
 import { ProductWithVariant } from "@/types/entityRelations";
 import { Discount } from "@prisma/client";
-import { useMemo } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 export const Details = ({
   cartItems,
@@ -15,6 +18,10 @@ export const Details = ({
   handleCheckout,
   shippingPrice,
   discount,
+  referalCode,
+  setReferalCode,
+  referalDiscount,
+  setReferalDiscount,
 }: {
   cartItems: CartItem[];
   products: ProductWithVariant[];
@@ -22,6 +29,10 @@ export const Details = ({
   handleCheckout: () => void;
   shippingPrice?: number;
   discount?: Discount | null;
+  referalCode?: string;
+  setReferalCode: Dispatch<SetStateAction<string | undefined>>;
+  referalDiscount?: number;
+  setReferalDiscount: Dispatch<SetStateAction<number | undefined>>;
 }) => {
   const detailedCartItems = useMemo(() => {
     if (!cartItems || !products) return [];
@@ -59,7 +70,7 @@ export const Details = ({
       .filter(Boolean);
   }, [cartItems, discount, products]);
 
-  const productPrice = useMemo(
+  const productsPrice = useMemo(
     () =>
       detailedCartItems.reduce((sum, item) => sum + item!.totalItemPrice, 0),
     [detailedCartItems],
@@ -76,30 +87,95 @@ export const Details = ({
     );
   }, [detailedCartItems]);
 
+  const referalDiscountPrice = useMemo(() => {
+    return referalDiscount
+      ? productsPrice * (referalDiscount / 100)
+      : undefined;
+  }, [productsPrice, referalDiscount]);
+
   const totalPrice = useMemo(
     () =>
-      productPrice -
-      discountPrice +
+      productsPrice -
+      (discountPrice + (referalDiscountPrice || 0)) +
       totalVat +
       (shippingPrice === undefined ? 0 : shippingPrice),
-    [productPrice, shippingPrice, discountPrice, totalVat],
+    [
+      productsPrice,
+      discountPrice,
+      referalDiscountPrice,
+      totalVat,
+      shippingPrice,
+    ],
   );
+
+  const [loading, setLoading] = useState(false);
+
   return (
-    <div className="flex h-full w-full flex-col items-stretch overflow-y-hidden lg:w-1/3">
+    <div className="flex h-full w-full flex-col items-stretch overflow-y-hidden px-1 lg:w-[35%]">
       <div className="mb-6 flex flex-col gap-y-2">
+        <div className="my-2 flex flex-col items-center justify-between gap-1 md:flex-row">
+          <Input
+            placeholder="Kode Referal"
+            onChange={(e) => {
+              setReferalCode(e.target.value);
+            }}
+          />
+          <Button
+            onClick={async () => {
+              if (!referalCode) {
+                return;
+              }
+
+              const loadingToast = toast.loading("Loading...");
+              setLoading(true);
+
+              try {
+                const appliedReferalCode = await applyReferalCode(referalCode);
+
+                if (appliedReferalCode.data) {
+                  setReferalDiscount(
+                    appliedReferalCode.data.discount_in_percent,
+                  );
+                }
+
+                toast.success("Berhasil mengaplikasikan kode referal!", {
+                  id: loadingToast,
+                });
+                setLoading(false);
+              } catch (e) {
+                console.log(e);
+                toast.error("Terjadi kesalahan!", { id: loadingToast });
+              }
+            }}
+            type="button"
+            disabled={loading}
+          >
+            Apply
+          </Button>
+        </div>
         <div className="flex flex-row justify-between">
           <Body3 className="text-black">
             Subtotal ({detailedCartItems.length})
           </Body3>
-          <Body3 className="text-black">{formatRupiah(productPrice)}</Body3>
+          <Body3 className="text-black">{formatRupiah(productsPrice)}</Body3>
         </div>
-        {discount && (
+        {discount && discountPrice && (
           <div className="flex flex-row justify-between">
             <Body3 className="text-black">
               Diskon ({discount.discount_in_percent}%)
             </Body3>
-            <Body3 className="text-red-500">
-              -{formatRupiah(discountPrice!)}
+            <Body3 className="text-green-500">
+              -{formatRupiah(discountPrice)}
+            </Body3>
+          </div>
+        )}
+        {referalDiscount && referalDiscountPrice && (
+          <div className="flex flex-row justify-between">
+            <Body3 className="text-black">
+              Diskon Referal ({referalDiscount}%)
+            </Body3>
+            <Body3 className="text-green-500">
+              -{formatRupiah(referalDiscountPrice)}
             </Body3>
           </div>
         )}
