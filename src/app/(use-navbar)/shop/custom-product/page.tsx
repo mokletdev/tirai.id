@@ -16,14 +16,13 @@ export default async function Page() {
 
   if (!session?.user) return;
 
-  const [colors, models, bahans, addresses, cart] = await prisma.$transaction([
-    prisma.customColor.findMany(),
+  const [models, bahans, addresses, cart] = await prisma.$transaction([
     prisma.model.findMany({
       select: {
         id: true,
         description: true,
         image: true,
-        model: true,
+        name: true,
       },
     }),
     prisma.material.findMany({
@@ -33,6 +32,7 @@ export default async function Page() {
         description: true,
         price: true,
         supplier_price: true,
+        image: true,
       },
     }),
     prisma.shippingAddress.findMany({
@@ -99,7 +99,6 @@ export default async function Page() {
         addresses={addresses}
         user={session.user}
         discount={discount}
-        colors={colors}
       />
     </PageContainer>
   );

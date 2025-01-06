@@ -26,13 +26,13 @@ export const upsertModel = async (
 
   try {
     const payload: Prisma.ModelCreateInput = {
-      model,
+      name: model,
       description,
-      image: imageUrl,
+      image: imageUrl!,
     };
 
     if (!id) {
-      const existingName = await findModel({ model });
+      const existingName = await findModel({ name: model });
 
       if (existingName) {
         return ActionResponses.badRequest("Nama model sudah digunakan");

@@ -11,6 +11,7 @@ import {
   Receipt,
   LogOut,
   type LucideIcon,
+  BookKey,
 } from "lucide-react";
 import {
   Sidebar,
@@ -109,6 +110,13 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: User2,
     isActive: false,
     requiredRole: ["SUPERADMIN"],
+  },
+  {
+    title: "Referal",
+    url: "/admin/referal",
+    icon: BookKey,
+    isActive: false,
+    requiredRole: ["SUPERADMIN", "ADMIN"],
   },
 ];
 

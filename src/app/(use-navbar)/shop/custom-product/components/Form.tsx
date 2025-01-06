@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Settings, Palette } from "lucide-react";
 import FabricIcon from "@/components/svg-tsxIcon/fabricIcon";
-import { CustomColor, Discount, Prisma } from "@prisma/client";
+import { Discount, Prisma } from "@prisma/client";
 import Image from "next/image";
 import {
   Tooltip,
@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { Body3, H1 } from "@/components/ui/text";
 
 export type Models = Prisma.ModelGetPayload<{
-  select: { id: true; description: true; image: true; model: true };
+  select: { id: true; description: true; image: true; name: true };
 }>;
 
 export type Bahans = Prisma.MaterialGetPayload<{
@@ -36,6 +36,7 @@ export type Bahans = Prisma.MaterialGetPayload<{
     description: true;
     price: true;
     supplier_price: true;
+    image: true;
   };
 }>;
 
@@ -43,10 +44,9 @@ export const Form: FC<{
   models: Models[];
   bahans: Bahans[];
   addresses: ShippingAddress[];
-  colors: CustomColor[];
   user: Session["user"];
   discount?: Discount | null;
-}> = ({ models, bahans, addresses, user, discount, colors }) => {
+}> = ({ models, bahans, addresses, user, discount }) => {
   const [dimensions, setDimensions] = useState({ length: 0, width: 0 });
   const [selectedMaterial, setSelectedMaterial] = useState<Bahans | null>(null);
   const [estimatedPrice, setEstimatedPrice] = useState(0);
@@ -62,7 +62,7 @@ export const Form: FC<{
     discount?: Discount | null,
   ) => {
     const area = length * width;
-    const brute = area * materialPrice;
+    const brute = (area / 100 < 1 ? 1 : area / 100) * materialPrice;
     return brute - (brute * (discount?.discount_in_percent || 0)) / 100;
   };
 
@@ -181,14 +181,14 @@ export const Form: FC<{
                       <TooltipTrigger asChild>
                         <div className="relative">
                           <RadioGroupItem
-                            value={model.model}
+                            value={model.name}
                             id={`model-${model.id}`}
                             className="peer sr-only"
                           />
                           <Label
                             htmlFor={`model-${model.id}`}
                             className={`flex cursor-pointer flex-col items-center space-y-2 rounded-lg border-2 p-4 transition-all hover:bg-muted ${
-                              selectedModel === model.model
+                              selectedModel === model.name
                                 ? "border-primary bg-primary/10 ring-primary ring-2 ring-offset-2"
                                 : "border-muted"
                             }`}
@@ -197,7 +197,7 @@ export const Form: FC<{
                               <div className="relative h-32 w-full overflow-hidden rounded-md">
                                 <Image
                                   src={model.image}
-                                  alt={model.model}
+                                  alt={model.name}
                                   fill
                                   className="object-cover"
                                 />
@@ -207,7 +207,7 @@ export const Form: FC<{
                             )}
                             <div className="space-y-1 text-center">
                               <span className="text-sm font-medium">
-                                {model.model}
+                                {model.name}
                               </span>
                               <p className="text-xs text-muted-foreground">
                                 {model.description}
@@ -226,7 +226,7 @@ export const Form: FC<{
               {selectedModel && (
                 <div className="mt-4 rounded-lg bg-muted p-4">
                   <p className="text-sm text-muted-foreground">
-                    {models.find((m) => m.model === selectedModel)?.description}
+                    {models.find((m) => m.name === selectedModel)?.description}
                   </p>
                 </div>
               )}
@@ -236,7 +236,7 @@ export const Form: FC<{
           <Card>
             <CardHeader className="flex flex-row items-center space-x-4">
               <FabricIcon className="h-6 w-6" />
-              <CardTitle>Bahan</CardTitle>
+              <CardTitle>Varian</CardTitle>
             </CardHeader>
             <CardContent>
               <RadioGroup
@@ -249,6 +249,14 @@ export const Form: FC<{
                     key={bahan.id}
                     className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-muted"
                   >
+                    <div className="relative h-32 w-full overflow-hidden rounded-md">
+                      <Image
+                        src={bahan.image}
+                        alt={bahan.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <RadioGroupItem
                       value={bahan.name}
                       id={`bahan-${bahan.id}`}
@@ -270,42 +278,6 @@ export const Form: FC<{
 
           <Card>
             <CardHeader className="flex flex-row items-center space-x-4">
-              <Palette className="h-6 w-6" />
-              <CardTitle>Warna</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup
-                name="color"
-                className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
-              >
-                {colors.map((color) => (
-                  <Label
-                    key={color.id}
-                    className="group relative flex cursor-pointer flex-col space-y-2 rounded-lg border p-4 transition-all hover:bg-muted
-                [&:has([data-state=checked])]:border-primary [&:has([data-state=checked])]:bg-primary/10 [&:has([data-state=checked])]:ring-2 [&:has([data-state=checked])]:ring-primary"
-                  >
-                    <RadioGroupItem
-                      value={color.colorCode}
-                      id={`color-${color.id}`}
-                      className="peer sr-only"
-                    />
-                    <div className="flex items-center justify-center">
-                      <div
-                        className="h-16 w-16 rounded-full border shadow-sm transition-transform group-hover:scale-105 [.group:has([data-state=checked])_&]:scale-110"
-                        style={{ backgroundColor: color.colorCode }}
-                      />
-                    </div>
-                    <div className="text-center">
-                      <span className="text-sm font-medium">{color.name}</span>
-                    </div>
-                  </Label>
-                ))}
-              </RadioGroup>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center space-x-4">
               <Settings className="h-6 w-6" />
               <CardTitle>Ukuran</CardTitle>
             </CardHeader>
@@ -313,7 +285,7 @@ export const Form: FC<{
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="length">
-                    Panjang <span className="text-destructive">*</span>
+                    Panjang (cm) <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     type="number"
@@ -331,7 +303,7 @@ export const Form: FC<{
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="width">
-                    Lebar <span className="text-destructive">*</span>
+                    Lebar (cm) <span className="text-destructive">*</span>
                   </Label>
                   <Input
                     type="number"

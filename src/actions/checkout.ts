@@ -27,6 +27,38 @@ interface CartObject {
 
 const BATCH_SIZE = 2; // Process items in smaller batches
 
+export function generateOrderId(
+  options: { prefix?: string; minLength?: number; maxLength?: number } = {},
+): string {
+  const { prefix = "TRI", minLength = 9, maxLength = 12 } = options;
+
+  // Generate random length between min and max
+  const length =
+    Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
+
+  // Create a timestamp component to help ensure uniqueness
+  const timestamp = Math.floor(Date.now() * 0.001)
+    .toString(16)
+    .slice(-4);
+
+  // Define character set for random string
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  // Generate random string (subtracting 4 to account for timestamp)
+  let randomString = "";
+  for (let i = 0; i < length - 4; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    randomString += characters[randomIndex];
+  }
+
+  // Combine timestamp and random string
+  const uniquePart = timestamp + randomString;
+
+  // Create the final order ID
+  return `${prefix}-${uniquePart}`;
+}
+
 const processBatch = async (
   tx: Omit<
     PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
@@ -127,6 +159,7 @@ const handleStandardCheckout = async (
 
       const order = await tx.order.create({
         data: {
+          id: generateOrderId(),
           shipping_address: buildShipmentAddressString(shipmentAddress),
           status: "UNPAID",
           user_id: userId,
@@ -245,6 +278,7 @@ const handleCustomRequestCheckout = async (
     const totalPrice = customRequest.shipping_price + customRequest.price + vat;
     const order = await prisma.order.create({
       data: {
+        id: generateOrderId(),
         shipping_address: customRequest.address,
         status: "UNPAID",
         user_id: userId,
@@ -265,11 +299,12 @@ const handleCustomRequestCheckout = async (
     });
 
     // Prepare item details for the invoice
+    // TODO: Change this according to the new schema
     const itemDetails: ItemDetail[] = [
       {
-        description: `${customRequest.model} ${customRequest.material} ${customRequest.color} (Custom Product)`,
+        description: `${customRequest.model} ${customRequest.material} (Custom Product)`,
         price: customRequest.price,
-        quantity: 1,
+        quantity: customRequest.quantity,
       },
     ];
 

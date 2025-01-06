@@ -11,13 +11,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { H2 } from "@/components/ui/text";
+import { H2, H5 } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { formatPrice } from "@/utils/format-price";
 import { Material } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,6 +36,7 @@ export default function MaterialForm({
         price: z.string().min(1, "Harga wajib diisi."),
         supplier_price: z.string().min(1, "Harga untuk supplier wajib diisi."),
         description: z.string().min(1, "Deskripsi wajib diisi"),
+        image: z.instanceof(File),
       }),
     [],
   );
@@ -58,10 +60,15 @@ export default function MaterialForm({
     );
 
     try {
-      const upsertCategoryResult = await upsertMaterial({
-        id: updateData?.id,
-        ...values,
-      });
+      const imageData = new FormData();
+      imageData.append("image", values.image);
+      const upsertCategoryResult = await upsertMaterial(
+        {
+          id: updateData?.id,
+          ...values,
+        },
+        imageData,
+      );
       if (!upsertCategoryResult.success) {
         setLoading(false);
         return toast.error(
@@ -178,6 +185,35 @@ export default function MaterialForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Gambar (optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  onChange={(e) => field.onChange(e.target.files?.[0])}
+                  placeholder="Unggah gambar"
+                  accept="image/*"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <H5 className="text-black">Gambar</H5>
+        {updateData?.image ? (
+          <Image
+            src={updateData?.image}
+            alt="Model preview"
+            height={200}
+            width={200}
+          />
+        ) : (
+          <p className="text-sm text-black">Tidak ada gambar</p>
+        )}
         <Button disabled={loading} type="submit" className="w-full">
           Simpan
         </Button>

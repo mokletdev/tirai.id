@@ -67,7 +67,27 @@ export const OrderTable = ({
         enableColumnFilter: true,
       },
       {
-        id: "price",
+        accessorKey: "name",
+        accessorFn: (row) => row.user.name,
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Nama Customer
+              <ArrowUpDown size={16} />
+            </Button>
+          );
+        },
+        cell: ({ row }) => <div>{row.original.id}</div>,
+        enableSorting: true,
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "price",
         accessorFn: (row) => row.total_price,
         header: ({ column }) => {
           return (

@@ -10,22 +10,30 @@ import {
 import { parsePrice } from "@/utils/format-price";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { uploadSeoImage } from "../seo";
 
-export const upsertMaterial = async (data: {
-  id?: string;
-  name: string;
-  price: string;
-  supplier_price: string;
-  description: string;
-}): Promise<ActionResponse<{ message: string }>> => {
+export const upsertMaterial = async (
+  data: {
+    id?: string;
+    name: string;
+    price: string;
+    supplier_price: string;
+    description: string;
+  },
+  imageData: FormData,
+): Promise<ActionResponse<{ message: string }>> => {
   const { id, name, price, supplier_price, description } = data;
+  const image = imageData.get("image");
 
   try {
+    const imageUpload = image ? await uploadSeoImage(image) : undefined;
+
     const payload: Prisma.MaterialCreateInput = {
       name,
       price: parsePrice(price),
       supplier_price: parsePrice(supplier_price),
       description,
+      image: imageUpload!,
     };
 
     if (!id) {

@@ -42,7 +42,7 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
   const [loading, setLoading] = useState(false);
   const form = useZodForm({
     defaultValues: {
-      model: updateData?.model || "",
+      model: updateData?.name || "",
       description: updateData?.description || "",
       image: undefined,
     },
@@ -106,7 +106,7 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
         </Button>
         <H2 className="text-black">
           {updateData ? (
-            <>Edit model {updateData.model}</>
+            <>Edit model {updateData.name}</>
           ) : (
             <>Buat model Baru</>
           )}
@@ -171,7 +171,7 @@ export default function ModelForm({ updateData }: { updateData?: Model }) {
             width={200}
           />
         ) : (
-          <p className="text-black text-sm">Tidak ada gambar</p>
+          <p className="text-sm text-black">Tidak ada gambar</p>
         )}
         <Button disabled={loading} type="submit" className="w-full">
           Simpan

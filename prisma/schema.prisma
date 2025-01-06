@@ -165,7 +165,7 @@ model CustomRequest {
 }
 
 model Order {
-  id             String      @id @default(uuid())
+  id             String      @id
   finished_at    DateTime?
   total_price    Float
   phone_number   String
@@ -183,7 +183,7 @@ model Order {
 
   user             User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id          String
-  shipping_address String // Shipping address from the table, but turned into a string to prevent 
+  shipping_address String
 }
 
 model Discount {
@@ -270,7 +270,7 @@ model Referal {
   id                  Int     @id @default(autoincrement())
   user                User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id             String
-  code                String
+  code                String  @unique
   fee_in_percent      Float
   discount_in_percent Float
   order               Order[]

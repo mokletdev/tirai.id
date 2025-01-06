@@ -83,6 +83,7 @@ export type OrderWithItemsPaymentShipment = Prisma.OrderGetPayload<{
     items: true;
     payment: true;
     shipment: true;
+    user: true;
   };
 }>;
 
@@ -115,4 +116,8 @@ export type ChatProduct = Prisma.ProductGetPayload<{
 
 export type ReviewWithOrderUser = Prisma.ReviewGetPayload<{
   include: { order: { include: { user: true } } };
+}>;
+
+export type ReferalWithUser = Prisma.ReferalGetPayload<{
+  include: { user: { select: { id: true; name: true; email: true } } };
 }>;

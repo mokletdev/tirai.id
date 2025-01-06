@@ -30,6 +30,7 @@ export const findOrders = async (
         items: true;
         payment: true;
         shipment: true;
+        user: true;
       };
     }>,
     Prisma.OrderFindManyArgs
@@ -50,6 +51,7 @@ export const findOrders = async (
         items: true,
         payment: true,
         shipment: true,
+        user: true,
       },
     },
   );

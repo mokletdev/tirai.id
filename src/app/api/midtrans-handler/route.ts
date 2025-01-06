@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const orderId = body.order_id.split("-").slice(0, 5).join("-");
+    const orderId = body.order_id.split("-").slice(0, 3).join("-");
 
     switch (body.transaction_status) {
       case "capture":
