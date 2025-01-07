@@ -61,6 +61,7 @@ export const findOrderById = async (id: string) => {
   return await prisma.order.findUnique({
     where: { id },
     include: {
+      user: { select: { name: true } },
       items: {
         include: {
           custom_request: true,

@@ -200,7 +200,7 @@ export const OrderTable = ({
                       disabled={loading}
                     >
                       <CheckCircle />
-                      <span>Konfirmasi Produksi</span>
+                      <span>Konfirmasi Selesai Produksi</span>
                     </DropdownMenuItem>
                   )}
                 {role === "PACKAGING" &&
@@ -212,7 +212,7 @@ export const OrderTable = ({
                       disabled={loading}
                     >
                       <CheckCircle />
-                      <span>Konfirmasi Packaging</span>
+                      <span>Konfirmasi Selesai Packaging</span>
                     </DropdownMenuItem>
                   )}
                 <DropdownMenuItem

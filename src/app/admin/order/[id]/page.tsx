@@ -114,10 +114,6 @@ export default async function OrderDetail({
                           <p>{item.custom_request.model}</p>
                         </div>
                         <div>
-                          <p className="text-muted-foreground">Warna</p>
-                          <p>{item.custom_request.color}</p>
-                        </div>
-                        <div>
                           <p className="text-muted-foreground">Ukuran</p>
                           <p>
                             {item.custom_request.width} x{" "}

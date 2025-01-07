@@ -83,7 +83,7 @@ export type OrderWithItemsPaymentShipment = Prisma.OrderGetPayload<{
     items: true;
     payment: true;
     shipment: true;
-    user: true;
+    user: { select: { name: true } };
   };
 }>;
 

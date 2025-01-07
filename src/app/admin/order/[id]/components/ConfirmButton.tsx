@@ -45,9 +45,9 @@ export const ConfirmButton = ({
           {
             { PRODUCTION: "Produksi", ADMIN: "Order", PACKAGING: "Packaging" }[
               role as keyof {
-                PRODUCTION: "Produksi";
+                PRODUCTION: "Selesai Produksi";
                 ADMIN: "Order";
-                PACKAGING: "Packaging";
+                PACKAGING: "Selesai Packaging";
               }
             ]
           }
