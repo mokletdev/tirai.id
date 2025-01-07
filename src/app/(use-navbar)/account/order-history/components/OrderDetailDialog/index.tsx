@@ -1,6 +1,6 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Dialog,
@@ -9,19 +9,21 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
+import { H3 } from "@/components/ui/text";
 import { formatDate, formatRupiah } from "@/lib/utils";
 import { DialogBaseProps } from "@/types/dialog";
 import { OrderWithPayment } from "@/types/order";
 import { Package, TruckIcon } from "lucide-react";
 import Link from "next/link";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import { ConfirmFinishButton } from "../ConfirmFinishButton";
 import { OrderItemCard } from "./OrderItemCard";
-import { H3 } from "@/components/ui/text";
 
 export const OrderDetailDialog: FC<
   DialogBaseProps & { order: OrderWithPayment }
 > = ({ open, setIsOpen, order }) => {
+  const [loading, setLoading] = useState(false);
+
   const realTotalPrice = useMemo(
     () =>
       order.items.reduce((sum, i) => {
@@ -202,6 +204,49 @@ export const OrderDetailDialog: FC<
               <ConfirmFinishButton order={order} />
             )}
         </div>
+
+        <Button
+          className="w-full"
+          onClick={async () => {
+            try {
+              setLoading(true);
+
+              const response = await fetch(
+                `/api/order-invoice-download/${order.id}`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                },
+              );
+
+              if (!response.ok) {
+                throw new Error("Failed to generate invoice");
+              }
+
+              const blob = await response.blob();
+              const url = window.URL.createObjectURL(blob);
+
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = `invoice-${order.id}.pdf`;
+              document.body.appendChild(link);
+              link.click();
+
+              document.body.removeChild(link);
+              window.URL.revokeObjectURL(url);
+            } catch (error) {
+              console.error("Error downloading invoice:", error);
+              alert("Failed to download invoice");
+            } finally {
+              setLoading(false);
+            }
+          }}
+          disabled={loading}
+        >
+          Download
+        </Button>
       </DialogContent>
     </Dialog>
   );
