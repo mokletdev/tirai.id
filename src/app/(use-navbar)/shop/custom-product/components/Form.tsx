@@ -37,6 +37,7 @@ export type Bahans = Prisma.MaterialGetPayload<{
     price: true;
     supplier_price: true;
     image: true;
+    allowed_model: true;
   };
 }>;
 
@@ -105,6 +106,7 @@ export const Form: FC<{
 
   const handleModelChange = (value: string) => {
     setSelectedModel(value);
+    setSelectedMaterial(null);
     if (selectedMaterial) {
       const price = calculatePrice(
         dimensions.length,
@@ -273,40 +275,46 @@ export const Form: FC<{
               <CardTitle>Varian</CardTitle>
             </CardHeader>
             <CardContent>
-              <RadioGroup
-                name="material"
-                onValueChange={handleMaterialChange}
-                className="space-y-2"
-              >
-                {bahans.map((bahan) => (
-                  <Label
-                    key={bahan.id}
-                    className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-muted"
-                  >
-                    <div className="relative aspect-square h-32 overflow-hidden rounded-md">
-                      <Image
-                        src={bahan.image}
-                        alt={bahan.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <RadioGroupItem
-                      value={bahan.name}
-                      id={`bahan-${bahan.id}`}
-                    />
-                    <Label
-                      htmlFor={`bahan-${bahan.id}`}
-                      className="flex flex-1 items-center justify-between"
-                    >
-                      <span className="font-medium">{bahan.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {bahan.description}
-                      </span>
-                    </Label>
-                  </Label>
-                ))}
-              </RadioGroup>
+              {selectedModel && (
+                <RadioGroup
+                  name="material"
+                  onValueChange={handleMaterialChange}
+                  className="space-y-2"
+                >
+                  {bahans
+                    .filter((i) =>
+                      i.allowed_model.find((j) => j.name === selectedModel),
+                    )
+                    .map((bahan) => (
+                      <Label
+                        key={bahan.id}
+                        className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-muted"
+                      >
+                        <div className="relative aspect-square h-32 overflow-hidden rounded-md">
+                          <Image
+                            src={bahan.image}
+                            alt={bahan.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <RadioGroupItem
+                          value={bahan.name}
+                          id={`bahan-${bahan.id}`}
+                        />
+                        <Label
+                          htmlFor={`bahan-${bahan.id}`}
+                          className="flex flex-1 items-center justify-between"
+                        >
+                          <span className="font-medium">{bahan.name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {bahan.description}
+                          </span>
+                        </Label>
+                      </Label>
+                    ))}
+                </RadioGroup>
+              )}
             </CardContent>
           </Card>
 

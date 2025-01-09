@@ -303,7 +303,7 @@ const handleCustomRequestCheckout = async (
 
     // Prepare item details for the invoice
     // TODO: Change this according to the new schema
-    let itemDetails: ItemDetail[] = [];
+    const itemDetails: ItemDetail[] = [];
 
     const {
       totalPrice,

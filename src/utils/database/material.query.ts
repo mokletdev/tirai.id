@@ -19,7 +19,10 @@ export const deleteMaterial = async (
 };
 
 export const findMaterial = async (where: Prisma.MaterialWhereUniqueInput) => {
-  return await prisma.material.findUnique({ where });
+  return await prisma.material.findUnique({
+    where,
+    include: { allowed_model: true },
+  });
 };
 
 export const findMaterials = async (where?: Prisma.MaterialWhereInput) => {

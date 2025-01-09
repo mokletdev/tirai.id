@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { isCustomCart } from "@/lib/utils";
 import { buildShipmentAddressString } from "@/utils/build-shipment-address-string";
 import { createProductCustom } from "@/utils/database/customProduct.query";
+import { findMaterial } from "@/utils/database/material.query";
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -104,6 +105,13 @@ export const addCustomProductByUser = async (formData: FormData) => {
       return ActionResponses.serverError("Missing required fields");
     }
 
+    const material = await findMaterial({ name: data.material });
+
+    if (!material) return ActionResponses.badRequest("Invalid Matrerial");
+
+    if (!material.allowed_model.find((i) => i.name === data.model))
+      return ActionResponses.badRequest("Invalid Matrerial and Model Relation");
+
     const address = buildShipmentAddressString({
       additional_info: data.address.additionalInfo ?? null,
       city: data.address.city,
@@ -143,6 +151,7 @@ export const addCustomProductByUser = async (formData: FormData) => {
     const cart = await prisma.cart.findUnique({
       where: { user_id: data.userId },
     });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!cart || (cart.json_content as unknown as any).items.length === 0) {
       await updateCart({
         type: "custom",

@@ -1,6 +1,7 @@
 import { findMaterial } from "@/utils/database/material.query";
 import { notFound } from "next/navigation";
 import MaterialForm from "../components/MaterialForm";
+import { findModels } from "@/utils/database/model.query";
 
 export default async function UpdateMaterial({
   params,
@@ -11,7 +12,8 @@ export default async function UpdateMaterial({
   if (!id) return notFound();
 
   const material = await findMaterial({ id });
-  if (!material) return notFound();
+  const models = await findModels();
+  if (!material || !models) return notFound();
 
-  return <MaterialForm updateData={material} />;
+  return <MaterialForm updateData={material} models={models} />;
 }

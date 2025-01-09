@@ -33,6 +33,7 @@ export default async function Page() {
         price: true,
         supplier_price: true,
         image: true,
+        allowed_model: true,
       },
     }),
     prisma.shippingAddress.findMany({

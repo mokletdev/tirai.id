@@ -90,7 +90,7 @@ export default function ReferalForm({
           : "Berhasil menambahkan referal!",
         { id: loading },
       );
-      return router.push("/admin/referal");
+      return router.push("/admin/ref-code");
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       setLoading(false);

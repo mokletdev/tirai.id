@@ -82,7 +82,7 @@ export const OrderTable = ({
             </Button>
           );
         },
-        cell: ({ row }) => <div>{row.original.id}</div>,
+        cell: ({ row }) => <div>{row.original.user.name}</div>,
         enableSorting: true,
         enableColumnFilter: true,
       },

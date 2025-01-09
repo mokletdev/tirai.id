@@ -145,7 +145,7 @@ export const ReferalTable: FC<{
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    router.push(`/admin/referal/${row.original.id}`);
+                    router.push(`/admin/ref-code/${row.original.id}`);
                   }}
                 >
                   <Pencil />
@@ -180,7 +180,7 @@ export const ReferalTable: FC<{
     <DataTable
       data={referals}
       columns={columns}
-      createPath="/admin/referal/add"
+      createPath="/admin/ref-code/add"
       filterPlaceholder="Filter by kode"
       columnSearch="code"
     />

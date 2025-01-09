@@ -2,6 +2,7 @@
 
 import { upsertMaterial } from "@/actions/customProduct/materials";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -11,11 +12,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { H2, H5 } from "@/components/ui/text";
+import { Label } from "@/components/ui/label";
+import { Body3, H2, H5 } from "@/components/ui/text";
 import { Textarea } from "@/components/ui/textarea";
 import { useZodForm } from "@/hooks/use-zod-form";
+import { cn } from "@/lib/utils";
+import { MaterialWithAllowedModel } from "@/types/entityRelations";
 import { formatPrice } from "@/utils/format-price";
-import { Material } from "@prisma/client";
+import { Model } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
 import Image from "next/image";
@@ -25,8 +29,10 @@ import { z } from "zod";
 
 export default function MaterialForm({
   updateData,
+  models,
 }: {
-  updateData?: Material;
+  updateData?: MaterialWithAllowedModel;
+  models: Model[];
 }) {
   const router = useRouter();
   const upsertCategorySchema = useMemo(
@@ -36,7 +42,8 @@ export default function MaterialForm({
         price: z.string().min(1, "Harga wajib diisi."),
         supplier_price: z.string().min(1, "Harga untuk supplier wajib diisi."),
         description: z.string().min(1, "Deskripsi wajib diisi"),
-        image: z.instanceof(File),
+        image: updateData ? z.instanceof(File).optional() : z.instanceof(File),
+        allowedModels: z.string().array(),
       }),
     [],
   );
@@ -48,6 +55,7 @@ export default function MaterialForm({
       price: updateData?.price.toString() || "",
       supplier_price: updateData?.supplier_price.toString() || "",
       description: updateData?.description?.toString(),
+      allowedModels: updateData?.allowed_model.map((i) => i.name) || [],
     },
     schema: upsertCategorySchema,
   });
@@ -61,7 +69,7 @@ export default function MaterialForm({
 
     try {
       const imageData = new FormData();
-      imageData.append("image", values.image);
+      if (values.image) imageData.append("image", values.image);
       const upsertCategoryResult = await upsertMaterial(
         {
           id: updateData?.id,
@@ -157,7 +165,7 @@ export default function MaterialForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel htmlFor="supplier_price">
-                Harga untuk Supplier (per m²)
+                Harga dari Supplier (per m²)
               </FormLabel>
               <FormControl>
                 <Input
@@ -185,6 +193,33 @@ export default function MaterialForm({
             </FormItem>
           )}
         />
+        <div>
+          <Label className={cn("mb-1 text-black")}>Model</Label>
+          {models.map((i) => (
+            <div key={i.id} className="flex items-center gap-1">
+              <Checkbox
+                defaultChecked={form
+                  .getValues("allowedModels")
+                  .some((j) => j === i.name)}
+                onCheckedChange={(e) => {
+                  const allowed = form.getValues("allowedModels");
+                  if (e as boolean) {
+                    if (!allowed.find((j) => j === i.name))
+                      form.setValue("allowedModels", [...allowed, i.name]);
+                  } else {
+                    if (allowed.find((j) => j === i.name)) {
+                      form.setValue(
+                        "allowedModels",
+                        allowed.filter((j) => j !== i.name),
+                      );
+                    }
+                  }
+                }}
+              />
+              <Body3 className="text-black">{i.name}</Body3>
+            </div>
+          ))}
+        </div>
         <FormField
           control={form.control}
           name="image"

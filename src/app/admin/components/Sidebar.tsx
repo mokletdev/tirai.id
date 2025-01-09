@@ -113,7 +113,7 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
   },
   {
     title: "Referal",
-    url: "/admin/referal",
+    url: "/admin/ref-code",
     icon: BookKey,
     isActive: false,
     requiredRole: ["SUPERADMIN", "ADMIN"],

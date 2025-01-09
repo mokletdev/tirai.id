@@ -50,7 +50,7 @@ export const Details = ({
 
         const pricePerUnit = variant?.price ?? product.price ?? 0;
         const totalItemPrice = pricePerUnit * item.quantity;
-        let discountPrice = discount
+        const discountPrice = discount
           ? totalItemPrice * (discount.discount_in_percent / 100)
           : 0;
         let referalDiscountPrice = 0;

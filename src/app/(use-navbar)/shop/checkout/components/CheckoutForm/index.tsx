@@ -1,3 +1,4 @@
+// eslint-disable-file react-hooks/rules-of-hooks
 "use client";
 
 import { applyReferalCode, upsertCheckout } from "@/actions/checkout";
@@ -37,6 +38,49 @@ export const CheckoutForm: FC<{
   const [referalCode, setReferalCode] = useState<string>();
   const [referalDiscount, setReferalDiscount] = useState<number>();
   const router = useRouter();
+
+  const totalDataCustom = useMemo(() => {
+    const count = customRequests?.reduce(
+      (sum, i) => {
+        if (i) {
+          const totalItemPrice = i.price * i.quantity;
+          sum.totalItemPrice += totalItemPrice;
+          sum.totalShipping += i.shipping_price ?? 0;
+          const discountPrice = discount
+            ? totalItemPrice * (discount.discount_in_percent / 100)
+            : 0;
+          let referalDiscountPrice = 0;
+          if (referalDiscount) {
+            referalDiscountPrice =
+              ((totalItemPrice - discountPrice) * referalDiscount) / 100;
+          }
+          sum.referalDiscountPrice += referalDiscountPrice;
+          sum.discountPrice += discountPrice;
+          if (i.is_vat)
+            sum.totalVat +=
+              ((totalItemPrice - discountPrice - referalDiscountPrice) * 11) /
+              100;
+        }
+        return sum;
+      },
+      {
+        totalItemPrice: 0,
+        totalVat: 0,
+        totalShipping: 0,
+        discountPrice: 0,
+        referalDiscountPrice: 0,
+      },
+    );
+    return count
+      ? { ...count }
+      : {
+          totalItemPrice: 0,
+          totalVat: 0,
+          totalShipping: 0,
+          discountPrice: 0,
+          referalDiscountPrice: 0,
+        };
+  }, [customRequests, discount, referalDiscount]);
 
   const handleCheckout = async () => {
     try {
@@ -88,43 +132,13 @@ export const CheckoutForm: FC<{
   if (customRequests !== undefined) {
     const {
       discountPrice,
+      referalDiscountPrice,
       totalItemPrice,
       totalShipping,
       totalVat,
-      referalDiscountPrice,
-    } = useMemo(() => {
-      const count = customRequests.reduce(
-        (sum, i) => {
-          const totalItemPrice = i.price * i.quantity;
-          sum.totalItemPrice += totalItemPrice;
-          sum.totalShipping += i.shipping_price ?? 0;
-          let discountPrice = discount
-            ? totalItemPrice * (discount.discount_in_percent / 100)
-            : 0;
-          let referalDiscountPrice = 0;
-          if (referalDiscount) {
-            referalDiscountPrice =
-              ((totalItemPrice - discountPrice) * referalDiscount) / 100;
-          }
-          sum.referalDiscountPrice += referalDiscountPrice;
-          sum.discountPrice += discountPrice;
-          if (i.is_vat)
-            sum.totalVat +=
-              ((totalItemPrice - discountPrice - referalDiscountPrice) * 11) /
-              100;
-          return sum;
-        },
-        {
-          totalItemPrice: 0,
-          totalVat: 0,
-          totalShipping: 0,
-          discountPrice: 0,
-          referalDiscountPrice: 0,
-        },
-      );
-      return { ...count };
-    }, [customRequests, discount, referalDiscount]);
+    } = totalDataCustom;
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const totalPrice = useMemo(() => {
       return (
         totalItemPrice -
@@ -139,6 +153,7 @@ export const CheckoutForm: FC<{
       totalVat,
       referalDiscountPrice,
     ]);
+
     return (
       <SectionContainer id="checkout">
         <div className="flex w-full flex-col items-start justify-between gap-x-6 lg:flex-row">

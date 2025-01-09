@@ -121,3 +121,7 @@ export type ReviewWithOrderUser = Prisma.ReviewGetPayload<{
 export type ReferalWithUser = Prisma.ReferalGetPayload<{
   include: { user: { select: { id: true; name: true; email: true } } };
 }>;
+
+export type MaterialWithAllowedModel = Prisma.MaterialGetPayload<{
+  include: { allowed_model: true };
+}>;

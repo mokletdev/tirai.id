@@ -19,34 +19,49 @@ export const upsertMaterial = async (
     price: string;
     supplier_price: string;
     description: string;
+    allowedModels: string[];
   },
   imageData: FormData,
 ): Promise<ActionResponse<{ message: string }>> => {
-  const { id, name, price, supplier_price, description } = data;
-  const image = imageData.get("image");
+  const { id, name, price, supplier_price, description, allowedModels } = data;
+  const image = imageData.get("image") as File | undefined;
+  const existingName = await findMaterial({ name });
 
   try {
     const imageUpload = image ? await uploadSeoImage(image) : undefined;
+    const models = allowedModels.map((i) => ({
+      name: i,
+    }));
 
-    const payload: Prisma.MaterialCreateInput = {
+    const payload: Prisma.MaterialUpdateInput = {
       name,
       price: parsePrice(price),
       supplier_price: parsePrice(supplier_price),
       description,
       image: imageUpload!,
+      allowed_model: {
+        connect: models,
+      },
     };
 
     if (!id) {
-      const existingName = await findMaterial({ name });
-
       if (existingName) {
         return ActionResponses.badRequest("The name is already in use");
       }
 
-      await createMaterial(payload);
+      await createMaterial(payload as Prisma.MaterialCreateInput);
       return ActionResponses.success({
         message: "Material created successfully",
       });
+    }
+
+    if (existingName) {
+      const disconnectedModels = existingName.allowed_model.filter(
+        (i) => !allowedModels.some((j) => i.name === j),
+      );
+      payload.allowed_model!.disconnect = disconnectedModels.map((i) => ({
+        name: i.name,
+      }));
     }
 
     await updateMaterial({ id }, payload);

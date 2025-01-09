@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { Body3 } from "@/components/ui/text";
 import { formatRupiah } from "@/lib/utils";
 import { OrderStatus, Prisma } from "@prisma/client";
-import { Palette, Ruler } from "lucide-react";
+import { Ruler } from "lucide-react";
 import Image from "next/image";
 import { FC } from "react";
 import { ReviewForm } from "./ReviewForm";
@@ -45,20 +45,6 @@ export const OrderItemCard: FC<{
           </div>
 
           <div className="grid gap-3 text-sm">
-            <div className="flex items-center gap-2">
-              <Palette className="h-4 w-4 text-slate-500" />
-              <span>Warna: </span>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-4 w-4 rounded-full border"
-                  style={{
-                    backgroundColor: item.custom_request.color,
-                  }}
-                />
-                <span>{item.custom_request.color}</span>
-              </div>
-            </div>
-
             <div className="flex items-center gap-2">
               <Ruler className="h-4 w-4 text-slate-500" />
               <span>
