@@ -37,6 +37,7 @@ export type SidebarItem = {
   children?: {
     title: string;
     url: string;
+    requiredRole?: (Role | "ALL")[];
   }[];
 };
 
@@ -75,7 +76,11 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     requiredRole: ["SUPERADMIN", "CONTENTWRITER"],
     children: [
       { title: "All Articles", url: "/admin/article" },
-      { title: "Add Article", url: "/admin/article/add" },
+      {
+        title: "Add Article",
+        url: "/admin/article/add",
+        requiredRole: ["SUPERADMIN"],
+      },
     ],
   },
   {
@@ -135,7 +140,16 @@ export function AdminSidebar({ session }: { session: Session | null }) {
         (item) =>
           item.requiredRole?.includes("ALL") ||
           item.requiredRole?.includes(userRole),
-      );
+      ).map((item) => ({
+        ...item,
+        children: item.children
+          ? item.children.filter(
+              (child) =>
+                child.requiredRole?.includes("ALL") ||
+                child.requiredRole?.includes(userRole),
+            )
+          : undefined,
+      }));
     } else {
       return [];
     }

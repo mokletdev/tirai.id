@@ -28,14 +28,15 @@ export default withAuth(
     }
 
     if (
-      pathname.startsWith("admin/shop/category/add") ||
-      pathname.startsWith("/admin/shop/product/add") ||
-      pathname.startsWith("/admin/user/add") ||
-      pathname.startsWith("/admin/seo/add") ||
-      pathname.startsWith("/admin/referal/add") ||
-      pathname.startsWith("/admin/material/add") ||
-      pathname.startsWith("/admin/model/add") ||
-      pathname.startsWith("/admin/article/add")
+      (pathname.startsWith("admin/shop/category/add") ||
+        pathname.startsWith("/admin/shop/product/add") ||
+        pathname.startsWith("/admin/user/add") ||
+        pathname.startsWith("/admin/seo/add") ||
+        pathname.startsWith("/admin/referal/add") ||
+        pathname.startsWith("/admin/material/add") ||
+        pathname.startsWith("/admin/model/add") ||
+        pathname.startsWith("/admin/article/add")) &&
+      token?.role !== "SUPERADMIN"
     ) {
       return NextResponse.rewrite(new URL("/unauthorized", req.url), {
         status: 403,
