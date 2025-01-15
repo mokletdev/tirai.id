@@ -58,9 +58,7 @@ export default withAuth(
     if (
       (pathname.startsWith("/auth") && token) ||
       (pathname.startsWith("/admin") &&
-        ["CUSTOMER", "AGENT", "AFFILIATE", "SUPPLIER"].includes(
-          token?.role!,
-        )) ||
+        ["CUSTOMER", "AGENT", "AFFILIATE", "SUPPLIER"].includes(token!.role)) ||
       (pathname.startsWith("/admin/user") && token?.role !== "SUPERADMIN") ||
       (pathname.startsWith("/admin/chat") && token?.role !== "SALES")
     ) {

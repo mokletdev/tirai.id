@@ -1,14 +1,14 @@
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SectionContainer } from "@/components/layout/SectionContainer";
 import { buttonVariants } from "@/components/ui/button";
-import { Body3, H1 } from "@/components/ui/text";
+import { Body3, Display, H1 } from "@/components/ui/text";
+import { COLORS } from "@/constants/color";
 import { getServerSession } from "@/lib/next-auth";
 import prisma from "@/lib/prisma";
 import { isReadyStockCart } from "@/lib/utils";
 import { findDiscountByRole } from "@/utils/database/discount.query";
-import { Ban } from "lucide-react";
+import { Ban, ShieldClose } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Form } from "./components/Form";
 
 export default async function Page() {
@@ -89,7 +89,32 @@ export default async function Page() {
     );
   }
 
-  if (models.length < 1 || materials.length < 1) return notFound();
+  if (models.length < 1 || materials.length < 1)
+    return (
+      <main className="flex min-h-screen w-full items-center justify-center">
+        <section className="flex w-full max-w-[380px] flex-col items-center">
+          <div className="justify center mb-8 flex w-fit items-center rounded-full bg-primary-50 p-6">
+            <ShieldClose color={COLORS.primary[900]} size={52} />
+          </div>
+          <div className="flex w-full flex-col items-center text-center text-black">
+            <Display className="mb-3">Produk Kustom Belum Tersedia</Display>
+            <Body3 className="mb-[3.375rem] text-neutral-500">
+              Maaf, saat ini bahan dan model untuk produk kustom belum tersedia.
+              Silakan coba lagi nanti
+            </Body3>
+            <Link
+              href={"/"}
+              className={buttonVariants({
+                variant: "default",
+                className: "w-full",
+              })}
+            >
+              Kembali ke beranda
+            </Link>
+          </div>
+        </section>
+      </main>
+    );
 
   return (
     <PageContainer>
