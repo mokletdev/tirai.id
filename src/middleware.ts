@@ -8,7 +8,9 @@ export default withAuth(
 
     // Helper function to redirect to login with callback URL
     const redirectToLogin = (callbackUrl: string) =>
-      NextResponse.redirect(new URL(`/auth/login?callbackUrl=${callbackUrl}`, req.url));
+      NextResponse.redirect(
+        new URL(`/auth/login?callbackUrl=${callbackUrl}`, req.url),
+      );
 
     // Routes requiring authentication
     const authRequiredRoutes = [
@@ -20,7 +22,10 @@ export default withAuth(
       "/cek-resi",
     ];
 
-    if (authRequiredRoutes.some((route) => pathname.startsWith(route)) && !token) {
+    if (
+      authRequiredRoutes.some((route) => pathname.startsWith(route)) &&
+      !token
+    ) {
       return redirectToLogin(pathname);
     }
 
@@ -40,19 +45,28 @@ export default withAuth(
       "/admin/article/add",
     ];
 
-    if (superAdminRoutes.some((route) => pathname.startsWith(route)) && token?.role !== "SUPERADMIN") {
-      return NextResponse.rewrite(new URL("/unauthorized", req.url), { status: 403 });
+    if (
+      superAdminRoutes.some((route) => pathname.startsWith(route)) &&
+      token?.role !== "SUPERADMIN"
+    ) {
+      return NextResponse.rewrite(new URL("/unauthorized", req.url), {
+        status: 403,
+      });
     }
 
     // Role-based access control
     if (
       (pathname.startsWith("/auth") && token) ||
       (pathname.startsWith("/admin") &&
-        ["CUSTOMER", "AGENT", "AFFILIATE", "SUPPLIER"].includes(token?.role)) ||
+        ["CUSTOMER", "AGENT", "AFFILIATE", "SUPPLIER"].includes(
+          token?.role!,
+        )) ||
       (pathname.startsWith("/admin/user") && token?.role !== "SUPERADMIN") ||
       (pathname.startsWith("/admin/chat") && token?.role !== "SALES")
     ) {
-      return NextResponse.rewrite(new URL("/unauthorized", req.url), { status: 403 });
+      return NextResponse.rewrite(new URL("/unauthorized", req.url), {
+        status: 403,
+      });
     }
 
     return NextResponse.next();
@@ -61,5 +75,5 @@ export default withAuth(
     callbacks: {
       authorized: () => true,
     },
-  }
+  },
 );
