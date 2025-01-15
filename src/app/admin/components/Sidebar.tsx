@@ -63,9 +63,9 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     isActive: false,
     requiredRole: ["ADMIN", "SALES", "SUPERADMIN"],
     children: [
-      { title: "Category", url: "/admin/shop/category" },
-      { title: "Product", url: "/admin/shop/product" },
-      { title: "Discount", url: "/admin/shop/discount" },
+      { title: "Category", url: "/admin/shop/category", requiredRole: ["ALL"] },
+      { title: "Product", url: "/admin/shop/product", requiredRole: ["ALL"] },
+      { title: "Discount", url: "/admin/shop/discount", requiredRole: ["ALL"] },
     ],
   },
   {
@@ -75,11 +75,11 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     isActive: false,
     requiredRole: ["SUPERADMIN", "CONTENTWRITER"],
     children: [
-      { title: "All Articles", url: "/admin/article" },
+      { title: "All Articles", url: "/admin/article", requiredRole: ["ALL"] },
       {
         title: "Add Article",
         url: "/admin/article/add",
-        requiredRole: ["SUPERADMIN"],
+        requiredRole: ["SUPERADMIN", "CONTENTWRITER"],
       },
     ],
   },
@@ -90,9 +90,13 @@ const BASE_SIDEBAR_ITEMS: SidebarItem[] = [
     isActive: false,
     requiredRole: ["SALES", "ADMIN", "SUPERADMIN"],
     children: [
-      { title: "Request", url: "/admin/custom-products" },
-      { title: "Bahan", url: "/admin/material" },
-      { title: "Model", url: "/admin/model" },
+      {
+        title: "Request",
+        url: "/admin/custom-products",
+        requiredRole: ["ALL"],
+      },
+      { title: "Bahan", url: "/admin/material", requiredRole: ["ALL"] },
+      { title: "Model", url: "/admin/model", requiredRole: ["ALL"] },
     ],
   },
   {

@@ -42,12 +42,22 @@ export default withAuth(
       "/admin/referal/add",
       "/admin/material/add",
       "/admin/model/add",
-      "/admin/article/add",
     ];
 
     if (
       superAdminRoutes.some((route) => pathname.startsWith(route)) &&
       token?.role !== "SUPERADMIN"
+    ) {
+      return NextResponse.rewrite(new URL("/unauthorized", req.url), {
+        status: 403,
+      });
+    }
+
+    // Block access to non-contentwriter
+    if (
+      pathname.startsWith("/admin/article/add") &&
+      token?.role !== "SUPERADMIN" &&
+      token?.role === "CONTENTWRITER"
     ) {
       return NextResponse.rewrite(new URL("/unauthorized", req.url), {
         status: 403,

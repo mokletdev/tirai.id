@@ -29,8 +29,8 @@ export function DateRangeFilter({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[300px] justify-start text-left font-normal",
-              !date && "text-primary-900",
+              "w-[300px] justify-start border-border text-left font-normal text-neutral-500 hover:bg-neutral-50",
+              !date && "text-neutral-300",
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />

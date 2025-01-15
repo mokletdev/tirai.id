@@ -1,7 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { useRouter } from "next-nprogress-bar";
+import Link from "next/link";
 import { FC, useCallback, useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { DateRangeFilter } from "./DateRangeFilter";
@@ -93,8 +95,8 @@ export const ArticleFilter: FC<{
         setStatus={setStatus}
       />
       <Button
-        variant="destructive"
-        className="w-full"
+        variant="outline"
+        className="mb-2 w-full"
         onClick={() => {
           setSearchTitle("");
           setSearchTags("");
@@ -106,6 +108,12 @@ export const ArticleFilter: FC<{
       >
         Clear Filters
       </Button>
+      <Link
+        href={"/admin/article/add"}
+        className={buttonVariants({ variant: "default" })}
+      >
+        Add Article <Plus />
+      </Link>
     </div>
   );
 };
