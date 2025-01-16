@@ -50,6 +50,7 @@ export const upsertMaterial = async (
       }
 
       await createMaterial(payload as Prisma.MaterialCreateInput);
+      revalidatePath("/", "layout");
       return ActionResponses.success({
         message: "Material created successfully",
       });

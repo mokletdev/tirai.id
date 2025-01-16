@@ -39,6 +39,8 @@ export const upsertModel = async (
       }
 
       await createModel(payload);
+      revalidatePath("/", "layout");
+
       return ActionResponses.success({
         message: "Model berhasil dibuat",
       });
