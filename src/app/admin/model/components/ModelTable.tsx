@@ -59,7 +59,7 @@ export const ModelTable: FC<{
             </Button>
           );
         },
-        cell: ({ row }) => <div>{row.getValue("model")}</div>,
+        cell: ({ row }) => <div>{row.original.name}</div>,
         enableSorting: true,
         enableColumnFilter: true,
       },

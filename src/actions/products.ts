@@ -96,6 +96,7 @@ export const upsertProduct = async ({
         is_published: true,
         is_vat: data.is_vat,
       });
+      revalidatePath("/", "layout");
 
       return ActionResponses.success("Success Create Product");
     }
