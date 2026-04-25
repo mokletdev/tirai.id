@@ -9,6 +9,7 @@ import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { findUserInById } from "@/utils/database/user.query";
 import { ChatUser } from "@/types/entityRelations";
 
+
 export const findChatById = async (
   id: string,
   page = 1,
@@ -51,7 +52,8 @@ export const sendMessage = async (
       created_at: new Date(
         new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
       ).toISOString(),
-    });
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
     if (res.error) throw new Error("Failed to send message");
 
     return ActionResponses.success(res);
@@ -68,8 +70,8 @@ export const setReadMessage = async (
   try {
     const client = await supabase();
 
-    const res = await client
-      .from("messages")
+    const res = await (client
+      .from("messages") as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .update({
         is_read: true,
       })
@@ -106,7 +108,8 @@ export const sendFile = async (
         new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
       ).toISOString(),
       file_url: uploadFile.data?.url,
-    });
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
     if (res.error) throw new Error("Failed to send message");
 
     return ActionResponses.success(res);
@@ -132,7 +135,8 @@ export const sendProductInfo = async (
         new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
       ).toISOString(),
       product_id: productId,
-    });
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+      );
     if (res.error) throw new Error("Failed to send message");
 
     return ActionResponses.success(res);
