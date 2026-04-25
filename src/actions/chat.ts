@@ -70,11 +70,11 @@ export const setReadMessage = async (
   try {
     const client = await supabase();
 
-    const res = await client
-      .from("messages")
+    const res = await (client
+      .from("messages") as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .update({
         is_read: true,
-      } as any) // eslint-disable-line @typescript-eslint/no-explicit-any
+      })
       .eq("customer_id", customerId)
       .neq("sender_id", session?.user?.id);
     if (res.error) throw new Error("Failed to send message");
