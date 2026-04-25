@@ -74,7 +74,7 @@ export const setReadMessage = async (
       .from("messages")
       .update({
         is_read: true,
-      })
+      } as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .eq("customer_id", customerId)
       .neq("sender_id", session?.user?.id);
     if (res.error) throw new Error("Failed to send message");
@@ -108,7 +108,8 @@ export const sendFile = async (
         new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
       ).toISOString(),
       file_url: uploadFile.data?.url,
-    });
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
     if (res.error) throw new Error("Failed to send message");
 
     return ActionResponses.success(res);
@@ -134,7 +135,8 @@ export const sendProductInfo = async (
         new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }),
       ).toISOString(),
       product_id: productId,
-    });
+    } as any // eslint-disable-line @typescript-eslint/no-explicit-any
+      );
     if (res.error) throw new Error("Failed to send message");
 
     return ActionResponses.success(res);
