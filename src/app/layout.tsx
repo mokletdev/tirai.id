@@ -33,7 +33,6 @@ export default function RootLayout({
           data-client-key={MIDTRANS_CLIENT_KEY}
           async
         ></Script>
-        <meta name="google-site-verification" content="sfbBPDBPick5wVbZjGSWPl7-cM4cIcR1xsdQ3QIyuGY" />
         <body
           className={`${generalSansFont.className} overflow-x-hidden bg-white antialiased`}
         >

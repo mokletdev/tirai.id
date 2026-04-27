@@ -128,7 +128,7 @@ The application will be available at [http://localhost:3000](http://localhost:30
 
 ## Author
 
-- mokletdev ([GitHub Profile](https://github.com/mokletdev))
+- mokletdev ([GitHub Profile Data](https://github.com/mokletdev))
 
 ## Repository Information
 
